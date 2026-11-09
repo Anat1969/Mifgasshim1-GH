@@ -89,7 +89,11 @@
     ] }
   ];
 
-  var HOME = { name: "אד' ענת שטיבלמן", photo: "", post: "" };
+  var HOME = {
+    name: "אד' ענת שטיבלמן",
+    photo: "assets/anat.png",
+    post: "רומא, מילאנו, וונציה. אשדוד.\n\nקולנוע, הדרכת טיולים... תמיד מישהו לספר את הסיפור. ואני, מתלבטת אם זה תפקיד או הרגל.\n\nעכשיו כלים. לא עוד תוכנית."
+  };
   var PAGES = { home: "בית", guide: "כללי", a: 'מפגש א: מבחן התב"ע', b: "מפגש ב: ניהול הסטודיו" };
   var GROUPS = { open: ["פתיחה", ""], learn: ["נלמד", "ידע"], understand: ["נבין", "הבנה"], do: ["נעשה", "יישום"] };
   var GROUP_ORDER = ["open", "learn", "understand", "do"];
@@ -351,16 +355,11 @@
 
   function buildHome() {
     $("#homeName").textContent = HOME.name;
-    if (HOME.photo) {
-      var img = new Image();
-      img.alt = HOME.name; img.onload = function () { var f = $("#homeFigure"); f.innerHTML = ""; f.appendChild(img); f.classList.add("photo"); };
-      img.src = HOME.photo;
-    }
+    if (HOME.photo) { var img = $("#homePhoto"); img.alt = HOME.name; img.src = HOME.photo; img.hidden = false; }
     if (HOME.post) {
-      var btn = $("#postBtn"), post = $("#post");
-      btn.hidden = false;
+      var post = $("#post");
       post.innerHTML = HOME.post.split(/\n+/).map(function (l) { return "<p>" + esc(l) + "</p>"; }).join("");
-      btn.addEventListener("click", function () { post.hidden = !post.hidden; btn.classList.toggle("on", !post.hidden); });
+      post.hidden = false;
     }
   }
 
