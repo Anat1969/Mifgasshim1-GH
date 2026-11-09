@@ -12,10 +12,10 @@
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
 <script src="https://appofapp-gh.vercel.app/ai-menu.js" defer></script>
 </head>
-<body data-page="guide" dir="rtl">
+<body data-page="home" dir="rtl">
 
 <header class="top" dir="rtl">
-  <a class="brand" href="#guide/home">בינה מלאכותית לאדריכלים</a>
+  <a class="brand" href="#home" aria-label="בינה מלאכותית לאדריכלים, לדף הבית"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5 27 10.5 16 16 5 10.5Z" fill="#fff" stroke="#151515" stroke-width="1.4" stroke-linejoin="round"/><path d="M5 10.5V21.5L16 27V16Z" fill="#e9e9e6" stroke="#151515" stroke-width="1.4" stroke-linejoin="round"/><path d="M27 10.5V21.5L16 27V16Z" fill="#151515" stroke="#151515" stroke-width="1.4" stroke-linejoin="round"/></svg><span>בינה מלאכותית לאדריכלים</span></a>
   <nav class="tabs" aria-label="שלושת הדפים">
     <a class="btn" href="#guide" data-tab="guide">כללי</a>
     <a class="btn" href="#a" data-tab="a">מפגש א</a>
@@ -38,15 +38,42 @@
     <div class="pane" id="pane">
       <div class="pane-top">
         <span id="kicker"></span>
-        <button class="btn" id="mark" type="button">סמן כנלמד</button>
+        <span class="pane-tools"><button class="btn" id="allBtn" type="button" aria-pressed="false">הצג הכול</button><button class="btn" id="mark" type="button">סמן כנלמד</button></span>
       </div>
+
+      <!-- ===================== בית ===================== -->
+      <section class="view home" data-page="home" data-group="open" data-id="start" data-title="בית">
+        <div class="home-main">
+          <svg class="mark home-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5 27 10.5 16 16 5 10.5Z" fill="#fff" stroke="#151515" stroke-width="1.4" stroke-linejoin="round"/><path d="M5 10.5V21.5L16 27V16Z" fill="#e9e9e6" stroke="#151515" stroke-width="1.4" stroke-linejoin="round"/><path d="M27 10.5V21.5L16 27V16Z" fill="#151515" stroke="#151515" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          <h1>בינה מלאכותית לאדריכלים</h1>
+          <p class="home-line"><mark>מבינים את הכלי, ואז בונים איתו.</mark></p>
+          <p class="home-name" id="homeName"></p>
+          <nav class="home-enter" aria-label="כניסה לדפים">
+            <a class="btn" href="#guide">כללי</a>
+            <a class="btn" href="#a">מפגש א</a>
+            <a class="btn" href="#b">מפגש ב</a>
+            <button class="btn" type="button" id="postBtn" hidden>הפוסט</button>
+          </nav>
+          <article class="home-post" id="post" hidden></article>
+        </div>
+        <figure class="home-figure" id="homeFigure">
+          <svg viewBox="0 0 400 420" role="img" aria-label="מסה על מגרש, עם קו הגובה המרבי">
+            <path d="M200 250 380 330 200 410 20 330Z" fill="#f1f1ef" stroke="#151515" stroke-width="1.5"/>
+            <path d="M200 268 344 332 200 396 56 332Z" fill="none" stroke="#8a8a8a" stroke-width="1" stroke-dasharray="5 5"/>
+            <path d="M200 30 380 110 200 190 20 110Z" fill="none" stroke="#d4a017" stroke-width="1.5"/>
+            <path d="M200 120 300 165 200 210 100 165Z" fill="#fff" stroke="#151515" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M100 165V325L200 370V210Z" fill="#e9e9e6" stroke="#151515" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M300 165V325L200 370V210Z" fill="#cfcfcc" stroke="#151515" stroke-width="1.5" stroke-linejoin="round"/>
+            <g stroke="#6b6b6b" stroke-width=".8" fill="none"><path d="M100 197 200 242 300 197M100 229 200 274 300 229M100 261 200 306 300 261M100 293 200 338 300 293"/></g>
+          </svg>
+        </figure>
+      </section>
 
       <!-- ===================== כללי ===================== -->
 
-      <section class="view" data-page="guide" data-group="open" data-id="home" data-title="מפת הקורס">
-        <h1>מבינים את הכלי, ואז בונים איתו.</h1>
-        <p class="lead"><mark>שני מפגשים, שלושה שלבים בכל אחד: נלמד, נבין, נעשה.</mark> בכל תחנה: פרומפט להעתקה, דבר אחד שעובד, ושאלה אחת לבינה.</p>
-        <div class="map" id="courseMap"></div>
+      <section class="view cover" data-page="guide" data-group="open" data-id="start" data-title="פתיחה">
+        <h1>כל מה שצריך כדי לבנות אפליקציה מקצה לקצה.</h1>
+        <div class="stages3" data-stages="guide"></div>
       </section>
 
       <section class="view" data-page="guide" data-group="learn" data-id="principles" data-title="שש תובנות">
@@ -236,7 +263,7 @@
       <section class="view" data-page="guide" data-group="do" data-id="claudemd" data-title="קובץ הכללים">
         <h1>קובץ אחד מחליף הסברים חוזרים בכל שיחה.</h1>
         <p class="lead">תבנית CLAUDE.md להעתקה. ממלאים אותה לפי הפרויקט, ושמים בשורש המאגר.</p>
-        <div class="prompt" data-label="תבנית CLAUDE.md" data-open>
+        <div class="prompt" data-label="תבנית CLAUDE.md">
 <pre># שם הפרויקט
 
 ## מטרה
@@ -294,7 +321,7 @@
 ## קריטריוני קבלה
 - [תוצאה צפויה לקלט ידוע]</pre>
         </div>
-        <div class="prompt" data-label="תבנית פרומפט למשימה ב-Claude Code" data-open>
+        <div class="prompt" data-label="תבנית פרומפט למשימה ב-Claude Code">
 <pre>קרא את CLAUDE.md ואת docs/SPEC.md. המשימה: [תיאור של משימה אחת].
 
 לפני קוד:
@@ -316,6 +343,11 @@
       </section>
 
       <!-- ===================== מפגש א ===================== -->
+
+      <section class="view cover" data-page="a" data-group="open" data-id="start" data-title="פתיחה">
+        <h1>מזכויות בנייה למודל, ומהמודל להכרעה.</h1>
+        <div class="stages3" data-stages="a"></div>
+      </section>
 
       <section class="view" data-page="a" data-group="learn" data-id="rights" data-title="מיפוי זכויות">
         <h1>זכויות בנייה הן שרשרת נתונים שניתן לאמת, לא מספר אחד.</h1>
@@ -438,6 +470,11 @@
       </section>
 
       <!-- ===================== מפגש ב: נבנה מהנתונים ב-app.js ===================== -->
+      <section class="view cover" data-page="b" data-group="open" data-id="start" data-title="פתיחה">
+        <h1>מהנתון לשליטה במשרד.</h1>
+        <div class="stages3" data-stages="b"></div>
+      </section>
+
       <div id="viewsB"></div>
     </div>
 
