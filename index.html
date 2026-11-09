@@ -1,45 +1,912 @@
 <!doctype html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>בינה מלאכותית לאדריכלים</title>
-  <meta name="description" content="שני מפגשים, שלושה שלבים בכל אחד: נלמד, נבין, נעשה.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="assets/style.css">
-  <script src="assets/content.js" defer></script>
-  <script src="assets/app.js" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>בינה מלאכותית לאדריכלים · מפגש א, מפגש ב וחומר כללי</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;background:#fff}
+body{font-family:Heebo,system-ui,"Segoe UI",Arial,sans-serif;color:#151515}
+.app-top{position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 6vw;background:#fff;border-bottom:1px solid #e2e2e2}
+.app-name{font-size:15px;font-weight:500}
+.app-nav{display:flex;gap:20px}
+.app-nav a{color:#6e6e6e;text-decoration:none;font-size:15px;padding:6px 0;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+.app-nav a:hover{color:#151515}
+.app-nav a.on{color:#151515;border-bottom-color:#151515}
+.app-nav a:focus-visible{outline:2px solid #151515;outline-offset:4px}
+[id]{scroll-margin-top:72px}
+.page[hidden]{display:none!important}
+@media (max-width:640px){.app-top{flex-direction:column;align-items:flex-start;gap:6px}.app-nav{gap:16px}}
+</style>
+<style>.page-guide{--ink:#111;--g3:#6b6b6b;--g2:#d9d9d9;--g1:#f4f4f4;--gr:#3c8c5a;--ye:#d4a017;--rd:#b83a2e}.page-guide *{box-sizing:border-box}.page-guide{direction:rtl}.page-guide{margin:0;font-family:system-ui,"Segoe UI",Arial,sans-serif;color:var(--ink);background:#fff;line-height:1.7;font-size:15px}.page-guide header{padding:48px 64px 28px;border-bottom:1px solid var(--g2)}.page-guide .kicker{color:var(--g3);font-size:13px}.page-guide h1{font-size:28px;margin:8px 0 10px;font-weight:700;line-height:1.3}.page-guide .lead{margin:0;color:var(--g3);max-width:820px}.page-guide nav.toc{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.page-guide nav.toc a{border:1px solid var(--ink);padding:6px 14px;color:var(--ink);text-decoration:none;font-size:14px}.page-guide nav.toc a:hover{background:var(--ink);color:#fff}.page-guide main{padding:24px 64px 80px;max-width:1000px}.page-guide section{padding:36px 0;border-bottom:1px solid var(--g2)}.page-guide h2{font-size:21px;margin:0 0 6px;font-weight:700}.page-guide h3{font-size:16px;margin:24px 0 6px;font-weight:700}.page-guide p{margin:8px 0;max-width:860px}.page-guide .sub{color:var(--g3);font-size:14px;margin:0 0 14px}.page-guide .note{font-size:13px;color:var(--g3)}.page-guide table{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}.page-guide th, .page-guide td{text-align:right;padding:8px;border-bottom:1px solid var(--g1);vertical-align:top}.page-guide th{font-size:12px;color:var(--g3);font-weight:500}.page-guide ul.plain{padding-right:20px;margin:6px 0}.page-guide ul.plain li{margin:4px 0}.page-guide .steps{counter-reset:s;border-top:1px solid var(--ink)}.page-guide .steps>div{padding:12px 0 12px 0;border-bottom:1px solid var(--g2);display:grid;grid-template-columns:44px 1fr;gap:6px}.page-guide .steps>div:before{counter-increment:s;content:counter(s);font-size:20px;color:var(--g3)}.page-guide .steps b{display:block}.page-guide .grid3{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ink)}.page-guide .grid3>div{padding:14px 16px;border-left:1px solid var(--g2)}.page-guide .grid3>div:last-child{border-left:none}.page-guide .grid3 b{display:block;margin-bottom:4px}.page-guide .warn{border-right:3px solid var(--ye);background:#fbf7e9;padding:10px 14px;margin:12px 0;max-width:860px;font-size:14px}.page-guide .block{margin:14px 0;border:1px solid var(--g2);padding:12px 16px;max-width:900px}.page-guide .block>.lbl{font-size:12px;color:var(--g3);margin-bottom:4px}.page-guide .btn{background:var(--ink);color:#fff;border:none;padding:8px 14px;font:inherit;cursor:pointer;font-size:13px}.page-guide .toast{font-size:12px;color:var(--gr);margin-right:8px}.page-guide .toggle{cursor:pointer;display:inline-block;border:1px solid var(--ink);padding:7px 14px;font-size:14px;list-style:none;font-weight:600}.page-guide .toggle::-webkit-details-marker{display:none}.page-guide .toggle:before{content:"+ ";color:var(--g3)}.page-guide details[open]>.toggle:before{content:"- "}.page-guide details[open]>.toggle{background:var(--ink);color:#fff}.page-guide details.pr{margin-top:10px}.page-guide details.pr .body{margin-top:10px}.page-guide pre{background:var(--g1);padding:14px 16px;white-space:pre-wrap;word-wrap:break-word;font-family:inherit;font-size:14px;line-height:1.75;margin:10px 0 0;border-right:3px solid var(--ink)}.page-guide pre.ltr{direction:ltr;text-align:left;font-family:Consolas,monospace;font-size:13px}.page-guide code{font-family:Consolas,monospace;font-size:13px;direction:ltr;unicode-bidi:embed}@media (max-width:860px){.page-guide header, .page-guide main{padding-left:20px;padding-right:20px}.page-guide .grid3{grid-template-columns:1fr}.page-guide .grid3>div{border-left:none;border-bottom:1px solid var(--g2)}}</style>
+<style>.page-a{--ink:#111;--g4:#8a8a8a;--g3:#6b6b6b;--g2:#e2e2e2;--g1:#f5f5f5;--gr:#3c8c5a;--ye:#d4a017;--rd:#b83a2e;--sh:0 1px 2px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.04)}.page-a *{box-sizing:border-box}.page-a [hidden]{display:none!important}.page-a{margin:0;font-family:system-ui,"Segoe UI",Arial,sans-serif;color:var(--ink);background:#fff;line-height:1.6;font-size:15px}.page-a header{padding:48px 6vw 28px}.page-a .kicker{color:var(--g3);font-size:12px;letter-spacing:.04em}.page-a h1{font-size:30px;line-height:1.25;margin:10px 0 12px;font-weight:700;max-width:760px}.page-a .lead{margin:0;color:var(--g3);max-width:700px;font-size:15px}.page-a .demo{display:inline-block;margin-top:16px;font-size:12px;color:var(--g3)}.page-a nav.stages{display:flex;gap:6px;margin-top:22px;flex-wrap:wrap}.page-a nav.stages a{padding:6px 12px;color:var(--ink);text-decoration:none;font-size:13px;border-radius:999px;background:var(--g1)}.page-a nav.stages a:hover{background:var(--ink);color:#fff}.page-a .thirds{display:grid;grid-template-columns:1fr 2fr;gap:0;padding:0 6vw 40px}.page-a .col{padding:28px 32px 28px 0;min-width:0;animation:rise .6s ease both}.page-a .col.view{padding:28px 0 28px 32px}.page-a h2.stage{font-size:18px;margin:0 0 4px;font-weight:700}.page-a .stagenum{font-size:12px;color:var(--g4);display:block;margin-bottom:2px}.page-a h3{font-size:14px;margin:0 0 10px;font-weight:600}.page-a .label{font-size:12px;color:var(--g3);margin:0 0 4px}.page-a input[type=text]{width:100%;padding:9px 11px;border:1px solid var(--g2);border-radius:6px;font:inherit;background:#fff;margin-bottom:14px}.page-a .docs{list-style:none;padding:0;margin:0 0 6px}.page-a .docs li{display:flex;justify-content:space-between;padding:7px 0;font-size:14px}.page-a .docs .ok{color:var(--g3);font-size:12px}.page-a .docs .miss{color:var(--g4);font-size:12px}.page-a .seg{display:inline-flex;background:var(--g1);border-radius:999px;padding:3px;margin:0 0 14px}.page-a .seg button{background:transparent;border:none;padding:6px 14px;border-radius:999px;font:inherit;font-size:13px;cursor:pointer;color:var(--g3);transition:background .25s,color .25s}.page-a .seg button.on{background:#fff;color:var(--ink);box-shadow:var(--sh)}.page-a #view, .page-a #iso3d{position:relative;background:linear-gradient(180deg,#fafafa,#f2f2f2);border-radius:12px;min-height:380px;overflow:hidden;box-shadow:var(--sh)}.page-a #view{display:flex;align-items:center;justify-content:center}.page-a #view svg{width:100%;height:auto;max-height:420px}.page-a #iso3d{height:420px}.page-a #iso3d canvas{display:block;width:100%;height:100%}.page-a #noThree{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--g3);font-size:13px;margin:0;padding:24px;text-align:center}.page-a .note{font-size:12px;color:var(--g3);margin:10px 0 0}.page-a .tool{font-size:12px;color:var(--g3);margin:14px 0 0;padding-top:10px;border-top:1px solid var(--g2)}.page-a table{width:100%;border-collapse:collapse;font-size:13.5px}.page-a th, .page-a td{text-align:right;padding:8px 4px;border-bottom:1px solid var(--g1);vertical-align:top}.page-a th{font-size:12px;color:var(--g3);font-weight:500}.page-a td.num{font-variant-numeric:tabular-nums;white-space:nowrap}.page-a .src{font-size:11.5px;color:var(--g4);padding-top:0;border-bottom:1px solid var(--g1)}.page-a .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:6px;vertical-align:middle}.page-a .g{background:var(--gr)}.page-a .y{background:var(--ye)}.page-a .r{background:var(--rd)}.page-a .score{font-size:32px;font-weight:700;margin:2px 0 0}.page-a section.fit{padding:8px 6vw 40px}.page-a section.fit>h2{font-size:18px;margin:0 0 18px}.page-a .fitgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}.page-a .fitgrid>div{padding:20px;border-radius:12px;background:#fafafa;box-shadow:var(--sh)}.page-a .fitgrid ul{margin:10px 0 0;padding:0;list-style:none}.page-a .fitgrid li{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:1px solid var(--g2);font-size:13.5px}.page-a .fitgrid small{display:block;color:var(--g3);font-size:11.5px;line-height:1.5}.page-a .rs{text-align:left}.page-a .dot.n{background:#d0d0d0}.page-a .reco{grid-column:1/-1;font-size:14px;color:var(--g3);margin:4px 0 0}.page-a section.learn{padding:8px 6vw 80px;border-top:1px solid var(--g2)}.page-a section.learn>h2{font-size:18px;margin:40px 0 4px}.page-a section.learn>h2:first-child{margin-top:28px}.page-a details{padding:12px 0;border-bottom:1px solid var(--g1)}.page-a details summary{cursor:pointer;font-weight:600;list-style:none;font-size:14px}.page-a details summary::-webkit-details-marker{display:none}.page-a details summary:before{content:"+ ";color:var(--g4)}.page-a details[open] summary:before{content:"- "}.page-a details p{font-size:14px;color:#222;max-width:820px;margin:8px 0 0}.page-a .step{color:var(--g4);font-size:12px;margin-left:8px}.page-a .copybar{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center}.page-a .copybar button{background:var(--ink);color:#fff;border:none;padding:9px 16px;border-radius:999px;font:inherit;cursor:pointer;font-size:13px;transition:opacity .2s}.page-a .copybar button:hover{opacity:.85}.page-a .copybar button.alt{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1px var(--g2)}.page-a .toast{font-size:12px;color:var(--gr)}@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){.page-a *{animation:none!important;transition:none!important}}@media (max-width:980px){.page-a .thirds{grid-template-columns:1fr;padding:0 20px 30px}.page-a .col, .page-a .col.view{padding:22px 0}.page-a .fitgrid{grid-template-columns:1fr}.page-a header, .page-a section.fit, .page-a section.learn{padding-left:20px;padding-right:20px}}</style>
+<style>.page-b{margin:0;font-family:Heebo,sans-serif;color:#151515;background:#fff}.page-b .sr{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px}.page-b .g1{color:#6e6e6e}.page-b .g2{color:#b5b5b5}.page-b .wrap{position:relative;padding:48px 64px 0;min-height:760px;box-sizing:border-box}.page-b .p{display:none}.page-b .d{display:none}.page-b .nav label{cursor:pointer;padding:6px 0;border-bottom:1px solid transparent;color:#6e6e6e;transition:color .3s,border-color .3s}.page-b .nav label:hover{color:#151515}.page-b .sb label{display:flex;gap:12px;align-items:center;padding:10px 0;cursor:pointer;color:#6e6e6e;transition:color .3s,transform .3s}.page-b .sb label:hover{color:#151515;transform:translateX(-4px)}.page-b .dot{width:8px;height:8px;border-radius:50%;flex:none;background:#edeaea}.page-b .cp{padding:4px 0;border:0;background:none;color:#6e6e6e;font:inherit;font-size:13px;cursor:pointer}.page-b .cp:hover{color:#151515}.page-b .row{padding:14px 0;border-top:1px solid #edeaea}.page-b .fade{animation:up .8s ease both}@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@media (prefers-reduced-motion: reduce){.page-b *{animation:none!important}}.page-b #vp:checked ~ .wrap .p-path, .page-b #vx:checked ~ .wrap .p-mat{display:grid}.page-b #vp:checked ~ header label[for=vp], .page-b #vx:checked ~ header label[for=vx]{color:#151515;border-bottom-color:#151515}.page-b #n1:checked ~ .wrap .d1, .page-b #n2:checked ~ .wrap .d2, .page-b #n3:checked ~ .wrap .d3, .page-b #n4:checked ~ .wrap .d4, .page-b #n5:checked ~ .wrap .d5, .page-b #n6:checked ~ .wrap .d6{display:block;animation:up .6s ease both}.page-b #n1:checked ~ .wrap label[for=n1], .page-b #n2:checked ~ .wrap label[for=n2], .page-b #n3:checked ~ .wrap label[for=n3], .page-b #n4:checked ~ .wrap label[for=n4], .page-b #n5:checked ~ .wrap label[for=n5], .page-b #n6:checked ~ .wrap label[for=n6]{color:#151515}.page-b #n1:checked ~ .wrap .dot1, .page-b #n2:checked ~ .wrap .dot2, .page-b #n3:checked ~ .wrap .dot3, .page-b #n4:checked ~ .wrap .dot4, .page-b #n5:checked ~ .wrap .dot5, .page-b #n6:checked ~ .wrap .dot6{background:#151515}</style>
 </head>
-<body data-page="index">
-  <header class="topbar">
-    <a class="brand" href="index.html">בינה מלאכותית לאדריכלים</a>
-    <div class="menu-wrap">
-      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="menu">תפריט</button>
-      <ul id="menu" class="menu" hidden>
-        <li><a href="index.html">בית</a></li>
-        <li><a href="session-1.html">מפגש 1 · מבחן התב"ע</a></li>
-        <li><a href="session-2.html">מפגש 2 · ניהול הסטודיו</a></li>
-        <li><a href="reference.html">חומר עזר</a></li>
-      </ul>
+<body>
+<header class="app-top">
+  <span class="app-name">בינה מלאכותית לאדריכלים</span>
+  <nav class="app-nav" aria-label="ניווט ראשי">
+    <a href="#guide" data-nav="guide">כללי</a>
+    <a href="#a" data-nav="a">מפגש א</a>
+    <a href="#b" data-nav="b">מפגש ב</a>
+  </nav>
+</header>
+
+<div class="app-main">
+  <section class="page page-guide" id="guide" hidden>
+
+<header>
+  <div class="kicker">קורס בינה מלאכותית לאדריכלים · מידע כללי, תובנות וטיפים</div>
+  <h1>עבודה יעילה עם Claude Code: אפיון קצר, בדיקה לפני כל צעד, וקובץ אחד שמחזיק את הכללים</h1>
+  <p class="lead">הדף מרכז את כל מה שצריך כדי לבנות אפליקציה מקצה לקצה: סדר העבודה, תפקיד כל כלי, סוגי הקבצים, כללי הבטיחות, ותבניות להעתקה. הוא לא מחליף את מפגש א ומפגש ב, שמופיעים בדפים נפרדים.</p>
+  <nav class="toc">
+    <a href="#principles">תובנות</a>
+    <a href="#flow">תהליך מקצה לקצה</a>
+    <a href="#tools">כלים ותפקידם</a>
+    <a href="#files">סוגי קבצים</a>
+    <a href="#claudemd">קובץ הכללים</a>
+    <a href="#tips">טיפים לעבודה יעילה</a>
+    <a href="#safety">אבטחה</a>
+    <a href="#templates">תבניות להעתקה</a>
+    <a href="#open">מה לאמת</a>
+  </nav>
+</header>
+
+<main>
+
+<section id="principles">
+  <h2>תובנות</h2>
+  <p class="sub">חמישה עקרונות שמשנים את איכות התוצר, יותר מכל כלי.</p>
+  <div class="grid3">
+    <div><b>אפיון לפני קוד</b>שלוש שורות על הבעיה, המשתמש, והתוצר הרצוי. בלי אפיון, הקוד מתחיל לנחש.</div>
+    <div><b>בדיקה לפני הבא</b>כל צעד נבדק לפני שממשיכים. בדיקה שנדחית לסוף מכפילה את התיקונים.</div>
+    <div><b>קובץ הכללים כחוזה</b>כל מה שחוזר פעם שנייה נכנס לקובץ הכללים של הפרויקט, ולא נאמר שוב בצ'אט.</div>
+  </div>
+  <div class="grid3">
+    <div><b>קטן וברור</b>משימה אחת בכל פעם, עם תוצאה שאפשר לבדוק. משימה גדולה מקבלת תוצאה מטושטשת.</div>
+    <div><b>לא מדמיינים קבצים</b>אם לא בטוחים במה שיש בקובץ, פותחים אותו. ניחוש על קוד או נתונים יוצר באגים שאי אפשר לאתר.</div>
+    <div><b>כל כלי לתפקיד שלו</b>ייעוץ וניסוח בצ'אט, עבודה מתמשכת על מסמכים בקוורק, בנייה ופריסה בקלוד קוד.</div>
+  </div>
+</section>
+
+<section id="flow">
+  <h2>תהליך מקצה לקצה</h2>
+  <p class="sub">הסדר שבו נבנית אפליקציה לכל משתמש. כל שלב נגמר בתוצאה שאפשר לבדוק.</p>
+  <div class="steps">
+    <div><div><b>הגדרת הבעיה</b>במשפט אחד: מי משתמש, במה, ומה התוצר. אם אי אפשר לנסח, הבעיה עוד לא מוגדרת.</div></div>
+    <div><div><b>אפיון</b>קובץ SPEC.md קצר: מטרה, משתמשים, מסכים, נתונים, מה לא נבנה. מאושר לפני קוד.</div></div>
+    <div><div><b>מבנה נתונים</b>טבלאות וקשרים ב-Supabase, עם Row Level Security מופעל מההתחלה. מיגרציות נשמרות כקבצים, לא כשינוי ידני.</div></div>
+    <div><div><b>בנייה בשלבים</b>קודם הלוגיקה והנתונים, אחר כך הממשק. כל שלב נבדק לפני שממשיכים.</div></div>
+    <div><div><b>בדיקה</b>בדיקות אוטומטיות על הלוגיקה, ובדיקה ידנית של כל כפתור ומסך. בדיקה ירוקה היא תנאי למיזוג.</div></div>
+    <div><div><b>מיזוג ל-main</b>רק אחרי בדיקה ירוקה. הודעת commit ברורה, ו-Pull Request עם תיאור של מה השתנה.</div></div>
+    <div><div><b>פריסה ב-Vercel</b>מיד אחרי המיזוג. בודקים את הכתובת הסופית, לא רק את התצוגה המקדימה.</div></div>
+    <div><div><b>תיעוד</b>האפליקציה נרשמת באפליקציית האפליקציות, עם כתובת GitHub וכתובת Vercel. תוצר עיצובי נשמר גם בקנבה.</div></div>
+    <div><div><b>מסירה</b>כתובת סופית ושורה אחת שמסבירה מה נבנה. בלי סיכום של כל הצעדים.</div></div>
+  </div>
+  <div class="warn">הכללים האלה מופיעים בקובץ anat-standards, שנטען בתחילת כל שיחה של בנייה. סטודנטים שאין להם את הסקיל צריכים להעתיק את הכללים לקובץ CLAUDE.md של הפרויקט שלהם (ראו סעיף קובץ הכללים).</div>
+</section>
+
+<section id="tools">
+  <h2>כלים ותפקידם</h2>
+  <p class="sub">כל כלי עושה דבר אחד טוב. בחירה לא נכונה של כלי היא מקור נפוץ לבזבוז זמן.</p>
+  <table>
+    <thead><tr><th>כלי</th><th>למה משתמשים בו</th><th>מה לא עושים בו</th></tr></thead>
+    <tbody>
+      <tr><td>צ'אט של Claude</td><td>חשיבה, אפיון, ניסוח פרומפטים, חקירה, שאלות על מושגים.</td><td>בנייה מתמשכת של קוד או פריסה.</td></tr>
+      <tr><td>Cowork</td><td>עבודה מתמשכת על מסמכים ומקורות לאורך זמן.</td><td>בנייה ופריסה של אפליקציה.</td></tr>
+      <tr><td>Claude Code</td><td>בנייה, תיקון, בדיקות, מיזוג, פריסה ואוטומציה בתוך מאגר הקוד.</td><td>החלטה על מה לבנות. זה נעשה לפני.</td></tr>
+      <tr><td>GitHub (gh)</td><td>מאגר הקוד, ענפים, Pull Requests, היסטוריית שינויים.</td><td>שמירת מפתחות סודיים. ראו סעיף אבטחה.</td></tr>
+      <tr><td>Vercel</td><td>פריסה של האפליקציה, תצוגה מקדימה לכל ענף, כתובת ציבורית.</td><td>אחסון נתונים. הנתונים נשמרים ב-Supabase.</td></tr>
+      <tr><td>Supabase</td><td>בסיס נתונים, אימות משתמשים, אחסון קבצים. עם Row Level Security.</td><td>לוגיקת ממשק.</td></tr>
+      <tr><td>Lovable</td><td>אב טיפוס מהיר של אפליקציה מלאה, לפי פרומפטים חדים.</td><td>מערכות שדורשות שליטה מלאה בקוד ובתשתית. שם עובדים עם Claude Code.</td></tr>
+      <tr><td>Canva</td><td>תוצרים עיצוביים שנשמרים כקובץ הניתן לעריכה: פלייר, פוסט, מצגת קצרה.</td><td>לוגיקה או נתונים.</td></tr>
+    </tbody>
+  </table>
+  <h3>איך לבחור</h3>
+  <ul class="plain">
+    <li>שאלה או החלטה: צ'אט.</li>
+    <li>מסמך שחוזר לאורך זמן: קוורק.</li>
+    <li>אפליקציה שתיבנה, תיבדק ותפרס: Claude Code, עם GitHub, Vercel ו-Supabase.</li>
+    <li>אב טיפוס מהיר שיבדקו לפני בנייה אמיתית: Lovable.</li>
+    <li>תוצר שמודפס או מופץ: Canva, עם שמירה גם בקנבה.</li>
+  </ul>
+</section>
+
+<section id="files">
+  <h2>סוגי קבצים</h2>
+  <p class="sub">כל סוג קובץ מתפקד אחרת. ערבוב ביניהם הוא מקור לבעיות.</p>
+  <table>
+    <thead><tr><th>קובץ</th><th>תפקיד</th><th>איפה</th></tr></thead>
+    <tbody>
+      <tr><td><code>CLAUDE.md</code></td><td>הכללים של הפרויקט: מה נבנה, באיזה כלים, מה אסור. נקרא אוטומטית בתחילת עבודה.</td><td>בשורש המאגר</td></tr>
+      <tr><td><code>SPEC.md</code></td><td>האפיון: מטרה, משתמשים, מסכים, נתונים, מה לא נבנה.</td><td>בתיקיית <code>docs</code></td></tr>
+      <tr><td><code>SKILL.md</code></td><td>הוראות לעבודה חוזרת על סוג תוצר מסוים. נטען לפי הצורך.</td><td>בתיקיית הסקיל</td></tr>
+      <tr><td><code>README.md</code></td><td>מה האפליקציה עושה ואיך מריצים אותה. לאדם, לא למודל.</td><td>בשורש המאגר</td></tr>
+      <tr><td><code>.env</code></td><td>מפתחות סודיים. לעולם לא נכנס ל-Git.</td><td>מקומי בלבד, ב-<code>.gitignore</code></td></tr>
+      <tr><td><code>.sql</code> (מיגרציות)</td><td>שינויים במבנה הנתונים, בסדר קבוע ובהיסטוריה.</td><td>בתיקיית <code>supabase/migrations</code></td></tr>
+      <tr><td><code>.html</code></td><td>דף בודד שרץ בדפדפן, בלי שרת. מתאים לכלי הדגמה.</td><td>בשורש או בתיקיית <code>public</code></td></tr>
+      <tr><td><code>.json</code></td><td>נתונים מובנים, קלט ופלט בין שלבים.</td><td>בתיקיית <code>data</code></td></tr>
+      <tr><td><code>.csv</code> / <code>.xlsx</code></td><td>טבלאות לקליטה והוצאה. CSV קל לקריאה על ידי כלים.</td><td>בתיקיית <code>data</code></td></tr>
+      <tr><td><code>.shp</code>, <code>.dxf</code>, <code>.dwg</code>, <code>.kml</code></td><td>קבצי GIS ו-CAD של תכנון עירוני. נקראים בכלי ייעודי, לא כטקסט.</td><td>בתיקיית <code>data/gis</code></td></tr>
+      <tr><td><code>.pdf</code> / <code>.docx</code></td><td>מסמכים רשמיים. קודם ממירים ל-Markdown או טקסט, ואז עובדים עליהם.</td><td>בתיקיית <code>docs/source</code></td></tr>
+    </tbody>
+  </table>
+  <div class="warn">קבצים בינאריים כמו DWG לא נקראים כטקסט. אם אין ממיר זמין, רושמים את זה במפורש ולא מניחים מה יש בתוכם.</div>
+</section>
+
+<section id="claudemd">
+  <h2>קובץ הכללים (CLAUDE.md)</h2>
+  <p class="sub">הקובץ שמחליף הסברים חוזרים בכל שיחה. תבנית להעתקה, שממלאים לפי הפרויקט.</p>
+  <div class="block">
+    <div class="lbl">תבנית CLAUDE.md</div>
+    <details class="pr"><summary class="toggle">פתיחה וסגירה: התבנית בעברית</summary>
+      <div class="body">
+        <button class="btn" onclick="copyText('claudemd',this)">העתק תבנית</button><span class="toast"></span>
+        <pre id="claudemd"># שם הפרויקט
+
+## מטרה
+[משפט אחד: מי משתמש, במה, ומה התוצר]
+
+## כללי עבודה
+- קודם אפיון ב-docs/SPEC.md, ואחר כך קוד. לא מתחילים לבנות לפני אישור האפיון.
+- לא מניחים תוכן של קובץ. פותחים אותו לפני שמשנים אותו.
+- משימה אחת בכל פעם. אחרי כל משימה: הרצת בדיקות ודיווח של התוצאה.
+- לא עוצרים לשאלות שאפשר להכריע לבד. מסמנים את ההחלטה ומנמקים בשורה אחת.
+
+## מחסנית טכנולוגית
+- ממשק: [למשל React ו-Tailwind]
+- נתונים: Supabase עם Row Level Security מופעל בכל טבלה
+- פריסה: Vercel, מיזוג ל-main רק אחרי בדיקה ירוקה
+
+## אסור
+- לשים מפתחות או סיסמאות בקוד או ב-Git.
+- להריץ סקריפטים מסקיל שלא נבדק.
+- למחוק נתונים בלי אישור מפורש.
+
+## סיום משימה
+- כתובת סופית אחת, ושורה אחת שמסבירה מה נבנה.
+- לתעד את האפליקציה ב-README: כתובת GitHub, כתובת Vercel, מה היא עושה.</pre>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="tips">
+  <h2>טיפים לעבודה יעילה</h2>
+  <ul class="plain">
+    <li><b>תנו הקשר בתחילת השיחה.</b> מטרה, מסכים קיימים, והכללים. מה שלא כתוב, המודל ינחש.</li>
+    <li><b>החזירו תוצאה שאפשר לבדוק.</b> "הרץ את הבדיקות והחזר את הפלט" עדיף על "תוודא שזה עובד".</li>
+    <li><b>פצלו שיחות.</b> שיחה אחת לאפיון, שיחה נפרדת לכל מודול. שיחה ארוכה מאבדת הקשר.</li>
+    <li><b>שמרו תמיד.</b> commit קטן אחרי כל משימה שעובדת. חזרה לנקודה טובה צריכה להיות פשוטה.</li>
+    <li><b>בדקו את התוצאה במקום המקורי.</b> דף שנבנה נפתח בדפדפן. מספר שנחשב נבדק מול חישוב ידני.</li>
+    <li><b>אל תסמכו על "זה עובד".</b> בקשו הוכחה: פלט בדיקה, צילום מסך, או מספר מהמקור.</li>
+    <li><b>כשמשהו משתבש, חזרו לאפיון.</b> לעיתים הבעיה היא שהאפיון לא ברור, לא שהקוד שבור.</li>
+    <li><b>הפרומפט הוא הכלי.</b> מילות חשיבה מדויקות (זקק, חלץ, בחן) מכוונות את המודל יותר מתיאור כללי של "תעשה טוב".</li>
+  </ul>
+  <h3>מבחן ההסרה למילים בפרומפט</h3>
+  <p>אם מסירים מילה מפרומפט והתוצאה לא משתנה, המילה מיותרת. זה מבחן פשוט, ושווה להפעיל על כל פרומפט לפני שמעתיקים אותו.</p>
+  <h3>שלוש סביבות לפרומפט</h3>
+  <ul class="plain">
+    <li><b>צ'אט:</b> שיחה חד-פעמית. ההקשר כולו חייב להיות בפרומפט.</li>
+    <li><b>פרויקט:</b> הוראות ומסמכים שנשארים. הכללים הקבועים שייכים לכאן.</li>
+    <li><b>סטייג'ינג:</b> ניסוי על קלט ידוע לפני שמשתמשים בפרומפט בתוצר אמיתי.</li>
+  </ul>
+</section>
+
+<section id="safety">
+  <h2>אבטחה</h2>
+  <ul class="plain">
+    <li><b>מפתחות:</b> אף מפתח סודי לא נכנס לקוד, לשיחה או ל-Git. מפתחות נשמרים ב-<code>.env</code> או בהגדרות הפריסה.</li>
+    <li><b>Row Level Security:</b> מופעל בכל טבלה ב-Supabase. טבלה בלי RLS היא טבלה שכל אחד יכול לקרוא.</li>
+    <li><b>סקילים ממאגרים לא מוכרים:</b> קוראים וסוכמים לפני התקנה. לא מריצים סקריפטים שמגיעים איתם בלי בדיקה.</li>
+    <li><b>מחיקה:</b> מחיקה של נתונים או של קבצים דורשת אישור מפורש.</li>
+    <li><b>פריסה:</b> לפני פרסום, בודקים שאין נתונים אישיים או סודיים בתצוגה הציבורית.</li>
+  </ul>
+</section>
+
+<section id="templates">
+  <h2>תבניות להעתקה</h2>
+  <p class="sub">כל תבנית פותחת וננעלת. העתקה עם כפתור.</p>
+
+  <div class="block">
+    <div class="lbl">תבנית אפיון (SPEC.md)</div>
+    <details class="pr"><summary class="toggle">פתיחה וסגירה: תבנית אפיון</summary>
+      <div class="body">
+        <button class="btn" onclick="copyText('spec',this)">העתק תבנית</button><span class="toast"></span>
+        <pre id="spec"># אפיון: [שם האפליקציה]
+
+## הבעיה
+[משפט אחד: מה לא עובד היום, ולמי]
+
+## המשתמש
+[מי, מה הוא יודע, מה הוא צריך להשיג]
+
+## התוצר
+[מה המשתמש מקבל בסוף, בשורה אחת]
+
+## מסכים
+1. [שם המסך]: [מה רואים, מה עושים]
+
+## נתונים
+- [טבלה]: [שדות חובה]
+
+## הקלט והפלט
+- קלט: [קבצים, שדות, פורמטים]
+- פלט: [קבצים, טבלאות, דוחות]
+
+## מה לא נבנה בגרסה הזו
+- [...]
+
+## קריטריוני קבלה
+- [תוצאה צפויה לקלט ידוע]</pre>
+      </div>
+    </details>
+  </div>
+
+  <div class="block">
+    <div class="lbl">תבנית פרומפט למשימה ב-Claude Code</div>
+    <details class="pr"><summary class="toggle">פתיחה וסגירה: תבנית משימה</summary>
+      <div class="body">
+        <button class="btn" onclick="copyText('task',this)">העתק תבנית</button><span class="toast"></span>
+        <pre id="task">קרא את CLAUDE.md ואת docs/SPEC.md. המשימה: [תיאור של משימה אחת].
+
+לפני קוד:
+1. הצע תוכנית של שלושה צעדים, ואל תתחיל לכתוב עד אישור.
+
+אחרי הקוד:
+2. הרץ את הבדיקות והחזר את הפלט המלא.
+3. פתח את הקבצים ששיניתי, והחזר את השינוי בכל קובץ בשורה אחת.
+4. אם בדיקה נכשלה, תקן ובדוק שוב. לא מדווחים על הצלחה לפני בדיקה ירוקה.
+
+אל תשנה קבצים מחוץ לתחום המשימה.</pre>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="open">
+  <h2>מה לאמת לפני השיעור</h2>
+  <p class="sub">הנקודות האלה משתנות לפי גרסאות כלים, ולכן לא נכתבו כעובדה קבועה.</p>
+  <ul class="plain">
+    <li>שמות הפקודות, הקבצים שנקראים אוטומטית, ואופן טעינת הסקילים ב-Claude Code. לבדוק מול התיעוד הרשמי של הגרסה שהסטודנטים מתקינים.</li>
+    <li>מגבלות החינמיות והמכסות של Vercel, Supabase ו-Lovable לסטודנטים.</li>
+    <li>תהליך ההתקנה של gh ו-Supabase CLI על מחשבי הסטודנטים, במיוחד Windows.</li>
+    <li>התבניות בדף נבדקות רק בתוך הדף. עוד לא הורצו על פרויקט אמיתי.</li>
+  </ul>
+</section>
+
+</main>
+
+<script>
+function flash(btn,ok){
+  const toast=btn.parentElement.querySelector(".toast");
+  toast.textContent=ok?"הועתק":"ההעתקה נחסמה בתצוגה הזו";
+  setTimeout(()=>toast.textContent="",2000);
+}
+function copyText(id,btn){
+  const text=document.getElementById(id).textContent;
+  const fallback=()=>{
+    const ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";
+    document.body.appendChild(ta);ta.select();let ok=false;
+    try{ok=document.execCommand("copy");}catch(e){ok=false;}
+    ta.remove();flash(btn,ok);
+  };
+  if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>flash(btn,true),fallback);}
+  else fallback();
+}
+</script>
+</section>
+  <section class="page page-a" id="a" hidden>
+
+<header>
+  <div class="kicker">קורס התאחדות מתקדמים 3 · מפגש א · ידע, הבנה, יישום</div>
+  <h1>זכויות בנייה הן שרשרת נתונים שניתן לאמת, לא מספר אחד</h1>
+  <p class="lead">הממשק מפרק תב"ע למקורות, בונה מודל לכל חלופה, ובודק כל חלופה מול היזם ומול העירייה. כל מספר מופיע עם מקורו, וכל חריגה מסומנת ברמזור.</p>
+  <div class="demo">הערכים בדף הם דמו בלבד. בשימוש אמיתי הם יחולצו ממסמכי התכנית.</div>
+  <nav class="stages">
+    <a href="#s1">1 · מיפוי זכויות</a>
+    <a href="#s2">2 · מודל וחלופות</a>
+    <a href="#s3">3 · בדיקת התאמה</a>
+    <a href="#learn">פרומפטים</a>
+  </nav>
+</header>
+
+<div class="thirds">
+  <div class="col" id="s1">
+    <span class="stagenum">שלב 1</span>
+    <h2 class="stage">מיפוי זכויות</h2>
+    <p class="note" style="margin:0 0 18px">קלט: מספר מגרש ומסמכי התכנית.</p>
+    <div class="label">מספר מגרש / תא שטח</div>
+    <input type="text" value="633" aria-label="מספר מגרש">
+    <div class="label">מסמכי התכנית</div>
+    <ul class="docs">
+      <li>הוראות התכנית <span class="ok">נטען</span></li>
+      <li>תשריט <span class="ok">נטען</span></li>
+      <li>טבלת זכויות (XLS / PDF) <span class="ok">נטען</span></li>
+      <li>דוח תאי שטח <span class="ok">נטען</span></li>
+      <li>שכבת מגרש (SHP / DXF) <span class="ok">נטען</span></li>
+      <li>נספחי מים, ביוב, תנועה <span class="miss">אופציונלי</span></li>
+    </ul>
+    <p class="tool">כלי לשלב: קורלציות בין שכבות, לבקרת עקביות בין השכבות. הכלי לא אומת מול התיאור שלו.</p>
+  </div>
+
+  <div class="col view" id="s2">
+    <span class="stagenum">שלב 2</span>
+    <h2 class="stage">מודל וחלופות</h2>
+    <p class="note" style="margin:0 0 16px">המודל נבנה רק מהזכויות של שלב 1.</p>
+    <div class="seg" id="altSeg"></div>
+    <div class="seg" id="viewSeg">
+      <button data-v="iso" class="on">איזומטרי</button>
+      <button data-v="plan">תוכנית</button>
+      <button data-v="elev">חזית</button>
     </div>
+    <div id="iso3d"><p id="noThree" hidden>התצוגה התלת-ממדית דורשת חיבור לאינטרנט לטעינת הספרייה. התצוגות תוכנית וחזית זמינות תמיד.</p></div>
+    <div id="view" hidden></div>
+    <p class="note">סיבוב, הזזה וזום בעכבר. חריגה מתכסית, מקווי בניין או מגובה מסומנת באדום.</p>
+  </div>
+</div>
+
+<div class="thirds" style="padding-top:0">
+  <div class="col" id="s1b">
+    <h3>פרמטרים מהתב"ע</h3>
+    <table>
+      <thead><tr><th>פרמטר</th><th>ערך</th><th></th></tr></thead>
+      <tbody id="rights"></tbody>
+    </table>
+    <p class="note">בכלי האמיתי כל ערך יקושר למקור: מסמך, עמוד וסעיף או תא.</p>
+  </div>
+  <div class="col view" id="s3info">
+    <h3>כלי לשלב 3</h3>
+    <p class="note">יועץ פרוגרמות: מחשבון דרישות תכנון עירוני לפי תקנים, כולל חובות יזם והתאמה ל-TBP. משמש כמקור הדרישות של הצד העירוני בבדיקה. הכלי מתואר לפי התיאור במערכת ולא נבדק עדיין.</p>
+  </div>
+</div>
+
+<section class="fit" id="s3">
+  <span class="stagenum">שלב 3</span>
+  <h2>בדיקת התאמה: תב"ע ועירייה מול יזם</h2>
+  <div class="fitgrid" id="fit"></div>
+</section>
+
+<section class="learn" id="learn">
+  <h2>נלמד, נבין, נעשה: פירוט לפי שלבים</h2>
+  <p class="note">כל שלב נפתח בנפרד. הפרומפט להעתקה נמצא בתחתית כל שלב. הנוסח המלא נמצא גם ב-docs/prompts.md.</p>
+
+  <h2>שלב 1: מיפוי זכויות בנייה למגרש</h2>
+  <details open><summary><span class="step">1</span>מה משנה במספר אחוזי הבנייה</summary>
+    <p>מאז תיקון דצמבר 2023 לתקנות חישוב השטחים (התשנ"ב-1992), אין חובה לפצל בתכנית בין שטחים עיקריים לשטחי שירות. לכן הקלט חייב לזהות איזה נוסח חל על התכנית לפני שמחשבים אחוזים.</p>
+    <p><b>נבין:</b> האם הטבלה מציגה שטח כולל או פיצול? מה קורה כשהתכנית ישנה יותר מ-1992?</p>
+  </details>
+  <details><summary><span class="step">2</span>שטח מגרש, תכסית וקווי בניין</summary>
+    <p>שטח המגרש נלקח מטבלת הזכויות ומתאם לשכבת המגרש. סטייה של עד 0.5% בין השייפ לטבלה נחשבת תקינה. תכסית וקווי בניין מגיעים מההוראות, לא מהתשריט בלבד.</p>
+  </details>
+  <details><summary><span class="step">3</span>קומות, גובה וזכויות מתחת לקרקע</summary>
+    <p>מספר קומות מעל ומתחת לקרקע מופיע בהוראות. גובה מרבי נמדד לפי ההגדרה שבתכנית, לא לפי הנחה כללית.</p>
+  </details>
+  <details><summary><span class="step">4</span>יחידות דיור ושימושים</summary>
+    <p>מספר יח"ד מרבי וצפיפות מופיעים בהוראות או בטבלה. כל שימוש שאינו מוגדר במפורש נשאר "לא נמצא" ולא מוסק.</p>
+  </details>
+  <details><summary><span class="step">5</span>בקרת עקביות</summary>
+    <p>רכיבי השטח חייבים לסכם לסה"כ. אחוזי הבנייה חייבים להתאים לשטחים. כל פער נרשם כממצא לאימות, ולא מתוקן בשקט.</p>
+  </details>
+  <div class="copybar">
+    <button data-key="p1h">העתק פרומפט לשלב 1 (עברית)</button>
+    <button class="alt" data-key="p1e">Copy stage 1 prompt (English)</button>
+    <span class="toast"></span>
+  </div>
+
+  <h2>שלב 2: בניית מודל וחלופות</h2>
+  <details open><summary><span class="step">1</span>מהטבלה למסה</summary>
+    <p>המסה נבנית רק מהזכויות שחולצו בשלב 1. תכסית קובעת שטח קומה מרבי, קומות וגובה קובעים נפח. כל חלופה היא שילוב אחר של שני המשתנים.</p>
+  </details>
+  <details><summary><span class="step">2</span>שלוש חלופות</summary>
+    <p>חלופה א: קומות נמוכות ושטח קומה גדול. חלופה ב: מגדל צר וגבוה. חלופה ג: ביניים. כל אחת מוגבלת לתוך קווי הבניין.</p>
+  </details>
+  <details><summary><span class="step">3</span>תצוגות: איזומטרי, תוכנית, חזית</summary>
+    <p>האיזומטרי מראה נפח. התוכנית מראה קווי בניין ותכסית. החזית מראה גובה מול הגבול המותר. שלוש התצוגות מופיעות תמיד יחד בדיקה.</p>
+  </details>
+  <details><summary><span class="step">4</span>רמת פירוט גאומטרית</summary>
+    <p>רמה בינונית: רצפות, רצועות חלונות וגג. פירוט מפורט (פתחים, חדרים) לא נכנס לשלב זה, כי הוא לא משנה את ההכרעה בין חלופות.</p>
+  </details>
+  <div class="copybar">
+    <button data-key="p2h">העתק פרומפט לשלב 2 (עברית)</button>
+    <button class="alt" data-key="p2e">Copy stage 2 prompt (English)</button>
+    <span class="toast"></span>
+  </div>
+
+  <h2>שלב 3: בדיקת התאמה</h2>
+  <details open><summary><span class="step">1</span>צד תב"ע ועירייה</summary>
+    <p>כל פרמטר מהשלב הראשון נבדק מול החלופה. <b>ירוק:</b> עומד בתנאי עם מרווח של לפחות 5%. <b>צהוב:</b> עומד בתנאי, אך במרווח קטן מ-5%. <b>אדום:</b> חורג.</p>
+  </details>
+  <details><summary><span class="step">2</span>צד יזם</summary>
+    <p>שטח נטו למכירה מתוך השטח הכולל (ברירת מחדל 80%), מספר יח"ד מול יעד היזם, שטח יח"ד ממוצע, וניצול זכויות מתוך המותר. ניצול מעל 90% ירוק, בין 75% ל-90% צהוב, מתחת ל-75% אדום.</p>
+  </details>
+  <details><summary><span class="step">3</span>אחוזי התאמה</summary>
+    <p>ירוק = 1, צהוב = 0.5, אדום = 0. הממוצע על כל הבדיקות כפול 100. המספר מסייע להשוואה, אבל לא מחליף את הפירוט.</p>
+  </details>
+  <details><summary><span class="step">4</span>דוח השוואה</summary>
+    <p>מסקנה בשלושה משפטים, טבלת השוואה, יתרון וחיסרון לכל חלופה, המלצה והנחות, ומקור לכל מספר. הדוח לא מציג מסקנה בלי הנתונים שעליה היא נשענת.</p>
+  </details>
+  <div class="copybar">
+    <button data-key="p3h">העתק פרומפט לשלב 3 (עברית)</button>
+    <button class="alt" data-key="p3e">Copy stage 3 prompt (English)</button>
+    <button class="alt" data-key="p4h">העתק פרומפט לדוח (עברית)</button>
+    <button class="alt" data-key="p4e">Copy report prompt (English)</button>
+    <span class="toast"></span>
+  </div>
+
+  <h2>איך נמדדת האמינות של הכלי</h2>
+  <details open><summary>מקרה מבחן ראשון</summary>
+    <p>תב"ע 603 כבר נבדקה ידנית, ונמצאו בה שישה ממצאים לאימות: סיכומי שטח שאינם תואמים לרכיבים, שורת סיכום שמשתנה לאחר תיקון, ושגיאת הקלדה באחוזי בנייה. הכלי צריך לזהות את כל הממצאים האלה לבד.</p>
+  </details>
+  <details><summary>מדדים</summary>
+    <p>כל ערך מהשלב הראשון מקושר למקור: יעד 100%. סטיית שטח מול שייפ: עד 0.5%. ממצא עקביות שלא זוהה במקרה המבחן נרשם ככשל של הכלי.</p>
+  </details>
+</section>
+
+<script>
+var R={plot:2000,cov:35,bp:250,floors:8,h:28,units:40,fl:3.2,sell:0.8,avg:90,target:32,ss:4,sf:5,sr:4};
+var ALTS={"א":{fp:650,fl:6},"ב":{fp:600,fl:8},"ג":{fp:700,fl:7}};
+var cur="א", mode="iso";
+
+var PROMPTS={
+p1h:`אתה מנתח תב"ע ישראלית. קלט: כל מסמכי התכנית שהועלו (הוראות, תשריט, טבלת זכויות, נספחים) ומספר המגרש או תא השטח.
+1. אתר ופענח את המגרש בטבלת הזכויות ובתשריט. אם הם לא מסכימים, עצור והצג את הסתירה.
+2. חלץ לכל מגרש: שטח מגרש; תכסית מרבית; אחוזי בנייה מרביים (ציין אם מוגדרים כשטח כולל או מפוצלים לעיקרי ושירות, לפי תקנות חישוב השטחים, התשנ"ב-1992); מספר קומות מרבי מעל ומתחת לקרקע; גובה מרבי והגדרתו; קווי בניין קדמי, צדדי ואחורי; מספר יח"ד מרבי וצפיפות; שימושים מותרים; דרישות חניה.
+3. לכל ערך החזר: ערך, יחידה, מקור (מסמך, עמוד, סעיף או תא), ורמת ודאות: מלאה, חלקית או חסרה.
+4. בצע בדיקות עקביות: רכיבי השטח מסתכמים לסה"כ; אחוזי הבנייה תואמים לשטחים; שטח השייפ תואם לשטח הטבלה בסטייה עד 0.5%.
+5. אל תנחש ערך חסר. סמן "לא נמצא" ורשום איזה מסמך לבדוק.
+6. הפלט: טבלה אחת, וממצאי עקביות בסוף.`,
+p1e:`You are an analyst of Israeli detailed plans (TABA). Input: all uploaded plan documents (ordinances, zoning map, rights table, appendices) and the plot or sub-plot number.
+1. Locate the plot in the rights table and on the map. If they disagree, stop and show the conflict.
+2. Extract and decode, for this plot: plot area; maximum coverage; maximum building rights (state whether expressed as total area or split into main and service areas under the 1992 area-calculation regulations); maximum floors above and below ground; maximum height and its definition; front, side and rear setbacks; maximum dwelling units and density; permitted uses; parking requirements.
+3. For each value return: value, unit, source (document, page, section or table cell), and confidence (full, partial or missing).
+4. Run consistency checks: components sum to the total; percentages match the areas; plot shape area matches the table area within 0.5%.
+5. Never guess a missing value. Mark it "not found" and name the document to check.
+6. Output one table, followed by the consistency findings.`,
+p2h:`בנה מודל מסה תלת-ממדי מתוך הזכויות שחולצו בשלב 1 בלבד. קלט: גבולות המגרש, קווי הבניין, התכסית המרבית, מספר הקומות, הגובה המרבי, ושלוש חלופות שמוגדרות לפי שטח קומה ומספר קומות.
+1. בנה את חלופות א', ב' ו-ג' כנפחים שנשארים בתוך אזור הבנייה המותר, ומפה כל אחת מהן מול קווי הבניין.
+2. הצג שלוש תצוגות: איזומטרית, תוכנית על וחזית. במודל התלת-ממדי אפשר לסובב, להזיז ולזום בעכבר.
+3. רמת פירוט בינונית: רצפות, רצועות חלונות, גג וקו מגרש מסומן.
+4. לכל חלופה חשב: תכסית באחוזים, אחוזי בנייה, מספר קומות, גובה ושטח כולל. גובה קומה 3.2 מ', אלא אם המסמכים קובעים אחרת.
+5. חשוף כל חריגה מקו בניין או מתכסית, וסמן אותה באדום עם המספר המדויק.
+6. כל המספרים נפתחים בפאנלים מתקפלים, כדי שהמסך לא יהיה צפוף.`,
+p2e:`Build a 3D massing model from the rights extracted in stage 1 only. Inputs: plot boundary, setbacks, maximum coverage, floors, maximum height, and three alternatives defined by footprint area and floor count.
+1. Build alternatives A, B and C as extruded footprints, and map each one against the permitted building zone.
+2. Show isometric, plan and elevation views. The 3D view supports orbit, pan and zoom with the mouse (three.js OrbitControls).
+3. Medium detail: slabs, window bands, roof, and a marked plot boundary.
+4. For each alternative calculate coverage %, building rights %, floors, height and gross area. Floor-to-floor height is 3.2 m unless the documents state otherwise.
+5. Expose any setback or coverage breach, and mark it in red with the exact figure.
+6. Place all numbers in collapsible panels so the screen stays uncluttered.`,
+p3h:`בחן כל חלופה לאורך שני צירים.
+ציר תב"ע ועירייה: כל פרמטר מהשלב הראשון מול החלופה. ירוק: עומד בתנאי עם מרווח של לפחות 5%. צהוב: עומד בתנאי עם מרווח קטן מ-5%. אדום: חורג.
+ציר יזם: שטח נטו למכירה מתוך השטח הכולל (ברירת מחדל 80%, ניתן לשינוי); מספר יח"ד מול יעד היזם (שדה קלט); שטח יח"ד ממוצע (ברירת מחדל 90 מ"ר); ניצול זכויות מתוך המותר. ניצול מעל 90% ירוק, בין 75% ל-90% צהוב, מתחת ל-75% אדום.
+חשב אחוזי התאמה: ירוק = 1, צהוב = 0.5, אדום = 0, ממוצע על כל הבדיקות כפול 100.
+לכל חלופה: טבלה, אחוזי התאמה, יתרון אחד, חיסרון אחד, ומה לבדוק מול הרשות. אם נתון מהשלב הראשון חסר, זקק את הפער וסמן אותו, ואל תשלים אותו.`,
+p3e:`Examine each alternative on two axes.
+Planning axis: each parameter from stage 1 against the alternative. Green: meets the limit with at least 5% margin. Yellow: meets the limit with less than 5% margin. Red: exceeds the limit.
+Developer axis: net sellable share of gross area (default 80%, editable); unit count against the developer target (input field); average unit size (default 90 sqm, editable); rights utilization as a share of permitted rights: green above 90%, yellow 75% to 90%, red below 75%.
+Fit score: green = 1, yellow = 0.5, red = 0, averaged over all checks, times 100.
+For each alternative show the table, the score, one advantage, one disadvantage, and what to verify with the planning authority. Distill the gap if a stage 1 value is missing, and do not fill it in.`,
+p4h:`סנתז דוח השוואה בין החלופות. מבנה הדוח:
+1. מסקנה: החלופה המומלצת בשלושה משפטים.
+2. טבלת השוואה: פרמטר, חלופה א', ב', ג', סטטוס.
+3. יתרונות וחסרונות לכל חלופה.
+4. המלצה, וההנחות שעליה היא נשענת. חשוף במפורש כל הנחה שלא הגיעה ממסמך.
+5. מקור לכל מספר.
+כתוב בעברית תקינה ורציפה, בלי הקדמות. אל תציג מסקנה בלי לציין את הנתונים שעליה היא נשענת.`,
+p4e:`Synthesize a comparison report for the alternatives. Structure: 1. Conclusion: the recommended alternative in three sentences. 2. Comparison table: parameter, A, B, C, status. 3. Advantages and disadvantages per alternative. 4. Recommendation and the assumptions behind it; expose every assumption not taken from a document. 5. Source for every number. Write plainly, with no preamble. Do not present a conclusion without naming the data it rests on.`
+};
+
+function calc(a){
+  var gross=a.fp*a.fl, cov=a.fp/R.plot*100, bp=gross/R.plot*100;
+  var h=a.fl*R.fl, units=Math.floor(gross*R.sell/R.avg), use=bp/R.bp*100;
+  return {fp:a.fp,fl:a.fl,gross:gross,cov:cov,bp:bp,h:h,units:units,use:use};
+}
+function geom(a){
+  var P=Math.sqrt(R.plot), w=Math.sqrt(a.fp*1.4), d=a.fp/w;
+  return {P:P,w:w,d:d,H:a.fl*R.fl,ox:(P-w)/2,oy:(P-d)/2};
+}
+var stMax=function(v,m){return v>m?"r":(v>=m*0.95?"y":"g");};
+var stMin=function(v,m){return v<m?"r":(v<m*1.05?"y":"g");};
+var stUse=function(v){return v>=90?"g":(v>=75?"y":"r");};
+var fmt=function(n,d){return Number(n).toLocaleString("he-IL",{maximumFractionDigits:(d===undefined?1:d)});};
+
+function noteMax(v,m,u){
+  if(v>m) return "חורג ב-"+fmt(v-m)+u;
+  if(v>=m*0.95) return "עומד, מרווח קטן מ-5%";
+  return "עומד";
+}
+function checks(a){
+  var c=calc(a), g=geom(a), out=[], inside;
+  out.push({n:"תכסית מרבית",lim:"עד "+R.cov+"%",val:fmt(c.cov)+"%",st:stMax(c.cov,R.cov),note:noteMax(c.cov,R.cov,"%")});
+  out.push({n:"אחוזי בנייה",lim:"עד "+R.bp+"%",val:fmt(c.bp,0)+"%",st:stMax(c.bp,R.bp),note:noteMax(c.bp,R.bp,"%")});
+  out.push({n:"מספר קומות",lim:"עד "+R.floors,val:String(a.fl),st:stMax(a.fl,R.floors),note:noteMax(a.fl,R.floors," קומות")});
+  out.push({n:"גובה מרבי",lim:"עד "+R.h+" מ'",val:fmt(c.h)+" מ'",st:stMax(c.h,R.h),note:noteMax(c.h,R.h," מ'")});
+  inside=g.ox>=R.ss-1e-9 && g.ox+g.w<=g.P-R.ss+1e-9 && g.oy>=R.sr-1e-9 && g.oy+g.d<=g.P-R.sf+1e-9;
+  out.push({n:"קווי בניין",lim:"צד "+R.ss+" מ', אחורי "+R.sr+" מ', קדמי "+R.sf+" מ'",val:fmt(g.w)+" × "+fmt(g.d)+" מ'",st:inside?"g":"r",note:inside?"עומד, המסה בתוך אזור הבנייה":"לא עומד, המסה חורגת מקו הבניין"});
+  out.push({n:"יח\"ד מרבי",lim:"עד "+R.units,val:String(c.units),st:stMax(c.units,R.units),note:noteMax(c.units,R.units," יח\"ד")});
+  out.push({n:"יח\"ד מול יעד יזם",lim:"לפחות "+R.target,val:String(c.units),st:stMin(c.units,R.target),note:c.units<R.target?"לא עומד, מתחת ליעד":"עומד ביעד"});
+  out.push({n:"ניצול זכויות יזם",lim:"מעל 90%",val:fmt(c.use,0)+"%",st:stUse(c.use),note:c.use<75?"לא עומד, מתחת ל-75%":(c.use<90?"עומד חלקית, בין 75% ל-90%":"עומד")});
+  out.push({n:"חניה",lim:"לפי התב\"ע",val:"לא נמצא",st:"n",note:"לא נבדק: הדרישה חסרה במסמכים"});
+  return out;
+}
+function score(ch){
+  var s=ch.filter(function(x){return x.st!=="n";});
+  return Math.round(s.reduce(function(t,x){return t+(x.st==="g"?1:x.st==="y"?0.5:0);},0)/s.length*100);
+}
+
+function renderRights(){
+  var rows=[
+    ["שטח מגרש", fmt(R.plot,0)+" מ\"ר", "g"],
+    ["תכסית מרבית", R.cov+"%", "g"],
+    ["אחוזי בנייה", R.bp+"%", "g"],
+    ["קומות מרבי", R.floors, "g"],
+    ["גובה מרבי", R.h+" מ'", "g"],
+    ["קו בניין קדמי / צדדי", "5 / 4 מ'", "y"],
+    ["יח\"ד מרבי", R.units, "g"],
+    ["חניה", "לא נמצא", "r"]
+  ];
+  document.getElementById("rights").innerHTML=rows.map(function(r){
+    return '<tr><td>'+r[0]+'</td><td class="num">'+r[1]+'</td><td><span class="dot '+r[2]+'"></span></td></tr>'+
+           '<tr><td colspan="3" class="src">מקור: יוזן מהמסמכים (דמו)</td></tr>';
+  }).join("");
+}
+
+function renderAltSeg(){
+  document.getElementById("altSeg").innerHTML=Object.keys(ALTS).map(function(k){
+    return '<button data-a="'+k+'" class="'+(k===cur?"on":"")+'">חלופה '+k+'</button>';
+  }).join("");
+}
+
+function renderFit(){
+  var keys=Object.keys(ALTS), best=null;
+  var cols=keys.map(function(k){
+    var ch=checks(ALTS[k]), s=score(ch);
+    var reds=ch.filter(function(x){return x.st==="r";}).length;
+    var cand={k:k,s:s,r:reds};
+    if(!best||cand.r<best.r||(cand.r===best.r&&cand.s>best.s)) best=cand;
+    var verdict=reds?"לא עומדת ב-"+reds+" דרישות":"עומדת בכל הדרישות הנבדקות";
+    return '<div><h3>חלופה '+k+'</h3><div class="score">'+s+'%</div><div class="label">אחוזי התאמה · '+verdict+'</div><ul>'+
+      ch.map(function(x){
+        var status=x.st==="r"?"לא עומד":(x.st==="n"?"לא נבדק":"עומד");
+        return '<li><span><b>'+x.n+'</b><small>'+x.lim+' · '+x.val+'</small></span><span class="rs"><span class="dot '+x.st+'"></span>'+status+'<small>'+x.note+'</small></span></li>';
+      }).join("")+'</ul></div>';
+  }).join("");
+  document.getElementById("fit").innerHTML=cols+
+    '<p class="reco"><b>המלצה לתצוגה:</b> חלופה '+best.k+', עם '+best.s+'% התאמה ו-'+best.r+' דרישות שלא עומדות. הכלי מציג את ההמלצה ואת הנתונים שעליה, ולא מחליט במקום היזם או הרשות.</p>';
+}
+
+function renderFlat(){
+  var k=ALTS[cur], c=calc(k), g=geom(k), P=g.P;
+  var X=function(v){return v*7;};
+  var svg;
+  if(mode==="plan"){
+    svg='<svg viewBox="-10 -10 '+(X(P)+20)+' '+(X(P)+20)+'" xmlns="http://www.w3.org/2000/svg">'+
+      '<rect x="0" y="0" width="'+X(P)+'" height="'+X(P)+'" fill="#fafafa" stroke="#111" stroke-dasharray="4 3"/>'+
+      '<rect x="'+X(R.ss)+'" y="'+X(R.sr)+'" width="'+X(P-2*R.ss)+'" height="'+X(P-R.sf-R.sr)+'" fill="none" stroke="#8a8a8a" stroke-dasharray="2 3"/>'+
+      '<rect x="'+X(g.ox)+'" y="'+X(g.oy)+'" width="'+X(g.w)+'" height="'+X(g.d)+'" fill="#cfcfcf" stroke="#111"/>'+
+      '<text x="'+(X(g.ox)+4)+'" y="'+(X(g.oy)+14)+'" font-size="9" fill="#111">תכסית '+fmt(c.cov)+'%</text>'+
+      '<text x="'+(X(R.ss)+4)+'" y="'+(X(R.sr)+12)+'" font-size="8" fill="#6b6b6b">קו בניין</text></svg>';
+  } else {
+    var H=c.h, Hpx=X(H), w=g.w, floors="";
+    for(var i=1;i<k.fl;i++){ floors+='<line x1="0" x2="'+X(w)+'" y1="'+(-X(i*R.fl))+'" y2="'+(-X(i*R.fl))+'" stroke="#6b6b6b" stroke-width=".6"/>'; }
+    svg='<svg viewBox="-20 '+(-X(R.h)-30)+' '+(X(w)+40)+' '+(X(R.h)+50)+'" xmlns="http://www.w3.org/2000/svg">'+
+      '<line x1="-200" x2="'+(X(w)+200)+'" y1="0" y2="0" stroke="#111"/>'+
+      '<line x1="-200" x2="'+(X(w)+200)+'" y1="'+(-X(R.h))+'" y2="'+(-X(R.h))+'" stroke="#d4a017" stroke-dasharray="4 3"/>'+
+      '<text x="'+(X(w)+6)+'" y="'+(-X(R.h)+4)+'" font-size="9" fill="#8a6a10">גובה מרבי '+R.h+' מ\'</text>'+
+      '<rect x="0" y="'+(-Hpx)+'" width="'+X(w)+'" height="'+Hpx+'" fill="'+(c.h>R.h?"#e7b8b3":"#cfcfcf")+'" stroke="#111"/>'+
+      floors+
+      '<text x="'+(X(w)+6)+'" y="'+(-Hpx+4)+'" font-size="9" fill="#111">'+fmt(H)+' מ\'</text></svg>';
+  }
+  document.getElementById("view").innerHTML=svg;
+}
+
+function renderView(){
+  if(mode==="iso"){
+    document.getElementById("iso3d").hidden=false;
+    document.getElementById("view").hidden=true;
+    if(window.update3D) window.update3D();
+    return;
+  }
+  document.getElementById("iso3d").hidden=true;
+  document.getElementById("view").hidden=false;
+  renderFlat();
+}
+
+document.getElementById("altSeg").addEventListener("click",function(e){
+  var b=e.target.closest("button[data-a]"); if(!b) return;
+  cur=b.getAttribute("data-a"); renderAltSeg(); renderView();
+});
+document.getElementById("viewSeg").addEventListener("click",function(e){
+  var b=e.target.closest("button[data-v]"); if(!b) return;
+  mode=b.getAttribute("data-v");
+  document.querySelectorAll("#viewSeg button").forEach(function(x){x.classList.toggle("on",x===b);});
+  renderView();
+});
+document.querySelectorAll(".copybar button[data-key]").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    var text=PROMPTS[btn.getAttribute("data-key")];
+    var toast=btn.parentElement.querySelector(".toast");
+    var done=function(ok){
+      toast.textContent=ok?"הועתק":"ההעתקה נחסמה בתצוגה הזו";
+      setTimeout(function(){toast.textContent="";},2000);
+    };
+    var fallback=function(){
+      var ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select();
+      var ok=false; try{ ok=document.execCommand("copy"); }catch(err){ ok=false; }
+      ta.remove(); done(ok);
+    };
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){done(true);},fallback);
+    } else fallback();
+  });
+});
+
+setTimeout(function(){ if(!window.update3D) document.getElementById("noThree").hidden=false; },4000);
+
+renderRights(); renderAltSeg(); renderFit(); renderView();
+</script>
+
+<script type="module">
+import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+
+var host=document.getElementById("iso3d");
+var renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+host.appendChild(renderer.domElement);
+var scene=new THREE.Scene();
+var camera=new THREE.PerspectiveCamera(35,1,0.1,2000);
+var controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;
+scene.add(new THREE.AmbientLight(0xffffff,0.85));
+var sun=new THREE.DirectionalLight(0xffffff,0.7); sun.position.set(60,120,40); scene.add(sun);
+var group=new THREE.Group(); scene.add(group);
+
+function rectPts(x1,z1,x2,z2,y){
+  return [[x1,z1],[x2,z1],[x2,z2],[x1,z2],[x1,z1]].map(function(p){return new THREE.Vector3(p[0],y,p[1]);});
+}
+function lineOf(pts,color){
+  return new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({color:color}));
+}
+function clearGroup(){
+  while(group.children.length){
+    var o=group.children.pop();
+    o.traverse(function(x){ if(x.geometry) x.geometry.dispose(); if(x.material) x.material.dispose(); });
+  }
+}
+function resize(){
+  var w=host.clientWidth, h=host.clientHeight;
+  if(!w||!h) return false;
+  renderer.setSize(w,h,false);
+  camera.aspect=w/h; camera.updateProjectionMatrix();
+  return true;
+}
+function build(){
+  clearGroup();
+  var k=ALTS[cur], c=calc(k), g=geom(k), P=g.P;
+  var breach=c.h>R.h||c.cov>R.cov||c.bp>R.bp;
+
+  var plane=new THREE.Mesh(new THREE.PlaneGeometry(P,P), new THREE.MeshBasicMaterial({color:0xf4f4f4,side:THREE.DoubleSide}));
+  plane.rotation.x=-Math.PI/2; plane.position.set(P/2,0,P/2); group.add(plane);
+  group.add(lineOf(rectPts(0,0,P,P,0.02),0x6b6b6b));
+  group.add(lineOf(rectPts(R.ss,R.sr,P-R.ss,P-R.sf,0.03),0x8a8a8a));
+  group.add(lineOf(rectPts(0,0,P,P,R.h),0xd4a017));
+
+  var body=new THREE.Mesh(new THREE.BoxGeometry(g.w,g.H,g.d),
+    new THREE.MeshStandardMaterial({color:breach?0xb83a2e:0xb5b5b5,roughness:0.8,transparent:true,opacity:0.94}));
+  body.position.set(g.ox+g.w/2, g.H/2, g.oy+g.d/2); group.add(body);
+  var edges=new THREE.LineSegments(new THREE.EdgesGeometry(body.geometry), new THREE.LineBasicMaterial({color:0x111111}));
+  edges.position.copy(body.position); group.add(edges);
+  for(var i=1;i<k.fl;i++){
+    group.add(lineOf(rectPts(g.ox,g.oy,g.ox+g.w,g.oy+g.d,i*R.fl),0x6b6b6b));
+  }
+
+  controls.target.set(P/2, g.H/3, P/2);
+  camera.position.set(P*1.5, Math.max(P,g.H)*1.2, P*1.5);
+  controls.update();
+}
+function update3D(){
+  if(!resize()) return;
+  build();
+}
+window.update3D=update3D;
+window.addEventListener("resize",function(){ if(!host.hidden) update3D(); });
+renderer.setAnimationLoop(function(){
+  if(!host.hidden){ controls.update(); renderer.render(scene,camera); }
+});
+update3D();
+</script>
+</section>
+  <section class="page page-b" id="b" hidden>
+
+
+<div style="position: relative; width: 100%; min-height: 900px; box-sizing: border-box; overflow: hidden; background: #fff" data-canvas-width="1280" data-canvas-height="900" data-document-role="page" data-label="Main">
+
+  <input class="sr" type="radio" id="vp" name="view" checked="">
+  <input class="sr" type="radio" id="vx" name="view">
+  <input class="sr" type="radio" id="n1" name="node" checked="">
+  <input class="sr" type="radio" id="n2" name="node">
+  <input class="sr" type="radio" id="n3" name="node">
+  <input class="sr" type="radio" id="n4" name="node">
+  <input class="sr" type="radio" id="n5" name="node">
+  <input class="sr" type="radio" id="n6" name="node">
+
+  <header class="fade" style="position: relative; display: flex; justify-content: space-between; align-items: baseline; padding: 40px 64px 0">
+    <h1 style="margin: 0; font-size: 20px; font-weight: 400">ניהול הסטודיו</h1>
+    <nav class="nav" aria-label="תצוגה" style="display: flex; gap: 28px; font-size: 15px">
+      <label for="vp">מסלול</label>
+      <label for="vx">חומרים</label>
+    </nav>
   </header>
 
-  <main>
-    <h1>מבינים את הכלי, ואז בונים איתו.</h1>
-    <p class="lead">
-      <mark class="insight">שני מפגשים, שלושה שלבים בכל אחד.</mark>
-      בכל צומת: פרומפט להעתקה, דבר אחד שעובד, ושאלה אחת לבינה.
-    </p>
+  <div class="wrap">
 
-    <div id="sessions" class="cards" aria-label="מפגשים"></div>
+    <!-- מסלול -->
+    <div class="p p-path" style="grid-template-columns: 300px 1fr; gap: 72px">
+      <aside class="sb" aria-label="צמתי המסלול">
+        <p class="g1" style="margin: 0 0 8px; font-size: 13px">מפגש 2 · ניהול הסטודיו</p>
+        <label for="n1"><span class="dot dot1"></span>1. נלמד · מה הכלי מחזיק</label>
+        <label for="n2"><span class="dot dot2"></span>2. נלמד · שלבים ועלויות</label>
+        <label for="n3"><span class="dot dot3"></span>3. נבין · הקשרים</label>
+        <label for="n4"><span class="dot dot4"></span>4. נבין · סטיות ורמזור</label>
+        <label for="n5"><span class="dot dot5"></span>5. נעשה · בניית הכלי</label>
+        <label for="n6"><span class="dot dot6"></span>6. נעשה · סקירה שבועית</label>
+        <p class="g1" style="margin: 28px 0 8px; font-size: 13px">יוצאים עם</p>
+        <div style="padding: 10px 0; color: #6e6e6e">דבר אחד שעובד</div>
+        <div style="padding: 10px 0; color: #6e6e6e">שאלה אחת לבינה</div>
+      </aside>
 
-    <p class="muted small" id="progress"></p>
+      <main>
+        <div class="d d1">
+          <p class="g1" style="margin: 0 0 10px; font-size: 14px">נלמד</p>
+          <h2 style="margin: 0 0 14px; font-size: 36px; font-weight: 300">מה הכלי מחזיק</h2>
+          <p style="margin: 0 0 32px; font-size: 18px; line-height: 1.7; color: #6e6e6e; max-width: 640px">חמש ישויות ושדות החובה של כל אחת: פרויקט, איש מקצוע, עלות, שלב ביצוע ותקציב.</p>
+          <div style="max-width: 680px">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #edeaea"><span class="g1" style="font-size: 13px">פרומפט · עברית</span><button class="cp">העתק</button></div>
+            <p dir="rtl" style="margin: 0 0 24px; padding: 16px 0; font-size: 16px; line-height: 1.8">אני מנהל משרד אדריכלות. עזור לי לפרק את המשרד לחמש ישויות, ולכל ישות הצע שדות חובה בלבד, בטבלה קצרה.</p>
+            <p style="margin: 0 0 24px; font-size: 14px; color: #6e6e6e">דבר אחד שעובד: רשומת פרויקט אחת עם שם, מזמין, סטטוס ותקציב.</p>
+            <p style="margin: 0; font-size: 14px; color: #6e6e6e">שאלה אחת לבינה: איזה שדות חסרים בכל רשומת פרויקט כדי שאדע את מצבו בלי לפתוח אותו?</p>
+          </div>
+        </div>
 
-    <section style="margin-top: 56px">
-      <h2>אפליקציות להדגמה</h2>
-      <p class="muted small">שיבוץ לפי מהפשוטה למורכבת, פרטי מול מקצועי. טרם אושר.</p>
-      <div id="apps" class="apps"></div>
-    </section>
-  </main>
+        <div class="d d2">
+          <p class="g1" style="margin: 0 0 10px; font-size: 14px">נלמד</p>
+          <h2 style="margin: 0 0 14px; font-size: 36px; font-weight: 300">שלבים ועלויות</h2>
+          <p style="margin: 0 0 32px; font-size: 18px; line-height: 1.7; color: #6e6e6e; max-width: 640px">שלבי הפרויקט במשרד (תכנון, היתר, ליווי ביצוע, סגירה) וסוגי העלות הפנימיות: שעות צוות, יועצים, הוצאות ישירות.</p>
+          <div style="max-width: 680px">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #edeaea"><span class="g1" style="font-size: 13px">פרומפט · עברית</span><button class="cp">העתק</button></div>
+            <p dir="rtl" style="margin: 0 0 24px; padding: 16px 0; font-size: 16px; line-height: 1.8">הצע רשימת שלבי עבודה טיפוסית של משרד אדריכלות לפרויקט מסוג [סוג פרויקט], ולכל שלב שלוש עלויות פנימיות אופייניות.</p>
+            <p style="margin: 0 0 24px; font-size: 14px; color: #6e6e6e">דבר אחד שעובד: עץ של פרויקט אחד עם ארבעה שלבים ורשימת עלויות מסווגת.</p>
+            <p style="margin: 0; font-size: 14px; color: #6e6e6e">שאלה אחת לבינה: אילו שלבים קבועים בכל פרויקט, ואילו משתנים לפי סוג הפרויקט?</p>
+          </div>
+        </div>
+
+        <div class="d d3">
+          <p class="g1" style="margin: 0 0 10px; font-size: 14px">נבין</p>
+          <h2 style="margin: 0 0 14px; font-size: 36px; font-weight: 300">הקשרים בין הישויות</h2>
+          <p style="margin: 0 0 32px; font-size: 18px; line-height: 1.7; color: #6e6e6e; max-width: 640px">כל שלב שייך לפרויקט, כל עלות משויכת לשלב ולאיש מקצוע, והתקציב הוא המסגרת שמעל הכול.</p>
+          <div style="max-width: 680px">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #edeaea"><span class="g1" style="font-size: 13px">פרומפט · עברית</span><button class="cp">העתק</button></div>
+            <p dir="rtl" style="margin: 0 0 24px; padding: 16px 0; font-size: 16px; line-height: 1.8">הסבר בשפה פשוטה איך פרויקט, שלבים, אנשי מקצוע, עלויות ותקציב מקושרים זה לזה. הדגם עם פרויקט בן שלושה שלבים.</p>
+            <p style="margin: 0 0 24px; font-size: 14px; color: #6e6e6e">דבר אחד שעובד: עלות אחת מקושרת לשלב אחד ולאיש מקצוע אחד, וסכומה מופיע בתקציב הפרויקט.</p>
+            <p style="margin: 0; font-size: 14px; color: #6e6e6e">שאלה אחת לבינה: מה קורה לתקציב הפרויקט כשעלות נרשמת בלי שלב?</p>
+          </div>
+        </div>
+
+        <div class="d d4">
+          <p class="g1" style="margin: 0 0 10px; font-size: 14px">נבין</p>
+          <h2 style="margin: 0 0 14px; font-size: 36px; font-weight: 300">סטיות ורמזור</h2>
+          <p style="margin: 0 0 32px; font-size: 18px; line-height: 1.7; color: #6e6e6e; max-width: 640px">מתי תקציב או לוח זמנים הופכים לסיכון: ירוק עד 80 אחוז, צהוב מעל 80 בשלב פתוח, אדום מעל 100.</p>
+          <div style="max-width: 680px">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #edeaea"><span class="g1" style="font-size: 13px">פרומפט · עברית</span><button class="cp">העתק</button></div>
+            <p dir="rtl" style="margin: 0 0 24px; padding: 16px 0; font-size: 16px; line-height: 1.8">הצע שלושה ספי סטייה לתקציב ולוח זמנים של פרויקט במשרד אדריכלות (ירוק, צהוב, אדום). לכל סף פעולה מומלצת אחת.</p>
+            <p style="margin: 0 0 24px; font-size: 14px; color: #6e6e6e">דבר אחד שעובד: ניצול תקציב מעל 80 אחוז לפני סיום שלב מסומן צהוב.</p>
+            <p style="margin: 0; font-size: 14px; color: #6e6e6e">שאלה אחת לבינה: מאיזה סף סטיית תקציב דורשת החלטה של מנהל המשרד ולא רק הערה?</p>
+          </div>
+        </div>
+
+        <div class="d d5">
+          <p class="g1" style="margin: 0 0 10px; font-size: 14px">נעשה</p>
+          <h2 style="margin: 0 0 14px; font-size: 36px; font-weight: 300">בניית הכלי</h2>
+          <p style="margin: 0 0 32px; font-size: 18px; line-height: 1.7; color: #6e6e6e; max-width: 640px">להזין פרויקט אחד במלואו: שלבים, אנשי מקצוע, עלויות ותקציב המשרד. אפשר פרויקט משלך או פרויקט דוגמה.</p>
+          <div style="max-width: 680px">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #edeaea"><span class="g1" style="font-size: 13px">פרומפט · עברית</span><button class="cp">העתק</button></div>
+            <p dir="rtl" style="margin: 0 0 24px; padding: 16px 0; font-size: 16px; line-height: 1.8">בנה טבלה אחת לפרויקט שלי עם העמודות: שלב, איש מקצוע, תקציב מתוכנן, עלות בפועל, סטטוס. אחרי שאמלא, סכם לי את הסטייה הכוללת.</p>
+            <p style="margin: 0 0 24px; font-size: 14px; color: #6e6e6e">דבר אחד שעובד: הפרויקט מוזן, והמספרים מתיישבים עם הכסף בפועל.</p>
+            <p style="margin: 0; font-size: 14px; color: #6e6e6e">שאלה אחת לבינה: אילו שלושה נתונים חסרים לי כדי לסגור את התקציב של הפרויקט הזה?</p>
+          </div>
+        </div>
+
+        <div class="d d6">
+          <p class="g1" style="margin: 0 0 10px; font-size: 14px">נעשה</p>
+          <h2 style="margin: 0 0 14px; font-size: 36px; font-weight: 300">סקירה שבועית</h2>
+          <p style="margin: 0 0 32px; font-size: 18px; line-height: 1.7; color: #6e6e6e; max-width: 640px">עמוד אחד שמציג לכל הפרויקטים סטטוס, סטייה ופעולה הבאה.</p>
+          <div style="max-width: 680px">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #edeaea"><span class="g1" style="font-size: 13px">פרומפט · עברית</span><button class="cp">העתק</button></div>
+            <p dir="rtl" style="margin: 0 0 24px; padding: 16px 0; font-size: 16px; line-height: 1.8">צור עמוד סקירה שבועית לכל הפרויקטים. לכל פרויקט שלושה שדות בלבד: סטטוס, סטייה מתקציב, הפעולה הבאה.</p>
+            <p style="margin: 0 0 24px; font-size: 14px; color: #6e6e6e">דבר אחד שעובד: עמוד אחד שמציג לכל פרויקט סטטוס, סטייה והפעולה הבאה.</p>
+            <p style="margin: 0; font-size: 14px; color: #6e6e6e">שאלה אחת לבינה: איזה מידע בעמוד השבועי משנה החלטה, ואיזה רק מוסיף רעש?</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- חומרים -->
+    <div class="p p-mat" style="grid-template-columns: 1fr 1fr; gap: 72px">
+      <section>
+        <p class="g1" style="margin: 0 0 12px; font-size: 13px">שלושה פרומפטים לבניית ה-MVP</p>
+        <div class="row">נלמד · מודל הנתונים והמסכים</div>
+        <div class="row">נבין · הקשרים, חישובים וכללים</div>
+        <div class="row">נעשה · בניית ה-MVP המלא</div>
+      </section>
+      <section>
+        <p class="g1" style="margin: 0 0 12px; font-size: 13px">פרויקט דוגמה · בדיוני · תקציב משרד</p>
+        <div class="row">שכר טרחה מאושר: 180,000 ש"ח</div>
+        <div class="row">תכנון: 98,000 מתוך 90,000 · אדום</div>
+        <div class="row">היתר: 30,000 מתוך 30,000 · ירוק</div>
+        <div class="row">ליווי ביצוע: 36,000 מתוך 50,000 · ירוק (בתהליך)</div>
+        <div class="row">סגירה ומסירה: טרם התחיל</div>
+      </section>
+    </div>
+
+  </div>
+</div>
+</section>
+</div>
+
+<script>
+(function () {
+  var pages = { guide: "guide", a: "a", b: "b" };
+  var current = "guide";
+  function pageOf(el) {
+    while (el && !(el.classList && el.classList.contains("page"))) el = el.parentElement;
+    return el ? el.id : null;
+  }
+  function show(key) {
+    current = key;
+    Object.keys(pages).forEach(function (k) {
+      document.getElementById(pages[k]).hidden = k !== key;
+    });
+    document.querySelectorAll(".app-nav a").forEach(function (a) {
+      var on = a.getAttribute("data-nav") === key;
+      a.classList.toggle("on", on);
+      if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+    if (key === "a" && window.update3D) setTimeout(window.update3D, 0);
+  }
+  function route() {
+    var key = decodeURIComponent((location.hash || "").slice(1));
+    var target = null, page = null;
+    if (pages[key]) page = key;
+    else if (key) {
+      target = document.getElementById(key);
+      page = target ? pageOf(target) : null;
+    }
+    if (!page) page = current;
+    show(page);
+    if (target) target.scrollIntoView(); else if (!location.hash || pages[key]) window.scrollTo(0, 0);
+  }
+  // copy buttons on the session B prompts (their text sits in the next sibling paragraph)
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest && e.target.closest(".page-b .cp");
+    if (!btn) return;
+    var box = btn.parentElement && btn.parentElement.nextElementSibling;
+    var p = box && box.matches("p") ? box : null;
+    if (!p || !navigator.clipboard) return;
+    var old = btn.textContent;
+    navigator.clipboard.writeText(p.textContent.trim()).then(function () {
+      btn.textContent = "הועתק";
+      setTimeout(function () { btn.textContent = old; }, 1500);
+    });
+  });
+  window.addEventListener("hashchange", route);
+  document.addEventListener("DOMContentLoaded", route);
+})();
+</script>
 </body>
 </html>
