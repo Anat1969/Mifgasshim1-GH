@@ -1,45 +1,477 @@
 <!doctype html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>בינה מלאכותית לאדריכלים</title>
-  <meta name="description" content="שני מפגשים, שלושה שלבים בכל אחד: נלמד, נבין, נעשה.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="assets/style.css">
-  <script src="assets/content.js" defer></script>
-  <script src="assets/app.js" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>בינה מלאכותית לאדריכלים</title>
+<meta name="description" content="קורס בשני מפגשים לאדריכלים: מזכויות בנייה למודל תלת-ממדי, ומהמשרד לכלי ניהול. נלמד, נבין, נעשה.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script src="https://appofapp-gh.vercel.app/ai-menu.js" defer></script>
 </head>
-<body data-page="index">
-  <header class="topbar">
-    <a class="brand" href="index.html">בינה מלאכותית לאדריכלים</a>
-    <div class="menu-wrap">
-      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="menu">תפריט</button>
-      <ul id="menu" class="menu" hidden>
-        <li><a href="index.html">בית</a></li>
-        <li><a href="session-1.html">מפגש 1 · מבחן התב"ע</a></li>
-        <li><a href="session-2.html">מפגש 2 · ניהול הסטודיו</a></li>
-        <li><a href="reference.html">חומר עזר</a></li>
-      </ul>
+<body data-page="guide" dir="rtl">
+
+<header class="top" dir="rtl">
+  <a class="brand" href="#guide/home">בינה מלאכותית לאדריכלים</a>
+  <nav class="tabs" aria-label="שלושת הדפים">
+    <a class="btn" href="#guide" data-tab="guide">כללי</a>
+    <a class="btn" href="#a" data-tab="a">מפגש א</a>
+    <a class="btn" href="#b" data-tab="b">מפגש ב</a>
+  </nav>
+  <span class="grow"></span>
+  <div class="walk" aria-label="מעבר בין תחנות">
+    <button class="btn" id="prev" type="button">הקודם</button>
+    <span id="where"></span>
+    <button class="btn" id="next" type="button">הבא</button>
+  </div>
+  <span id="progress"></span>
+  <ai-menu chat="https://claude.ai/code/session_018qeN1B15zgyFTiEuRioVsy"></ai-menu>
+</header>
+
+<div class="shell" dir="rtl">
+  <aside class="rail" id="rail" aria-label="נלמד, נבין, נעשה"></aside>
+
+  <main class="stage">
+    <div class="pane" id="pane">
+      <div class="pane-top">
+        <span id="kicker"></span>
+        <button class="btn" id="mark" type="button">סמן כנלמד</button>
+      </div>
+
+      <!-- ===================== כללי ===================== -->
+
+      <section class="view" data-page="guide" data-group="open" data-id="home" data-title="מפת הקורס">
+        <h1>מבינים את הכלי, ואז בונים איתו.</h1>
+        <p class="lead"><mark>שני מפגשים, שלושה שלבים בכל אחד: נלמד, נבין, נעשה.</mark> בכל תחנה: פרומפט להעתקה, דבר אחד שעובד, ושאלה אחת לבינה.</p>
+        <div class="map" id="courseMap"></div>
+      </section>
+
+      <section class="view" data-page="guide" data-group="learn" data-id="principles" data-title="שש תובנות">
+        <h1>שש תובנות משנות את התוצר יותר מכל כלי.</h1>
+        <p class="lead">הדף הכללי מרכז את מה שצריך כדי לבנות אפליקציה מקצה לקצה: סדר העבודה, תפקיד כל כלי, סוגי הקבצים, כללי הבטיחות, ותבניות להעתקה.</p>
+        <div class="grid3">
+          <div><b>אפיון לפני קוד</b>שלוש שורות על הבעיה, המשתמש והתוצר הרצוי. בלי אפיון, הקוד מתחיל לנחש.</div>
+          <div><b>בדיקה לפני הבא</b>כל צעד נבדק לפני שממשיכים. בדיקה שנדחית לסוף מכפילה את התיקונים.</div>
+          <div><b>קובץ הכללים כחוזה</b>כל מה שחוזר פעם שנייה נכנס לקובץ הכללים של הפרויקט, ולא נאמר שוב בצ'אט.</div>
+          <div><b>קטן וברור</b>משימה אחת בכל פעם, עם תוצאה שאפשר לבדוק. משימה גדולה מקבלת תוצאה מטושטשת.</div>
+          <div><b>לא מדמיינים קבצים</b>אם לא בטוחים במה שיש בקובץ, פותחים אותו. ניחוש על קוד או נתונים יוצר באגים שאי אפשר לאתר.</div>
+          <div><b>כל כלי לתפקיד שלו</b>ייעוץ וניסוח בצ'אט, עבודה מתמשכת על מסמכים בקוורק, בנייה ופריסה בקלוד קוד.</div>
+        </div>
+      </section>
+
+      <section class="view" data-page="guide" data-group="learn" data-id="tools" data-title="כלים ותפקידם">
+        <h1>כל כלי עושה דבר אחד טוב.</h1>
+        <p class="lead">בחירה לא נכונה של כלי היא מקור נפוץ לבזבוז זמן.</p>
+        <table class="t">
+          <thead><tr><th>כלי</th><th>למה משתמשים בו</th><th>מה לא עושים בו</th></tr></thead>
+          <tbody>
+            <tr><td><a href="https://claude.ai" target="_blank" rel="noopener">צ'אט של Claude</a></td><td>חשיבה, אפיון, ניסוח פרומפטים, חקירה, שאלות על מושגים.</td><td>בנייה מתמשכת של קוד או פריסה.</td></tr>
+            <tr><td>Cowork</td><td>עבודה מתמשכת על מסמכים ומקורות לאורך זמן.</td><td>בנייה ופריסה של אפליקציה.</td></tr>
+            <tr><td><a href="https://claude.ai/code" target="_blank" rel="noopener">Claude Code</a></td><td>בנייה, תיקון, בדיקות, מיזוג, פריסה ואוטומציה בתוך מאגר הקוד.</td><td>החלטה על מה לבנות. זה נעשה לפני.</td></tr>
+            <tr><td><a href="https://github.com" target="_blank" rel="noopener">GitHub</a></td><td>מאגר הקוד, ענפים, Pull Requests, היסטוריית שינויים.</td><td>שמירת מפתחות סודיים.</td></tr>
+            <tr><td><a href="https://vercel.com" target="_blank" rel="noopener">Vercel</a></td><td>פריסה של האפליקציה, תצוגה מקדימה לכל ענף, כתובת ציבורית.</td><td>אחסון נתונים. הנתונים נשמרים ב-Supabase.</td></tr>
+            <tr><td><a href="https://supabase.com" target="_blank" rel="noopener">Supabase</a></td><td>בסיס נתונים, אימות משתמשים, אחסון קבצים. עם Row Level Security.</td><td>לוגיקת ממשק.</td></tr>
+            <tr><td><a href="https://lovable.dev" target="_blank" rel="noopener">Lovable</a></td><td>אב טיפוס מהיר של אפליקציה מלאה, לפי פרומפטים חדים.</td><td>מערכות שדורשות שליטה מלאה בקוד ובתשתית.</td></tr>
+            <tr><td><a href="https://www.canva.com" target="_blank" rel="noopener">Canva</a></td><td>תוצרים עיצוביים שנשמרים כקובץ שניתן לעריכה: פלייר, פוסט, מצגת קצרה.</td><td>לוגיקה או נתונים.</td></tr>
+          </tbody>
+        </table>
+        <h2>איך לבחור</h2>
+        <ul class="plain cols2">
+          <li>שאלה או החלטה: צ'אט.</li>
+          <li>מסמך שחוזר לאורך זמן: קוורק.</li>
+          <li>אפליקציה שתיבנה, תיבדק ותיפרס: Claude Code, עם GitHub, Vercel ו-Supabase.</li>
+          <li>אב טיפוס מהיר שייבדק לפני בנייה אמיתית: Lovable.</li>
+          <li>תוצר שמודפס או מופץ: Canva.</li>
+        </ul>
+      </section>
+
+      <section class="view" data-page="guide" data-group="learn" data-id="files" data-title="סוגי קבצים">
+        <h1>כל סוג קובץ מתפקד אחרת, וערבוב ביניהם יוצר בעיות.</h1>
+        <table class="t">
+          <thead><tr><th>קובץ</th><th>תפקיד</th><th>איפה</th></tr></thead>
+          <tbody>
+            <tr><td><code>CLAUDE.md</code></td><td>הכללים של הפרויקט: מה נבנה, באיזה כלים, מה אסור. נקרא אוטומטית בתחילת עבודה.</td><td>בשורש המאגר</td></tr>
+            <tr><td><code>SPEC.md</code></td><td>האפיון: מטרה, משתמשים, מסכים, נתונים, מה לא נבנה.</td><td>בתיקיית <code>docs</code></td></tr>
+            <tr><td><code>SKILL.md</code></td><td>הוראות לעבודה חוזרת על סוג תוצר מסוים. נטען לפי הצורך.</td><td>בתיקיית הסקיל</td></tr>
+            <tr><td><code>README.md</code></td><td>מה האפליקציה עושה ואיך מריצים אותה. לאדם, לא למודל.</td><td>בשורש המאגר</td></tr>
+            <tr><td><code>.env</code></td><td>מפתחות סודיים. לעולם לא נכנס ל-Git.</td><td>מקומי בלבד</td></tr>
+            <tr><td><code>.sql</code></td><td>מיגרציות: שינויים במבנה הנתונים, בסדר קבוע ובהיסטוריה.</td><td><code>supabase/migrations</code></td></tr>
+            <tr><td><code>.html</code></td><td>דף בודד שרץ בדפדפן, בלי שרת. מתאים לכלי הדגמה.</td><td>בשורש או ב-<code>public</code></td></tr>
+            <tr><td><code>.json</code></td><td>נתונים מובנים, קלט ופלט בין שלבים.</td><td>בתיקיית <code>data</code></td></tr>
+            <tr><td><code>.csv</code> / <code>.xlsx</code></td><td>טבלאות לקליטה ולהוצאה. CSV קל לקריאה על ידי כלים.</td><td>בתיקיית <code>data</code></td></tr>
+            <tr><td><code>.shp</code> <code>.dxf</code> <code>.dwg</code> <code>.kml</code></td><td>קבצי GIS ו-CAD של תכנון עירוני. נקראים בכלי ייעודי, לא כטקסט.</td><td><code>data/gis</code></td></tr>
+            <tr><td><code>.pdf</code> / <code>.docx</code></td><td>מסמכים רשמיים. קודם ממירים ל-Markdown או לטקסט, ואז עובדים עליהם.</td><td><code>docs/source</code></td></tr>
+          </tbody>
+        </table>
+        <div class="warn">קבצים בינאריים כמו DWG לא נקראים כטקסט. אם אין ממיר זמין, רושמים זאת במפורש ולא מניחים מה יש בתוכם.</div>
+      </section>
+
+      <section class="view" data-page="guide" data-group="learn" data-id="glossary" data-title="מילון מושגים">
+        <h1>עשרה מושגים שחוזרים בכל שיחה עם בינה.</h1>
+        <dl>
+          <div class="gloss"><dt>פרומפט</dt><dd>ההוראה שכותבים לכלי AI. פרומפט טוב מגדיר תפקיד, הקשר, משימה ופורמט.</dd></div>
+          <div class="gloss"><dt>הקשר (context)</dt><dd>כל מה שהכלי רואה בשיחה: הוראות, נתונים, קבצים והיסטוריית השיחה.</dd></div>
+          <div class="gloss"><dt>טוקן</dt><dd>יחידת טקסט שהמודל קורא וכותב. מגבלת השיחה והעלות נמדדות בטוקנים.</dd></div>
+          <div class="gloss"><dt>מודל</dt><dd>המערכת שמייצרת את התשובה. אותו כלי יכול להציע כמה מודלים.</dd></div>
+          <div class="gloss"><dt>הזיה (hallucination)</dt><dd>תשובה שנשמעת סבירה ואינה נכונה. מונעים אותה בנתונים מפורשים ובבדיקה מול מקור.</dd></div>
+          <div class="gloss"><dt>פרומפט מערכת (system prompt)</dt><dd>הוראות קבועות שמנחות את הכלי בכל שיחה, לפני ההודעה של המשתמש.</dd></div>
+          <div class="gloss"><dt>סקיל (skill)</dt><dd>חבילת הוראות קבועה שהכלי טוען כשהמשימה דורשת אותה.</dd></div>
+          <div class="gloss"><dt>חיבור (connector / MCP)</dt><dd>דרך שמחברת את הכלי למערכת חיצונית, כמו דרייב, יומן או בסיס נתונים.</dd></div>
+          <div class="gloss"><dt>סוכן משנה (subagent)</dt><dd>עותק של הכלי שמקבל משימה משלו ומחזיר תוצאה, בלי להעמיס על השיחה הראשית.</dd></div>
+          <div class="gloss"><dt>אפיון</dt><dd>תיאור הבעיה, המשתמש, המסכים והנתונים לפני שבונים. אפיון נכתב לפני קוד.</dd></div>
+        </dl>
+      </section>
+
+      <section class="view" data-page="guide" data-group="understand" data-id="flow" data-title="תהליך מקצה לקצה">
+        <h1>תשעה שלבים, וכל אחד נגמר בתוצאה שאפשר לבדוק.</h1>
+        <p class="lead">הסדר שבו נבנית אפליקציה לכל משתמש.</p>
+        <div class="steps">
+          <div><div><b>הגדרת הבעיה</b>במשפט אחד: מי משתמש, במה, ומה התוצר. אם אי אפשר לנסח, הבעיה עוד לא מוגדרת.</div></div>
+          <div><div><b>אפיון</b>קובץ SPEC.md קצר: מטרה, משתמשים, מסכים, נתונים, מה לא נבנה. מאושר לפני קוד.</div></div>
+          <div><div><b>מבנה נתונים</b>טבלאות וקשרים ב-Supabase, עם Row Level Security מההתחלה. מיגרציות נשמרות כקבצים.</div></div>
+          <div><div><b>בנייה בשלבים</b>קודם הלוגיקה והנתונים, אחר כך הממשק. כל שלב נבדק לפני שממשיכים.</div></div>
+          <div><div><b>בדיקה</b>בדיקות אוטומטיות על הלוגיקה, ובדיקה ידנית של כל כפתור ומסך. בדיקה ירוקה היא תנאי למיזוג.</div></div>
+          <div><div><b>מיזוג ל-main</b>רק אחרי בדיקה ירוקה. הודעת commit ברורה, ו-Pull Request עם תיאור של מה שהשתנה.</div></div>
+          <div><div><b>פריסה ב-Vercel</b>מיד אחרי המיזוג. בודקים את הכתובת הסופית, לא רק את התצוגה המקדימה.</div></div>
+          <div><div><b>תיעוד</b>האפליקציה נרשמת באפליקציית האפליקציות, עם כתובת GitHub וכתובת Vercel.</div></div>
+          <div><div><b>מסירה</b>כתובת סופית ושורה אחת שמסבירה מה נבנה. בלי סיכום של כל הצעדים.</div></div>
+        </div>
+        <div class="warn">מי שאין לו סקיל כללים קבוע מעתיק את הכללים לקובץ CLAUDE.md של הפרויקט שלו. התבנית נמצאת תחת "נעשה".</div>
+      </section>
+
+      <section class="view" data-page="guide" data-group="understand" data-id="processes" data-title="שלושה תהליכים">
+        <h1>שלושה תהליכים חוזרים בכל מפגש.</h1>
+        <div class="cols3">
+          <div>
+            <h2>עבודה עם AI על בעיה</h2>
+            <ol class="plain">
+              <li>מגדירים את הבעיה ואת התוצאה הרצויה, במשפט אחד.</li>
+              <li>נותנים לכלי את הנתונים והמקור, ולא רק תיאור.</li>
+              <li>מבקשים טיוטה קטנה, לא את התוצר הסופי.</li>
+              <li>בודקים כל מספר וכל עובדה מול המקור.</li>
+              <li>מתקנים בלולאה קצרה, ורושמים מה עבד לפעם הבאה.</li>
+            </ol>
+          </div>
+          <div>
+            <h2>בניית כלי קטן</h2>
+            <ol class="plain">
+              <li>מחליטים איזו החלטה הכלי צריך לשרת.</li>
+              <li>בוחרים מקור נתונים אחד, וכל תצוגה נגזרת ממנו.</li>
+              <li>מגדירים מסך אחד ומוקד אחד.</li>
+              <li>בודקים על נתונים אמיתיים, לא על דוגמה.</li>
+              <li>עמית בודק, ורושמים את ההערות שלו.</li>
+              <li>מתקנים, ומוסרים בקישור אחד.</li>
+            </ol>
+          </div>
+          <div>
+            <h2>בניית פרומפט</h2>
+            <ol class="plain">
+              <li>כותבים תפקיד: מי הכלי בשיחה.</li>
+              <li>כותבים הקשר: הנתונים והמטרה.</li>
+              <li>כותבים משימה אחת ברורה.</li>
+              <li>קובעים פורמט: טבלה, רשימה או טקסט.</li>
+              <li>בודקים: אם הסרת משפט והתוצאה לא השתנתה, הוא מיותר.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-page="guide" data-group="understand" data-id="tips" data-title="טיפים לעבודה יעילה">
+        <h1>הפרומפט הוא הכלי, והוכחה עדיפה על "זה עובד".</h1>
+        <ul class="plain cols2">
+          <li><b>תנו הקשר בתחילת השיחה.</b> מטרה, מסכים קיימים והכללים. מה שלא כתוב, המודל ינחש.</li>
+          <li><b>בקשו תוצאה שאפשר לבדוק.</b> "הרץ את הבדיקות והחזר את הפלט" עדיף על "תוודא שזה עובד".</li>
+          <li><b>פצלו שיחות.</b> שיחה אחת לאפיון, ושיחה נפרדת לכל מודול. שיחה ארוכה מאבדת הקשר.</li>
+          <li><b>שמרו תמיד.</b> commit קטן אחרי כל משימה שעובדת. חזרה לנקודה טובה צריכה להיות פשוטה.</li>
+          <li><b>בדקו את התוצאה במקום המקורי.</b> דף שנבנה נפתח בדפדפן. מספר שחושב נבדק מול חישוב ידני.</li>
+          <li><b>אל תסמכו על "זה עובד".</b> בקשו הוכחה: פלט בדיקה, צילום מסך, או מספר מהמקור.</li>
+          <li><b>כשמשהו משתבש, חזרו לאפיון.</b> לעיתים האפיון לא ברור, ולא הקוד שבור.</li>
+          <li><b>מילות חשיבה מדויקות.</b> זקק, חלץ, בחן: הן מכוונות את המודל יותר מ"תעשה טוב".</li>
+        </ul>
+        <div class="cols2" style="margin-top:8px">
+          <div>
+            <h2>מבחן ההסרה</h2>
+            <p>אם מסירים מילה מפרומפט והתוצאה לא משתנה, המילה מיותרת. שווה להפעיל את המבחן על כל פרומפט לפני שמעתיקים אותו.</p>
+          </div>
+          <div>
+            <h2>שלוש סביבות לפרומפט</h2>
+            <ul class="plain">
+              <li><b>צ'אט:</b> שיחה חד-פעמית. ההקשר כולו חייב להיות בפרומפט.</li>
+              <li><b>פרויקט:</b> הוראות ומסמכים שנשארים. הכללים הקבועים שייכים לכאן.</li>
+              <li><b>ניסוי:</b> בדיקה על קלט ידוע לפני שמשתמשים בפרומפט בתוצר אמיתי.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-page="guide" data-group="understand" data-id="safety" data-title="אבטחה ומה לאמת">
+        <h1>חמישה כללי בטיחות, וארבע נקודות לאמת לפני השיעור.</h1>
+        <div class="cols2">
+          <div>
+            <h2>אבטחה</h2>
+            <ul class="plain">
+              <li><b>מפתחות:</b> אף מפתח סודי לא נכנס לקוד, לשיחה או ל-Git. מפתחות נשמרים ב-<code>.env</code> או בהגדרות הפריסה.</li>
+              <li><b>Row Level Security:</b> מופעל בכל טבלה ב-Supabase. טבלה בלי RLS היא טבלה שכל אחד יכול לקרוא.</li>
+              <li><b>סקילים ממאגרים לא מוכרים:</b> קוראים ומסכמים לפני התקנה. לא מריצים סקריפטים שמגיעים איתם בלי בדיקה.</li>
+              <li><b>מחיקה:</b> מחיקה של נתונים או של קבצים דורשת אישור מפורש.</li>
+              <li><b>פריסה:</b> לפני פרסום, בודקים שאין נתונים אישיים או סודיים בתצוגה הציבורית.</li>
+            </ul>
+          </div>
+          <div>
+            <h2>מה לאמת לפני השיעור</h2>
+            <p class="small muted">הנקודות האלה משתנות לפי גרסאות הכלים, ולכן לא נכתבו כעובדה קבועה.</p>
+            <ul class="plain">
+              <li>שמות הפקודות, הקבצים שנקראים אוטומטית, ואופן טעינת הסקילים ב-Claude Code, מול התיעוד הרשמי.</li>
+              <li>מגבלות החינם והמכסות של Vercel, Supabase ו-Lovable לסטודנטים.</li>
+              <li>תהליך ההתקנה של gh ושל Supabase CLI על מחשבי הסטודנטים, במיוחד ב-Windows.</li>
+              <li>התבניות בדף נבדקו רק בתוך הדף. הן עוד לא הורצו על פרויקט אמיתי.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-page="guide" data-group="do" data-id="claudemd" data-title="קובץ הכללים">
+        <h1>קובץ אחד מחליף הסברים חוזרים בכל שיחה.</h1>
+        <p class="lead">תבנית CLAUDE.md להעתקה. ממלאים אותה לפי הפרויקט, ושמים בשורש המאגר.</p>
+        <div class="prompt" data-label="תבנית CLAUDE.md" data-open>
+<pre># שם הפרויקט
+
+## מטרה
+[משפט אחד: מי משתמש, במה, ומה התוצר]
+
+## כללי עבודה
+- קודם אפיון ב-docs/SPEC.md, ואחר כך קוד. לא מתחילים לבנות לפני אישור האפיון.
+- לא מניחים תוכן של קובץ. פותחים אותו לפני שמשנים אותו.
+- משימה אחת בכל פעם. אחרי כל משימה: הרצת בדיקות ודיווח של התוצאה.
+- לא עוצרים לשאלות שאפשר להכריע לבד. מסמנים את ההחלטה ומנמקים בשורה אחת.
+
+## מחסנית טכנולוגית
+- ממשק: [למשל React ו-Tailwind]
+- נתונים: Supabase עם Row Level Security מופעל בכל טבלה
+- פריסה: Vercel, מיזוג ל-main רק אחרי בדיקה ירוקה
+
+## אסור
+- לשים מפתחות או סיסמאות בקוד או ב-Git.
+- להריץ סקריפטים מסקיל שלא נבדק.
+- למחוק נתונים בלי אישור מפורש.
+
+## סיום משימה
+- כתובת סופית אחת, ושורה אחת שמסבירה מה נבנה.
+- לתעד את האפליקציה ב-README: כתובת GitHub, כתובת Vercel, מה היא עושה.</pre>
+        </div>
+      </section>
+
+      <section class="view" data-page="guide" data-group="do" data-id="templates" data-title="תבניות להעתקה">
+        <h1>שתי תבניות: אפיון לפני קוד, ומשימה אחת בכל פעם.</h1>
+        <div class="prompt" data-label="תבנית אפיון (SPEC.md)">
+<pre># אפיון: [שם האפליקציה]
+
+## הבעיה
+[משפט אחד: מה לא עובד היום, ולמי]
+
+## המשתמש
+[מי, מה הוא יודע, מה הוא צריך להשיג]
+
+## התוצר
+[מה המשתמש מקבל בסוף, בשורה אחת]
+
+## מסכים
+1. [שם המסך]: [מה רואים, מה עושים]
+
+## נתונים
+- [טבלה]: [שדות חובה]
+
+## הקלט והפלט
+- קלט: [קבצים, שדות, פורמטים]
+- פלט: [קבצים, טבלאות, דוחות]
+
+## מה לא נבנה בגרסה הזו
+- [...]
+
+## קריטריוני קבלה
+- [תוצאה צפויה לקלט ידוע]</pre>
+        </div>
+        <div class="prompt" data-label="תבנית פרומפט למשימה ב-Claude Code" data-open>
+<pre>קרא את CLAUDE.md ואת docs/SPEC.md. המשימה: [תיאור של משימה אחת].
+
+לפני קוד:
+1. הצע תוכנית של שלושה צעדים, ואל תתחיל לכתוב עד אישור.
+
+אחרי הקוד:
+2. הרץ את הבדיקות והחזר את הפלט המלא.
+3. פתח את הקבצים ששינית, והחזר את השינוי בכל קובץ בשורה אחת.
+4. אם בדיקה נכשלה, תקן ובדוק שוב. לא מדווחים על הצלחה לפני בדיקה ירוקה.
+
+אל תשנה קבצים מחוץ לתחום המשימה.</pre>
+        </div>
+      </section>
+
+      <section class="view" data-page="guide" data-group="do" data-id="apps" data-title="אפליקציות להדגמה">
+        <h1>שש אפליקציות חיות, מהפשוטה אל המורכבת.</h1>
+        <p class="lead">כל אפליקציה נפתחת בכתובת החיה שלה, ולצידה מאגר הקוד. השיבוץ לפי רמה עוד לא אושר.</p>
+        <div class="apps" id="appsList"></div>
+      </section>
+
+      <!-- ===================== מפגש א ===================== -->
+
+      <section class="view" data-page="a" data-group="learn" data-id="rights" data-title="מיפוי זכויות">
+        <h1>זכויות בנייה הן שרשרת נתונים שניתן לאמת, לא מספר אחד.</h1>
+        <div class="subtabs" data-subtabs>
+          <button class="btn on" type="button" data-sub="tool">הכלי</button>
+          <button class="btn" type="button" data-sub="explain">ההסבר</button>
+          <button class="btn" type="button" data-sub="prompt">הפרומפט</button>
+        </div>
+        <div data-subview="tool">
+          <div class="field-lbl">מגרש (ערכי דמו, ניתנים לעריכה)</div>
+          <div class="seg" id="plotSeg"></div>
+          <div class="field-lbl">מסמכי התכנית <span id="docsCount"></span></div>
+          <ul class="docs" id="docs"></ul>
+          <div class="field-lbl">פרמטרים מהתב"ע <span id="srcCount"></span></div>
+          <table class="t rights">
+            <thead><tr><th>פרמטר</th><th>ערך</th><th></th><th>מקור</th><th></th></tr></thead>
+            <tbody id="rights"></tbody>
+          </table>
+          <div class="legend">
+            <span><i class="dot g"></i>ערך עם מקור</span>
+            <span><i class="dot y"></i>ערך בלי מקור</span>
+            <span><i class="dot r"></i>ערך חסר</span>
+            <span id="savedA" class="toast"></span>
+          </div>
+        </div>
+        <div data-subview="explain" hidden>
+          <ol class="explain">
+            <li><div><b>מה משנה במספר אחוזי הבנייה</b><p>מאז תיקון דצמבר 2023 לתקנות חישוב השטחים (התשנ"ב-1992), אין חובה לפצל בתכנית בין שטחים עיקריים לשטחי שירות. לכן הקלט חייב לזהות איזה נוסח חל על התכנית לפני שמחשבים אחוזים. <span class="flag">טעון בדיקה משפטית לפני פרסום</span></p><p><b>נבין:</b> האם הטבלה מציגה שטח כולל או פיצול? מה קורה כשהתכנית ישנה יותר מ-1992?</p></div></li>
+            <li><div><b>שטח מגרש, תכסית וקווי בניין</b><p>שטח המגרש נלקח מטבלת הזכויות ומתואם לשכבת המגרש. סטייה של עד 0.5% בין השכבה לטבלה נחשבת תקינה. תכסית וקווי בניין מגיעים מההוראות, לא מהתשריט בלבד.</p></div></li>
+            <li><div><b>קומות, גובה וזכויות מתחת לקרקע</b><p>מספר הקומות מעל ומתחת לקרקע מופיע בהוראות. גובה מרבי נמדד לפי ההגדרה שבתכנית, לא לפי הנחה כללית.</p></div></li>
+            <li><div><b>יחידות דיור ושימושים</b><p>מספר יח"ד מרבי וצפיפות מופיעים בהוראות או בטבלה. כל שימוש שאינו מוגדר במפורש נשאר "לא נמצא" ולא מוסק.</p></div></li>
+            <li><div><b>בקרת עקביות</b><p>רכיבי השטח חייבים להסתכם לסה"כ. אחוזי הבנייה חייבים להתאים לשטחים. כל פער נרשם כממצא לאימות, ולא מתוקן בשקט.</p></div></li>
+          </ol>
+          <p class="tiny" style="margin-top:10px">כלי קשור לשלב: <a href="https://korelaztiot.vercel.app" target="_blank" rel="noopener">קורלציות בין שכבות</a>, לבקרת עקביות בין השכבות. הכלי לא אומת מול התיאור שלו.</p>
+        </div>
+        <div data-subview="prompt" hidden>
+          <div class="prompt" data-he="p1h" data-en="p1e" data-label="פרומפט לשלב 1: מיפוי זכויות"></div>
+          <div class="prompt" data-he="pjson" data-label="תוספת: פלט שנקלט בכלי"></div>
+          <div class="import">
+            <div class="field-lbl">הדבקת התשובה של הבינה (JSON)</div>
+            <textarea id="importBox" aria-label="הדבקת JSON" placeholder='{"plot": 2000, "cov": 35, "bp": 250, "floors": 8, "h": 28, "units": 40, "sf": 5, "ss": 4, "sr": 4, "sources": {"plot": "טבלת זכויות, עמ 3"}}'></textarea>
+            <div class="row"><button class="btn dark" type="button" id="importBtn">קלוט ערכים למודל</button><span id="importMsg" class="tiny"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-page="a" data-group="understand" data-id="model" data-title="מודל וחלופות">
+        <h1>כל חלופה היא שילוב אחר של שטח קומה ומספר קומות.</h1>
+        <div class="subtabs" data-subtabs>
+          <button class="btn on" type="button" data-sub="tool">הכלי</button>
+          <button class="btn" type="button" data-sub="explain">ההסבר</button>
+          <button class="btn" type="button" data-sub="prompt">הפרומפט</button>
+        </div>
+        <div data-subview="tool">
+          <p class="tiny">המודל נבנה רק מהזכויות של שלב 1. מזיזים שטח קומה וקומות, והמסה משתנה מיד.</p>
+          <div id="alts"></div>
+          <div class="field-lbl">הנחות היזם</div>
+          <div class="dev" id="dev"></div>
+        </div>
+        <div data-subview="explain" hidden>
+          <ol class="explain">
+            <li><div><b>מהטבלה למסה</b><p>המסה נבנית רק מהזכויות שחולצו בשלב 1. תכסית קובעת שטח קומה מרבי, קומות וגובה קובעים נפח. כל חלופה היא שילוב אחר של שני המשתנים.</p></div></li>
+            <li><div><b>שלוש חלופות</b><p>חלופה א: קומות נמוכות ושטח קומה גדול. חלופה ב: מגדל צר וגבוה. חלופה ג: ביניים. כל אחת מוגבלת לתוך קווי הבניין.</p></div></li>
+            <li><div><b>תצוגות: איזומטרי, תוכנית, חזית</b><p>האיזומטרי מראה נפח. התוכנית מראה קווי בניין ותכסית. החזית מראה גובה מול הגבול המותר. בודקים את שלושתן יחד.</p></div></li>
+            <li><div><b>רמת פירוט גאומטרית</b><p>רמה בינונית: רצפות, רצועות חלונות וגג. פירוט מפורט (פתחים, חדרים) לא נכנס לשלב זה, כי הוא לא משנה את ההכרעה בין חלופות.</p></div></li>
+          </ol>
+          <p class="tiny" style="margin-top:10px">כלים קשורים: <a href="https://chalufot-gh.vercel.app" target="_blank" rel="noopener">חלופה שעוברת בדיקה</a>, <a href="https://tamhil-gh.vercel.app" target="_blank" rel="noopener">איזה תמהיל עדיף</a>.</p>
+        </div>
+        <div data-subview="prompt" hidden>
+          <div class="prompt" data-he="p2h" data-en="p2e" data-label="פרומפט לשלב 2: מודל וחלופות"></div>
+        </div>
+      </section>
+
+      <section class="view" data-page="a" data-group="do" data-id="fit" data-title="בדיקת התאמה">
+        <h1 id="fitTitle">בדיקת התאמה: תב"ע ועירייה מול יזם.</h1>
+        <div class="subtabs" data-subtabs>
+          <button class="btn on" type="button" data-sub="tool">הכלי</button>
+          <button class="btn" type="button" data-sub="explain">ההסבר</button>
+          <button class="btn" type="button" data-sub="prompt">הפרומפט</button>
+        </div>
+        <div data-subview="tool">
+          <table class="t fit" id="fit"></table>
+          <p class="reco" id="reco"></p>
+          <div class="legend">
+            <span><i class="dot g"></i>עומד, מרווח של 5% לפחות</span>
+            <span><i class="dot y"></i>עומד, מרווח קטן מ-5%</span>
+            <span><i class="dot r"></i>חורג</span>
+            <span><i class="dot"></i>לא נבדק</span>
+          </div>
+        </div>
+        <div data-subview="explain" hidden>
+          <ol class="explain">
+            <li><div><b>צד תב"ע ועירייה</b><p>כל פרמטר מהשלב הראשון נבדק מול החלופה. ירוק: עומד בתנאי עם מרווח של לפחות 5%. צהוב: עומד בתנאי, במרווח קטן מ-5%. אדום: חורג.</p></div></li>
+            <li><div><b>צד יזם</b><p>שטח נטו למכירה מתוך השטח הכולל (ברירת מחדל 80%), מספר יח"ד מול יעד היזם, שטח יח"ד ממוצע, וניצול זכויות מתוך המותר. ניצול מעל 90% ירוק, בין 75% ל-90% צהוב, מתחת ל-75% אדום.</p></div></li>
+            <li><div><b>אחוזי התאמה</b><p>ירוק = 1, צהוב = 0.5, אדום = 0. הממוצע על כל הבדיקות כפול 100. המספר מסייע להשוואה, ולא מחליף את הפירוט.</p></div></li>
+            <li><div><b>דוח השוואה</b><p>מסקנה בשלושה משפטים, טבלת השוואה, יתרון וחיסרון לכל חלופה, המלצה והנחות, ומקור לכל מספר. הדוח לא מציג מסקנה בלי הנתונים שעליה היא נשענת.</p></div></li>
+          </ol>
+          <p class="tiny" style="margin-top:10px">כלי קשור לשלב: <a href="https://programa-gh.vercel.app" target="_blank" rel="noopener">מחשבון פרוגרמות</a>, מקור הדרישות של הצד העירוני. הכלי מתואר לפי התיאור במערכת, ולא נבדק עדיין.</p>
+        </div>
+        <div data-subview="prompt" hidden>
+          <div class="prompt" data-he="p3h" data-en="p3e" data-label="פרומפט לשלב 3: בדיקת התאמה"></div>
+          <div class="prompt" data-he="p4h" data-en="p4e" data-label="פרומפט לדוח ההשוואה"></div>
+        </div>
+      </section>
+
+      <section class="view" data-page="a" data-group="do" data-id="trust" data-title="אמינות הכלי">
+        <h1>כלי אמין מזהה לבד את מה שנמצא בבדיקה ידנית.</h1>
+        <h2>מקרה מבחן ראשון: תב"ע 603</h2>
+        <p>התכנית כבר נבדקה ידנית, ונמצאו בה שישה ממצאים לאימות: סיכומי שטח שאינם תואמים לרכיבים, שורת סיכום שמשתנה לאחר תיקון, ושגיאת הקלדה באחוזי הבנייה. הכלי צריך לזהות את כל הממצאים האלה לבד.</p>
+        <h2>שלושה מדדים</h2>
+        <table class="t">
+          <thead><tr><th>מדד</th><th>יעד</th><th>במגרש הנוכחי</th></tr></thead>
+          <tbody>
+            <tr><td>ערכים שמקושרים למקור</td><td class="num">100%</td><td class="num" id="trustSrc"></td></tr>
+            <tr><td>סטיית שטח בין שכבת המגרש לטבלה</td><td class="num">עד 0.5%</td><td class="muted">נמדד כשנטענת שכבת מגרש</td></tr>
+            <tr><td>ממצאי עקביות שלא זוהו במקרה המבחן</td><td class="num">0</td><td class="muted">טרם נבדק</td></tr>
+          </tbody>
+        </table>
+        <div class="warn">הערכים בכלי הם דמו. בשימוש אמיתי הם מחולצים ממסמכי התכנית, וכל ערך מקבל מקור: מסמך, עמוד וסעיף או תא.</div>
+      </section>
+
+      <!-- ===================== מפגש ב: נבנה מהנתונים ב-app.js ===================== -->
+      <div id="viewsB"></div>
     </div>
-  </header>
 
-  <main>
-    <h1>מבינים את הכלי, ואז בונים איתו.</h1>
-    <p class="lead">
-      <mark class="insight">שני מפגשים, שלושה שלבים בכל אחד.</mark>
-      בכל צומת: פרומפט להעתקה, דבר אחד שעובד, ושאלה אחת לבינה.
-    </p>
+    <aside class="focus" id="focusA" aria-label="מודל המגרש">
+      <div class="focus-head">
+        <h2 id="headline"></h2>
+        <div class="focus-tools">
+          <div class="seg" id="altSeg" aria-label="חלופה"></div>
+          <div class="seg" id="viewSeg" aria-label="תצוגה">
+            <button class="btn on" type="button" data-v="iso">תלת-ממד</button>
+            <button class="btn" type="button" data-v="plan">תוכנית</button>
+            <button class="btn" type="button" data-v="elev">חזית</button>
+          </div>
+        </div>
+      </div>
+      <div class="viewport">
+        <div id="iso3d"><p id="noThree" hidden>התצוגה התלת-ממדית דורשת חיבור לאינטרנט לטעינת הספרייה. התצוגות תוכנית וחזית זמינות תמיד.</p></div>
+        <div id="flat" hidden></div>
+        <span class="hint" id="hint">סיבוב, הזזה וזום בעכבר · צהוב: גובה מרבי · מקווקו: קווי בניין · אדום: חריגה</span>
+      </div>
+      <div class="metrics" id="metrics"></div>
+    </aside>
 
-    <div id="sessions" class="cards" aria-label="מפגשים"></div>
-
-    <p class="muted small" id="progress"></p>
-
-    <section style="margin-top: 56px">
-      <h2>אפליקציות להדגמה</h2>
-      <p class="muted small">שיבוץ לפי מהפשוטה למורכבת, פרטי מול מקצועי. טרם אושר.</p>
-      <div id="apps" class="apps"></div>
-    </section>
+    <aside class="focus" id="focusB" aria-label="פרויקט לדוגמה">
+      <div class="focus-head">
+        <h2><b>התכנון חרג ב-8,000 ש"ח.</b> הפרויקט כולו ניצל 91% מהתקציב.</h2>
+        <p class="tiny">פרויקט לדוגמה, בדיוני: תקציב משרד לבית פרטי. שכר טרחה מאושר: 180,000 ש"ח. העלויות הן של המשרד בלבד.</p>
+      </div>
+      <div class="bars" id="bars"></div>
+    </aside>
   </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script type="module" src="assets/model3d.js"></script>
 </body>
 </html>
