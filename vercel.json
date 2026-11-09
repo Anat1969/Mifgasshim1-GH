@@ -1,0 +1,7 @@
+{
+  "redirects": [
+    { "source": "/session-1.html", "destination": "/#a", "permanent": false },
+    { "source": "/session-2.html", "destination": "/#b", "permanent": false },
+    { "source": "/reference.html", "destination": "/#guide", "permanent": false }
+  ]
+}
