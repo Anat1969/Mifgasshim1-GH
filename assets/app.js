@@ -89,7 +89,8 @@
     ] }
   ];
 
-  var PAGES = { guide: "כללי", a: 'מפגש א: מבחן התב"ע', b: "מפגש ב: ניהול הסטודיו" };
+  var HOME = { name: "אד' ענת שטיבלמן", photo: "", post: "" };
+  var PAGES = { home: "בית", guide: "כללי", a: 'מפגש א: מבחן התב"ע', b: "מפגש ב: ניהול הסטודיו" };
   var GROUPS = { open: ["פתיחה", ""], learn: ["נלמד", "ידע"], understand: ["נבין", "הבנה"], do: ["נעשה", "יישום"] };
   var GROUP_ORDER = ["open", "learn", "understand", "do"];
 
@@ -99,7 +100,7 @@
       return '<section class="view" data-page="b" data-group="' + n.g + '" data-id="' + n.id + '" data-title="' + esc(n.t) + '" hidden>' +
         "<h1>" + esc(n.t) + "</h1>" +
         '<p class="lead">' + esc(n.lead) + "</p>" + track(i) +
-        '<div class="prompt" data-open data-label="פרומפט לתחנה ' + (i + 1) + '"><pre>' + esc(n.prompt) + "</pre></div>" +
+        '<div class="prompt" data-label="פרומפט לתחנה ' + (i + 1) + '"><pre>' + esc(n.prompt) + "</pre></div>" +
         '<div class="out2"><div><span>יוצאים עם דבר אחד שעובד</span><p>' + esc(n.works) + "</p></div><div><span>ושאלה אחת לבינה</span><p>" + esc(n.ask) + "</p></div></div>" +
         "</section>";
     }).join("");
@@ -183,7 +184,6 @@
   /* ---------- ניווט: שלושה דפים, סרגל שלבים, הקודם והבא ---------- */
   var views = [], current = null;
   var done = load("done", []);
-  var last = load("last", {});
 
   function collectViews() {
     views = $$(".view").map(function (el) {
@@ -194,19 +194,20 @@
   function pageViews(p) { return views.filter(function (v) { return v.page === p; }); }
   function find(p, id) { return views.filter(function (v) { return v.page === p && v.id === id; })[0]; }
 
+  var openGroup = null;
+  function stations() { return views.filter(function (v) { return v.group !== "open"; }); }
   function buildRail(page) {
-    var list = pageViews(page), html = "", step = 0;
-    GROUP_ORDER.forEach(function (g) {
+    var list = pageViews(page), html = "";
+    ["learn", "understand", "do"].forEach(function (g, n) {
       var items = list.filter(function (v) { return v.group === g; });
       if (!items.length) return;
-      if (g !== "open") step++;
-      html += '<div class="rail-group">' +
-        (g === "open" ? "" : '<div class="rail-head"><b>' + GROUPS[g][0] + "</b><span>" + step + " · " + GROUPS[g][1] + "</span></div>") +
-        items.map(function (v) {
+      var open = openGroup === g;
+      html += '<div class="rail-group' + (open ? " open" : "") + '">' +
+        '<button class="rail-head" type="button" data-group="' + g + '" aria-expanded="' + open + '"><b>' + GROUPS[g][0] + "</b><span>" + (n + 1) + " · " + GROUPS[g][1] + "</span><i>" + items.length + "</i></button>" +
+        '<div class="rail-items"' + (open ? "" : " hidden") + ">" + items.map(function (v) {
           return '<a href="#' + key(v) + '" data-key="' + key(v) + '"><i class="tick"></i><span>' + esc(v.title) + "</span></a>";
-        }).join("") + "</div>";
+        }).join("") + "</div></div>";
     });
-    html += '<div class="rail-foot">נקודה מלאה: תחנה שסומנה כנלמדה. הסימון נשמר בדפדפן הזה בלבד.</div>';
     $("#rail").innerHTML = html;
   }
   function paintRail() {
@@ -222,7 +223,8 @@
     var mark = $("#mark");
     mark.textContent = isDone ? "נלמד. בטל" : "סמן כנלמד";
     mark.classList.toggle("on", !!isDone);
-    $("#progress").textContent = done.length + " מתוך " + views.length + " נלמדו";
+    mark.hidden = !current || current.group === "open";
+    $("#progress").textContent = done.length + " מתוך " + stations().length + " נלמדו";
   }
 
   function show(v) {
@@ -230,7 +232,8 @@
     current = v;
     document.body.setAttribute("data-page", v.page);
     views.forEach(function (x) { x.el.hidden = x !== v; });
-    if (pageChanged) buildRail(v.page);
+    openGroup = v.group === "open" ? (pageChanged ? null : openGroup) : v.group;
+    buildRail(v.page);
     $$(".tabs a").forEach(function (a) {
       var on = a.getAttribute("data-tab") === v.page;
       a.classList.toggle("on", on);
@@ -238,45 +241,127 @@
     });
     var list = pageViews(v.page), i = list.indexOf(v);
     $("#kicker").textContent = PAGES[v.page] + (v.group === "open" ? "" : " · " + GROUPS[v.group][0] + " · " + GROUPS[v.group][1]);
-    $("#where").textContent = (i + 1) + " מתוך " + list.length;
+    $("#where").textContent = v.group === "open" ? "" : i + " מתוך " + (list.length - 1);
     $("#prev").disabled = i === 0;
     $("#next").disabled = i === list.length - 1;
     paintRail();
-    last[v.page] = v.id; save("last", last);
+    paintCover();
     $("#pane").scrollTop = 0;
     if (pageChanged) window.scrollTo(0, 0);
-    document.title = v.title + " · בינה מלאכותית לאדריכלים";
+    document.title = (v.page === "home" ? "" : v.title + " · ") + "בינה מלאכותית לאדריכלים";
     if (v.page === "a") refreshA();
   }
 
   function route() {
     var h = decodeURIComponent((location.hash || "").slice(1)).split("/");
-    var page = PAGES[h[0]] ? h[0] : (current ? current.page : "guide");
-    var v = (h[1] && find(page, h[1])) || (last[page] && h.length < 2 && find(page, last[page])) || pageViews(page)[0];
-    show(v);
+    var page = PAGES[h[0]] ? h[0] : "home";
+    show((h[1] && find(page, h[1])) || pageViews(page)[0]);
   }
   function step(d) {
     var list = pageViews(current.page), i = list.indexOf(current) + d;
     if (list[i]) location.hash = key(list[i]);
   }
 
-  function buildMap() {
-    var html = '<div class="mh"></div>';
-    ["learn", "understand", "do"].forEach(function (g, i) {
-      html += '<div class="mh"><b>' + GROUPS[g][0] + "</b>" + (i + 1) + " · " + GROUPS[g][1] + "</div>";
+  /* דף הפתיחה של כל דף: שלושה שלבים, והתחנות נפתחות רק בלחיצה */
+  function buildCovers() {
+    $$("[data-stages]").forEach(function (box) {
+      var page = box.getAttribute("data-stages");
+      box.innerHTML = ["learn", "understand", "do"].map(function (g, n) {
+        var items = views.filter(function (v) { return v.page === page && v.group === g; });
+        return '<div class="stage3" data-g="' + g + '"><button class="btn" type="button" data-group="' + g + '" aria-expanded="false"><span>' + (n + 1) + " · " + GROUPS[g][1] + "</span><b>" + GROUPS[g][0] + "</b><i>" + items.length + (items.length === 1 ? " תחנה" : " תחנות") + "</i></button>" +
+          '<div class="stage3-items" hidden>' + items.map(function (v) { return '<a class="btn" href="#' + key(v) + '">' + esc(v.title) + "</a>"; }).join("") + "</div></div>";
+      }).join("");
     });
-    var sub = { guide: "מידע, תובנות ותבניות", a: "מזכויות בנייה למודל ולבדיקה", b: "מהנתון לשליטה במשרד" };
-    Object.keys(PAGES).forEach(function (p) {
-      html += '<div class="mr">' + PAGES[p].split(":")[0] + "<small>" + sub[p] + "</small></div>";
-      ["learn", "understand", "do"].forEach(function (g) {
-        html += '<div data-g="' + GROUPS[g][0] + '">' + views.filter(function (v) { return v.page === p && v.group === g; }).map(function (v) {
-          var h1 = $("h1", v.el), lead = $(".lead", v.el);
-          var d = p === "b" && lead ? lead.textContent : (h1 ? h1.textContent : "");
-          return '<a href="#' + key(v) + '">' + esc(v.title) + (d && d !== v.title ? "<small>" + esc(d) + "</small>" : "") + "</a>";
-        }).join("") + "</div>";
+  }
+  function paintCover() {
+    $$(".stage3").forEach(function (s) {
+      var open = s.getAttribute("data-g") === openGroup;
+      $(".stage3-items", s).hidden = !open;
+      var b = $("button", s); b.classList.toggle("on", open); b.setAttribute("aria-expanded", String(open));
+    });
+  }
+  function toggleGroup(g) {
+    openGroup = openGroup === g ? null : g;
+    buildRail(current.page); paintRail(); paintCover();
+  }
+
+  /* תצוגה בשלבים: רואים כותרות, והפירוט נפתח בלחיצה */
+  function makeFold(item, title) {
+    if (!title || item.classList.contains("fold")) return;
+    var more = document.createElement(item.tagName === "LI" || item.tagName === "DIV" ? "div" : "span");
+    more.className = "more";
+    var n = title.nextSibling, moved = false;
+    while (n) { var nx = n.nextSibling; more.appendChild(n); moved = true; n = nx; }
+    if (!moved || !more.textContent.trim()) return;
+    item.appendChild(more);
+    item.classList.add("fold");
+    title.classList.add("fold-t");
+    title.setAttribute("role", "button"); title.setAttribute("tabindex", "0"); title.setAttribute("aria-expanded", "false");
+  }
+  function stagify() {
+    $$(".view").forEach(function (view) {
+      if (view.classList.contains("home")) return;
+      /* כותרת משנה ומה שמתחתיה */
+      $$("h2", view).forEach(function (h) {
+        if (h.closest("[data-subview]")) return;
+        var box = document.createElement("div"); box.className = "sec-more"; box.hidden = true;
+        var n = h.nextElementSibling;
+        while (n && n.tagName !== "H2") { var nx = n.nextElementSibling; box.appendChild(n); n = nx; }
+        if (!box.children.length) return;
+        h.parentNode.insertBefore(box, h.nextSibling);
+        h.classList.add("sec-t"); h.setAttribute("role", "button"); h.setAttribute("tabindex", "0"); h.setAttribute("aria-expanded", "false");
+      });
+      $$(".grid3 > div, .steps > div > div, ul.plain > li, .gloss, .out2 > div, .app-row > div:first-child", view).forEach(function (it) {
+        if (it.closest(".sec-more") || it.closest("[data-subview]")) return;
+        makeFold(it, it.firstElementChild);
+      });
+      $$("table.t:not(.rights):not(.fit) tbody tr", view).forEach(function (tr) {
+        if (tr.closest(".sec-more") || tr.closest("[data-subview]")) return;
+        tr.classList.add("fold", "fold-row");
+        var t = tr.firstElementChild; t.classList.add("fold-t"); t.setAttribute("role", "button"); t.setAttribute("tabindex", "0"); t.setAttribute("aria-expanded", "false");
+      });
+      $$(":scope > .lead, :scope > p, .warn, .tiny", view).forEach(function (el) {
+        if (el.closest(".sec-more") || el.classList.contains("reco")) return;
+        el.classList.add("more-all");
       });
     });
-    $("#courseMap").innerHTML = html;
+    $$(".focus .tiny").forEach(function (el) { el.classList.add("more-all"); });
+    function toggle(t) {
+      if (t.classList.contains("sec-t")) {
+        var box = t.nextElementSibling; box.hidden = !box.hidden; t.setAttribute("aria-expanded", String(!box.hidden)); t.classList.toggle("open", !box.hidden);
+      } else {
+        var it = t.closest(".fold"); var open = it.classList.toggle("open"); t.setAttribute("aria-expanded", String(open));
+      }
+    }
+    document.addEventListener("click", function (e) {
+      if (e.target.closest("a")) return;
+      var t = e.target.closest(".fold-t, .sec-t"); if (t) toggle(t);
+    });
+    document.addEventListener("keydown", function (e) {
+      if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".fold-t, .sec-t")) { e.preventDefault(); toggle(e.target); }
+    });
+    var all = load("all", false);
+    function paintAll() {
+      document.body.classList.toggle("all", all);
+      var b = $("#allBtn"); b.textContent = all ? "הסתר פירוט" : "הצג הכול"; b.classList.toggle("on", all); b.setAttribute("aria-pressed", String(all));
+    }
+    $("#allBtn").addEventListener("click", function () { all = !all; save("all", all); paintAll(); });
+    paintAll();
+  }
+
+  function buildHome() {
+    $("#homeName").textContent = HOME.name;
+    if (HOME.photo) {
+      var img = new Image();
+      img.alt = HOME.name; img.onload = function () { var f = $("#homeFigure"); f.innerHTML = ""; f.appendChild(img); f.classList.add("photo"); };
+      img.src = HOME.photo;
+    }
+    if (HOME.post) {
+      var btn = $("#postBtn"), post = $("#post");
+      btn.hidden = false;
+      post.innerHTML = HOME.post.split(/\n+/).map(function (l) { return "<p>" + esc(l) + "</p>"; }).join("");
+      btn.addEventListener("click", function () { post.hidden = !post.hidden; btn.classList.toggle("on", !post.hidden); });
+    }
   }
 
   /* ---------- לשוניות בתוך שלב: הכלי, ההסבר, הפרומפט ---------- */
@@ -693,7 +778,12 @@
     initPrompts();
     initSubtabs();
     collectViews();
-    buildMap();
+    buildCovers();
+    buildHome();
+    stagify();
+    document.addEventListener("click", function (e) {
+      var g = e.target.closest("button[data-group]"); if (g) toggleGroup(g.getAttribute("data-group"));
+    });
     wireA();
     wireMenu();
     $("#prev").addEventListener("click", function () { step(-1); });
