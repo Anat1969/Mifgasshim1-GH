@@ -78,21 +78,99 @@
 
   var APPS = [
     { group: "פרטי והשראה", items: [
-      { n: "נקודות מבט", level: "פשוטה", d: "סדרת כלים לתהליכי התפתחות ושינוי.", gh: "https://github.com/Anat1969/PointOfView" },
-      { n: "שלוש טבעות: פלייסמייקינג אשדוד", level: "בינונית", d: "אטלס של מסלולים, סיפורים ומרחבי שהייה, נמדדים ביצר, רגש ושכל.", url: "https://placemaking-ashdod.vercel.app", gh: "https://github.com/Anat1969/PlaceMaking-GH" },
-      { n: "moment", level: "מורכבת", d: "תיאור טרם נכתב.", gh: "https://github.com/Anat1969/moment" }
+      { n: "נקודות מבט", level: "פשוטה", d: "סדרת כלים לתהליכי התפתחות ושינוי.", gh: "https://github.com/Anat1969/PointOfView", sk: ["React", "Supabase", "GitHub"] },
+      { n: "שלוש טבעות: פלייסמייקינג אשדוד", level: "בינונית", d: "אטלס של מסלולים, סיפורים ומרחבי שהייה, נמדדים ביצר, רגש ושכל.", url: "https://placemaking-ashdod.vercel.app", gh: "https://github.com/Anat1969/PlaceMaking-GH", sk: ["React", "מפה", "GitHub", "Vercel"] },
+      { n: "moment", level: "מורכבת", d: "תיאור טרם נכתב.", gh: "https://github.com/Anat1969/moment", sk: ["React", "Supabase", "מפה", "GitHub"] }
     ] },
     { group: "מקצועי", items: [
-      { n: "ארכיטייפ: DNA תרבותי", level: "פשוטה", d: "מסע אל עולמות התרבות וההיסטוריה.", url: "https://architaip.vercel.app", gh: "https://github.com/Anat1969/ARCHITAIP-GH" },
-      { n: "מד הפרופורציות", level: "בינונית", d: "מכשיר מדידה לקומפוזיציה, מול חמש שיטות פרופורציה.", url: "https://propotions-gh.vercel.app", gh: "https://github.com/Anat1969/Propotions-GH" },
-      { n: "דשבורד עסקים", level: "מורכבת", d: "דשבורד נתוני עסקים באשדוד.", url: "https://deshbord-gh.vercel.app", gh: "https://github.com/Anat1969/DESHBORD-GH" }
+      { n: "ארכיטייפ: DNA תרבותי", level: "פשוטה", d: "מסע אל עולמות התרבות וההיסטוריה.", url: "https://architaip.vercel.app", gh: "https://github.com/Anat1969/ARCHITAIP-GH", sk: ["GitHub", "Vercel"] },
+      { n: "מד הפרופורציות", level: "בינונית", d: "מכשיר מדידה לקומפוזיציה, מול חמש שיטות פרופורציה.", url: "https://propotions-gh.vercel.app", gh: "https://github.com/Anat1969/Propotions-GH", sk: ["React", "בדיקות", "GitHub", "Vercel"] },
+      { n: "דשבורד עסקים", level: "מורכבת", d: "דשבורד נתוני עסקים באשדוד.", url: "https://deshbord-gh.vercel.app", gh: "https://github.com/Anat1969/DESHBORD-GH", sk: ["React", "גרפים", "מפה", "בדיקות", "GitHub", "Vercel"] }
     ] }
   ];
+
+  /* ---------- תוכן: כישורים ורשימות הדף הכללי ----------
+     סימון בטקסט: ==תובנה==  **פרמטר**  ++פתרון++  !!בעיה!!  */
+  var SKILLS = [
+    { n: "צ'אט של Claude", icon: "claude", url: "https://claude.ai", yes: "**חשיבה**, **אפיון**, ניסוח פרומפטים, חקירה ושאלות על מושגים.", no: "בנייה מתמשכת של קוד או פריסה." },
+    { n: "Cowork", icon: "claude", yes: "עבודה מתמשכת על **מסמכים ומקורות** לאורך זמן.", no: "בנייה ופריסה של אפליקציה." },
+    { n: "Claude Code", icon: "claude", url: "https://claude.ai/code", yes: "**בנייה**, תיקון, בדיקות, מיזוג, **פריסה** ואוטומציה בתוך מאגר הקוד.", no: "החלטה על מה לבנות. זה נעשה לפני." },
+    { n: "GitHub", icon: "github", url: "https://github.com", yes: "**מאגר הקוד**, ענפים, Pull Requests והיסטוריית שינויים.", no: "שמירת מפתחות סודיים." },
+    { n: "Vercel", icon: "vercel", url: "https://vercel.com", yes: "**פריסה** של האפליקציה, תצוגה מקדימה לכל ענף ו**כתובת ציבורית**.", no: "אחסון נתונים. הנתונים נשמרים ב-Supabase." },
+    { n: "Supabase", icon: "supabase", url: "https://supabase.com", yes: "**בסיס נתונים**, אימות משתמשים ואחסון קבצים, עם Row Level Security.", no: "לוגיקת ממשק." },
+    { n: "Lovable", icon: "lovable", url: "https://lovable.dev", yes: "**אב טיפוס מהיר** של אפליקציה מלאה, לפי פרומפטים חדים.", no: "מערכות שדורשות שליטה מלאה בקוד ובתשתית." },
+    { n: "Canva", icon: "canva", url: "https://www.canva.com", yes: "**תוצרים עיצוביים** שנשמרים כקובץ שניתן לעריכה: פלייר, פוסט, מצגת קצרה.", no: "לוגיקה או נתונים." }
+  ];
+  var LIST_META = {
+    principles: { titles: true, ex: true, add: "הוספת תובנה" },
+    choose: { titles: false, ex: true, add: "הוספת שורה" },
+    flow: { titles: true, add: "הוספת שלב" },
+    tips: { titles: true, add: "הוספת טיפ" },
+    envs: { titles: true, add: "הוספת סביבה" },
+    safety: { titles: true, add: "הוספת כלל" },
+    verify: { titles: false, add: "הוספת נקודה" }
+  };
+  var LISTS = {
+    principles: [
+      { t: "אפיון לפני קוד", x: "==**שלוש שורות** על הבעיה, המשתמש והתוצר הרצוי.== !!בלי אפיון, הקוד מתחיל לנחש.!!", ex: "\"אדריכל במשרד קטן מזין מספר מגרש, ומקבל טבלת זכויות עם מקור לכל ערך.\"" },
+      { t: "בדיקה לפני הבא", x: "==כל צעד נבדק לפני שממשיכים.== !!בדיקה שנדחית לסוף מכפילה את התיקונים.!!", ex: "משווים **שלושה ערכים** מהטבלה לתב\"ע, ורק אז בונים את המודל." },
+      { t: "קובץ הכללים כחוזה", x: "==כל מה שחוזר **פעם שנייה** נכנס לקובץ הכללים של הפרויקט.== הוא לא נאמר שוב בצ'אט.", ex: "\"תמיד בעברית, מימין לשמאל\" נכתב פעם אחת ב-CLAUDE.md." },
+      { t: "קטן וברור", x: "==**משימה אחת** בכל פעם, עם תוצאה שאפשר לבדוק.== !!משימה גדולה מקבלת תוצאה מטושטשת.!!", ex: "++\"הוסף עמודת מקור לטבלה\"++, ולא !!\"שפר את הכלי\"!!." },
+      { t: "לא מדמיינים קבצים", x: "==אם לא בטוחים במה שיש בקובץ, פותחים אותו.== !!ניחוש על קוד או נתונים יוצר באגים שאי אפשר לאתר.!!", ex: "לפני שמחשבים אחוזי בנייה, פותחים את טבלת הזכויות עצמה." },
+      { t: "כל כלי לתפקיד שלו", x: "==ייעוץ וניסוח ב**צ'אט**, מסמכים מתמשכים ב**קוורק**, בנייה ופריסה ב**קלוד קוד**.==", ex: "השאלה \"מה לבנות\" נשאלת בצ'אט, והבנייה עצמה נעשית ב-Claude Code." }
+    ],
+    choose: [
+      { x: "**שאלה או החלטה:** ==צ'אט.==", ex: "\"איזה מבנה נתונים מתאים למעקב היתרים?\"" },
+      { x: "**מסמך שחוזר לאורך זמן:** ==קוורק.==", ex: "פרוגרמה שמתעדכנת מפגישה לפגישה." },
+      { x: "**אפליקציה שתיבנה, תיבדק ותיפרס:** ==Claude Code==, עם GitHub, Vercel ו-Supabase.", ex: "כלי מיפוי הזכויות של מפגש א." },
+      { x: "**אב טיפוס מהיר לפני בנייה אמיתית:** ==Lovable.==", ex: "מסך אחד להדגמה ללקוח." },
+      { x: "**תוצר שמודפס או מופץ:** ==Canva.==", ex: "פלייר לערב תושבים." }
+    ],
+    flow: [
+      { t: "הגדרת הבעיה", x: "==**משפט אחד**: מי משתמש, במה, ומה התוצר.== !!אם אי אפשר לנסח, הבעיה עוד לא מוגדרת.!!" },
+      { t: "אפיון", x: "קובץ **SPEC.md** קצר: מטרה, משתמשים, מסכים, נתונים, ומה לא נבנה. ==מאושר לפני קוד.==" },
+      { t: "מבנה נתונים", x: "טבלאות וקשרים ב-**Supabase**, עם **Row Level Security** מההתחלה. ==מיגרציות נשמרות כקבצים.==" },
+      { t: "בנייה בשלבים", x: "קודם הלוגיקה והנתונים, אחר כך הממשק. ==כל שלב נבדק לפני שממשיכים.==" },
+      { t: "בדיקה", x: "בדיקות אוטומטיות על הלוגיקה, ובדיקה ידנית של כל כפתור ומסך. ==בדיקה ירוקה היא תנאי למיזוג.==" },
+      { t: "מיזוג ל-main", x: "==רק אחרי בדיקה ירוקה.== הודעת commit ברורה, ו-**Pull Request** עם תיאור של מה שהשתנה." },
+      { t: "פריסה ב-Vercel", x: "מיד אחרי המיזוג. ==בודקים את הכתובת הסופית.== !!לא רק את התצוגה המקדימה.!!" },
+      { t: "תיעוד", x: "האפליקציה נרשמת באפליקציית האפליקציות, עם כתובת **GitHub** וכתובת **Vercel**." },
+      { t: "מסירה", x: "==כתובת סופית ו**שורה אחת** שמסבירה מה נבנה.== !!בלי סיכום של כל הצעדים.!!" }
+    ],
+    tips: [
+      { t: "תנו הקשר בתחילת השיחה", x: "==מטרה, מסכים קיימים והכללים.== !!מה שלא כתוב, המודל ינחש.!!" },
+      { t: "בקשו תוצאה שאפשר לבדוק", x: "++\"הרץ את הבדיקות והחזר את הפלט\"++ עדיף על !!\"תוודא שזה עובד\"!!." },
+      { t: "פצלו שיחות", x: "==שיחה אחת לאפיון, ושיחה נפרדת לכל מודול.== !!שיחה ארוכה מאבדת הקשר.!!" },
+      { t: "שמרו תמיד", x: "==commit קטן אחרי כל משימה שעובדת.== חזרה לנקודה טובה צריכה להיות פשוטה." },
+      { t: "בדקו את התוצאה במקום המקורי", x: "דף שנבנה נפתח בדפדפן. ==מספר שחושב נבדק מול חישוב ידני.==" },
+      { t: "אל תסמכו על \"זה עובד\"", x: "==בקשו הוכחה: פלט בדיקה, צילום מסך, או מספר מהמקור.==" },
+      { t: "כשמשהו משתבש, חזרו לאפיון", x: "לעיתים !!האפיון לא ברור!!, ולא הקוד שבור." },
+      { t: "מילות חשיבה מדויקות", x: "==**זקק**, **חלץ**, **בחן**.== הן מכוונות את המודל יותר מ\"תעשה טוב\"." }
+    ],
+    envs: [
+      { t: "צ'אט", x: "שיחה חד-פעמית. ==ההקשר כולו חייב להיות בפרומפט.==" },
+      { t: "פרויקט", x: "הוראות ומסמכים שנשארים. ==הכללים הקבועים שייכים לכאן.==" },
+      { t: "ניסוי", x: "==בדיקה על קלט ידוע== לפני שמשתמשים בפרומפט בתוצר אמיתי." }
+    ],
+    safety: [
+      { t: "מפתחות", x: "!!אף מפתח סודי לא נכנס לקוד, לשיחה או ל-Git.!! ++מפתחות נשמרים ב-.env או בהגדרות הפריסה.++" },
+      { t: "Row Level Security", x: "++מופעל בכל טבלה ב-Supabase.++ !!טבלה בלי RLS היא טבלה שכל אחד יכול לקרוא.!!" },
+      { t: "סקילים ממאגרים לא מוכרים", x: "++קוראים ומסכמים לפני התקנה.++ !!לא מריצים סקריפטים שמגיעים איתם בלי בדיקה.!!" },
+      { t: "מחיקה", x: "מחיקה של נתונים או של קבצים דורשת ==אישור מפורש.==" },
+      { t: "פריסה", x: "לפני פרסום, ++בודקים שאין נתונים אישיים או סודיים בתצוגה הציבורית.++" }
+    ],
+    verify: [
+      { x: "שמות הפקודות, הקבצים שנקראים אוטומטית, ואופן טעינת הסקילים ב-Claude Code, ==מול התיעוד הרשמי.==" },
+      { x: "מגבלות החינם והמכסות של **Vercel**, **Supabase** ו-**Lovable** לסטודנטים." },
+      { x: "תהליך ההתקנה של gh ושל Supabase CLI על מחשבי הסטודנטים, במיוחד ב-**Windows**." },
+      { x: "התבניות בדף נבדקו רק בתוך הדף. !!הן עוד לא הורצו על פרויקט אמיתי.!!" }
+    ]
+  };
 
   var HOME = {
     name: "אד' ענת שטיבלמן",
     photo: "assets/anat.png",
-    post: "רומא, מילאנו, וונציה. אשדוד.\n\nקולנוע, הדרכת טיולים... תמיד מישהו לספר את הסיפור. ואני, מתלבטת אם זה תפקיד או הרגל.\n\nעכשיו כלים. לא עוד תוכנית."
+    post: "רומא, מילאנו, וונציה. אשדוד.\n\nקולנוע, הדרכת טיולים... תמיד לספר את הסיפור. ואני, מתלבטת אם זה תפקיד או הרגל.\n\nעכשיו כלים. לא עוד תוכנית."
   };
   var PAGES = { home: "בית", guide: "כללי", a: 'מפגש א: מבחן התב"ע', b: "מפגש ב: ניהול הסטודיו" };
   var GROUPS = { open: ["פתיחה", ""], learn: ["נלמד", "ידע"], understand: ["נבין", "הבנה"], do: ["נעשה", "יישום"] };
@@ -145,15 +223,121 @@
       '<div class="bar-nums"><span class="num">' + fmt(a, 0) + " מתוך " + fmt(b, 0) + ' ש"ח</span><span class="num">' + pct + "%</span></div></div>";
   }
 
+  function icon(k, name) {
+    var p = window.ICONS && window.ICONS[String(k).toLowerCase()];
+    return p ? '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="' + p + '"/></svg>'
+      : '<span class="ico tile" aria-hidden="true">' + esc(String(name).charAt(0)) + "</span>";
+  }
   function buildApps() {
     $("#appsList").innerHTML = APPS.map(function (g) {
-      return "<div><h2>" + esc(g.group) + "</h2>" + g.items.map(function (a) {
+      return "<div><h3>" + esc(g.group) + "</h3>" + g.items.map(function (a) {
         return '<div class="app-row"><div><b>' + esc(a.n) + '</b> <span class="tiny">· ' + esc(a.level) + '</span><div class="small muted">' + esc(a.d) + "</div></div>" +
+          '<div class="chips" aria-label="כישורים">' + a.sk.map(function (k) {
+            return '<span class="chip">' + (window.ICONS && window.ICONS[k.toLowerCase()] ? icon(k, k) : "") + esc(k) + "</span>";
+          }).join("") + "</div>" +
           '<div class="links">' +
           (a.url ? '<a class="btn small dark" href="' + a.url + '" target="_blank" rel="noopener">פתיחה</a>' : "") +
           '<a class="btn small" href="' + a.gh + '" target="_blank" rel="noopener">קוד</a></div></div>';
       }).join("") + "</div>";
     }).join("");
+  }
+
+  /* ---------- טקסט עשיר, משפט בשורה, רשימות ועריכה ---------- */
+  function lines(h) {
+    return h.replace(/(?<!\.)([.?!])((?:<\/[a-z]+>)*)\s+(?=\S)/g, function (m, p1, p2) { return p1 + p2 + "<br>"; });
+  }
+  function rich(t) {
+    var h = esc(t || "");
+    h = h.replace(/==(.+?)==/g, "<mark>$1</mark>").replace(/\+\+(.+?)\+\+/g, '<span class="good">$1</span>')
+      .replace(/!!(.+?)!!/g, '<span class="bad">$1</span>').replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+    return lines(h);
+  }
+  var edits = load("edits", { lists: {}, texts: {} });
+  if (!edits.lists) edits.lists = {};
+  if (!edits.texts) edits.texts = {};
+  var seen = load("seen", []);
+  var editing = false;
+  function getList(id) { return edits.lists[id] || LISTS[id]; }
+  function ownList(id) { if (!edits.lists[id]) edits.lists[id] = JSON.parse(JSON.stringify(LISTS[id])); return edits.lists[id]; }
+  function saved() {
+    save("edits", edits);
+    var m = $("ai-menu"); if (m) { try { m.status = "נשמר"; } catch (e) { /* הרכיב עוד לא נטען */ } }
+  }
+  function renderLists() {
+    $$("ol[data-list]").forEach(function (ol) {
+      var id = ol.getAttribute("data-list"), meta = LIST_META[id], list = getList(id);
+      ol.classList.toggle("titled", !!meta.titles);
+      if (editing) {
+        ol.innerHTML = list.map(function (it, i) {
+          return '<li class="ed">' +
+            (meta.titles ? '<input type="text" data-f="t" data-i="' + i + '" value="' + esc(it.t || "") + '" placeholder="כותרת" aria-label="כותרת">' : "") +
+            '<textarea rows="2" data-f="x" data-i="' + i + '" placeholder="הטקסט" aria-label="טקסט">' + esc(it.x || "") + "</textarea>" +
+            (meta.ex ? '<input type="text" data-f="ex" data-i="' + i + '" value="' + esc(it.ex || "") + '" placeholder="דוגמה (לא חובה)" aria-label="דוגמה">' : "") +
+            '<button class="btn small" type="button" data-del="' + i + '">מחיקה</button></li>';
+        }).join("") + '<li class="ed-foot"><button class="btn dark" type="button" data-add>' + meta.add + '</button><span>סימון בטקסט: ==תובנה== · **פרמטר** · ++פתרון++ · !!בעיה!!</span></li>';
+        return;
+      }
+      ol.innerHTML = list.map(function (it, i) {
+        var body = rich(it.x) + (it.ex ? '<span class="ex"><i>דוגמה</i>' + rich(it.ex) + "</span>" : "");
+        if (!meta.titles) return "<li><div class=\"line\">" + body + "</div></li>";
+        var k = "l:" + id + ":" + i;
+        return '<li class="fold' + (seen.indexOf(k) !== -1 ? " seen" : "") + '" data-seen="' + k + '"><b class="fold-t" role="button" tabindex="0" aria-expanded="false">' + esc(it.t) + '</b><div class="more">' + body + "</div></li>";
+      }).join("");
+    });
+  }
+  function buildSkills() {
+    $("#skills").innerHTML = "<thead><tr><th></th><th>כישור</th><th>למה כן</th><th>למה לא</th></tr></thead><tbody>" + SKILLS.map(function (k, i) {
+      var name = icon(k.icon, k.n) + (k.url ? '<a href="' + k.url + '" target="_blank" rel="noopener">' + esc(k.n) + "</a>" : esc(k.n));
+      return '<tr><td class="num muted">' + (i + 1) + '</td><td class="sk">' + name + '</td><td class="yes"><i>✓</i><span>' + rich(k.yes) + '</span></td><td class="no"><i>✕</i><span>' + rich(k.no) + "</span></td></tr>";
+    }).join("") + "</tbody>";
+  }
+  function splitSentences() {
+    $$(".view p, .view dd, .view .warn, .view li, .focus-head p").forEach(function (el) {
+      if (el.closest("pre, .prompt, ol[data-list], .home-post") || el.querySelector("div, p, ol, ul, input, button, table, label")) return;
+      el.innerHTML = lines(el.innerHTML);
+    });
+  }
+  function paintEditable() {
+    $$(".view > h1").forEach(function (h) {
+      if (h.id === "fitTitle") return;
+      if (editing) h.setAttribute("contenteditable", "plaintext-only"); else h.removeAttribute("contenteditable");
+    });
+    var post = $("#post");
+    if (editing) post.setAttribute("contenteditable", "plaintext-only"); else post.removeAttribute("contenteditable");
+  }
+  function applyTexts() {
+    views.forEach(function (v) {
+      var t = edits.texts["h1:" + key(v)], h = $("h1", v.el);
+      if (t && h && h.id !== "fitTitle") h.textContent = t;
+    });
+  }
+  function setEditing(v) {
+    editing = v;
+    document.body.classList.toggle("editing", v);
+    $("#editNote").hidden = !v; $("#editDone").hidden = !v;
+    renderLists(); paintEditable(); setMenu();
+  }
+  function wireEditing() {
+    document.addEventListener("input", function (e) {
+      var t = e.target, ol = t.closest && t.closest("ol[data-list]");
+      if (ol && t.matches("[data-f]")) {
+        ownList(ol.getAttribute("data-list"))[Number(t.getAttribute("data-i"))][t.getAttribute("data-f")] = t.value;
+        saved(); return;
+      }
+      if (!editing) return;
+      if (t.matches && t.matches(".view > h1")) { edits.texts["h1:" + key(current)] = t.textContent.trim(); saved(); }
+      if (t.id === "post") { edits.texts.post = t.innerText.trim(); saved(); }
+    });
+    document.addEventListener("click", function (e) {
+      var b = e.target.closest && e.target.closest("[data-add], [data-del]"); if (!b) return;
+      var ol = b.closest("ol[data-list]"); if (!ol) return;
+      var id = ol.getAttribute("data-list"), list = ownList(id);
+      if (b.hasAttribute("data-add")) list.push(LIST_META[id].titles ? { t: "", x: "" } : { x: "" });
+      else { if (!window.confirm("למחוק את הפריט?")) return; list.splice(Number(b.getAttribute("data-del")), 1); }
+      saved(); renderLists();
+      if (b.hasAttribute("data-add")) { var f = $$("li.ed", ol).pop(); if (f) $("input, textarea", f).focus(); }
+    });
+    $("#editDone").addEventListener("click", function () { setEditing(false); });
   }
 
   /* ---------- פרומפט: הצגה, הסתרה, העתקה ---------- */
@@ -319,10 +503,11 @@
         if (it.closest(".sec-more") || it.closest("[data-subview]")) return;
         makeFold(it, it.firstElementChild);
       });
-      $$("table.t:not(.rights):not(.fit) tbody tr", view).forEach(function (tr) {
-        if (tr.closest(".sec-more") || tr.closest("[data-subview]")) return;
-        tr.classList.add("fold", "fold-row");
-        var t = tr.firstElementChild; t.classList.add("fold-t"); t.setAttribute("role", "button"); t.setAttribute("tabindex", "0"); t.setAttribute("aria-expanded", "false");
+      var vk = view.getAttribute("data-page") + "/" + view.getAttribute("data-id");
+      $$(".fold:not([data-seen]), .sec-t", view).forEach(function (el, i) {
+        if (el.closest("ol[data-list]")) return;
+        var k = "s:" + vk + ":" + i; el.setAttribute("data-seen", k);
+        if (seen.indexOf(k) !== -1) el.classList.add("seen");
       });
       $$(":scope > .lead, :scope > p, .warn, .tiny", view).forEach(function (el) {
         if (el.closest(".sec-more") || el.classList.contains("reco")) return;
@@ -330,11 +515,24 @@
       });
     });
     $$(".focus .tiny").forEach(function (el) { el.classList.add("more-all"); });
+    function markSeen(el) {
+      var k = el.getAttribute("data-seen"); if (!k) return;
+      el.classList.add("seen");
+      if (seen.indexOf(k) === -1) { seen.push(k); save("seen", seen); }
+      /* כשכל הרשומות בתחנה נפתחו, התחנה מסומנת כנלמדה */
+      if (!current || current.group === "open") return;
+      var all = $$("[data-seen]", current.el);
+      if (all.length && all.every(function (x) { return x.classList.contains("seen"); }) && done.indexOf(key(current)) === -1) {
+        done.push(key(current)); save("done", done); paintRail();
+      }
+    }
     function toggle(t) {
       if (t.classList.contains("sec-t")) {
         var box = t.nextElementSibling; box.hidden = !box.hidden; t.setAttribute("aria-expanded", String(!box.hidden)); t.classList.toggle("open", !box.hidden);
+        if (!box.hidden) markSeen(t);
       } else {
         var it = t.closest(".fold"); var open = it.classList.toggle("open"); t.setAttribute("aria-expanded", String(open));
+        if (open) markSeen(it);
       }
     }
     document.addEventListener("click", function (e) {
@@ -356,11 +554,16 @@
   function buildHome() {
     $("#homeName").textContent = HOME.name;
     if (HOME.photo) { var img = $("#homePhoto"); img.alt = HOME.name; img.src = HOME.photo; img.hidden = false; }
-    if (HOME.post) {
+    var text = edits.texts.post || HOME.post;
+    if (text) {
       var post = $("#post");
-      post.innerHTML = HOME.post.split(/\n+/).map(function (l) { return "<p>" + esc(l) + "</p>"; }).join("");
+      post.innerHTML = text.split(/\n+/).map(function (l) { return "<p>" + lines(esc(l)) + "</p>"; }).join("");
       post.hidden = false;
     }
+    $$("[data-count]").forEach(function (el) {
+      var n = stations().filter(function (v) { return v.page === el.getAttribute("data-count"); }).length;
+      el.textContent = n + " תחנות";
+    });
   }
 
   /* ---------- לשוניות בתוך שלב: הכלי, ההסבר, הפרומפט ---------- */
@@ -759,15 +962,24 @@
   }
 
   /* ---------- כפתור הלוגו: פעולות המערכת בתוכו ---------- */
-  function wireMenu() {
-    if (!window.customElements || !customElements.whenDefined) return;
-    customElements.whenDefined("ai-menu").then(function () {
-      var m = $("ai-menu"); if (!m) return;
+  function setMenu() {
+    var m = $("ai-menu"); if (!m) return;
+    try {
       m.items = [
-        { label: "איפוס סימוני נלמד", onSelect: function () { done = []; save("done", done); paintRail(); } },
+        { label: "מצב עריכה", pressed: editing, onSelect: function () { setEditing(!editing); } },
+        { label: "העתקת העריכות שלי", onSelect: function () { copy(JSON.stringify(edits, null, 1), null); m.status = "העריכות הועתקו"; } },
+        { label: "שחזור הטקסטים המקוריים", onSelect: function () {
+          if (!window.confirm("למחוק את כל העריכות ולחזור לטקסטים המקוריים?")) return;
+          edits = { lists: {}, texts: {} }; save("edits", edits); location.reload();
+        } },
+        { label: "איפוס סימוני נלמד", onSelect: function () { done = []; seen = []; save("done", done); save("seen", seen); location.reload(); } },
         { label: "איפוס המגרש לערכי הדמו", onSelect: function () { delete A.data[A.plot]; saveA(); refreshA(); } }
       ];
-    });
+    } catch (e) { /* הרכיב עוד לא נטען */ }
+  }
+  function wireMenu() {
+    if (!window.customElements || !customElements.whenDefined) return;
+    customElements.whenDefined("ai-menu").then(setMenu);
   }
 
   /* ---------- הפעלה ---------- */
@@ -776,10 +988,15 @@
     buildApps();
     initPrompts();
     initSubtabs();
+    buildSkills();
     collectViews();
     buildCovers();
     buildHome();
+    renderLists();
+    splitSentences();
     stagify();
+    applyTexts();
+    wireEditing();
     document.addEventListener("click", function (e) {
       var g = e.target.closest("button[data-group]"); if (g) toggleGroup(g.getAttribute("data-group"));
     });
