@@ -50,10 +50,11 @@ function resize() {
   camera.updateProjectionMatrix();
   return true;
 }
+const TONE = { n: 0xbdbdba, g: 0x7fbf95, y: 0xe0c060, r: 0xc9584c };
 function build() {
   clearGroup();
   const s = window.TOOL.snapshot();
-  const R = s.R, g = s.g, P = g.P;
+  const R = s.R, g = s.g, P = g.P, z = s.zone;
   const ok = (v) => v !== null && v !== undefined && v !== "";
 
   const ground = new THREE.Mesh(
@@ -64,13 +65,21 @@ function build() {
   ground.position.set(P / 2, 0, P / 2);
   group.add(ground);
   group.add(lineOf(rectPts(0, 0, P, P, 0.02), 0x151515));
-  if (ok(R.ss) && ok(R.sr) && ok(R.sf)) group.add(lineOf(rectPts(R.ss, R.sr, P - R.ss, P - R.sf, 0.04), 0x8a8a8a, true));
-  if (ok(R.h)) group.add(lineOf(rectPts(0, 0, P, P, R.h), 0xd4a017));
+
+  /* המעטפת המותרת: קווי הבניין, עד הגובה המרבי */
+  const EN = 0x6f859c;
+  group.add(lineOf(rectPts(z.x1, z.y1, z.x2, z.y2, 0.04), EN, true));
+  if (ok(R.h)) {
+    group.add(lineOf(rectPts(z.x1, z.y1, z.x2, z.y2, R.h), EN, true));
+    [[z.x1, z.y1], [z.x2, z.y1], [z.x2, z.y2], [z.x1, z.y2]].forEach((c) => {
+      group.add(lineOf([new THREE.Vector3(c[0], 0, c[1]), new THREE.Vector3(c[0], R.h, c[1])], EN, true));
+    });
+  }
 
   if (s.mass) {
     const body = new THREE.Mesh(
       new THREE.BoxGeometry(g.w, g.H, g.d),
-      new THREE.MeshStandardMaterial({ color: s.breach ? 0xb83a2e : 0xb9b9b6, roughness: 0.85, transparent: true, opacity: 0.94 })
+      new THREE.MeshStandardMaterial({ color: TONE[s.tone] || TONE.n, roughness: 0.85, transparent: true, opacity: 0.95 })
     );
     body.position.set(g.ox + g.w / 2, g.H / 2, g.oy + g.d / 2);
     group.add(body);
@@ -78,7 +87,7 @@ function build() {
     edges.position.copy(body.position);
     group.add(edges);
     for (let i = 1; i < s.a.fl; i++) {
-      group.add(lineOf(rectPts(g.ox, g.oy, g.ox + g.w, g.oy + g.d, i * s.fl), s.breach ? 0x7a2219 : 0x6b6b6b));
+      group.add(lineOf(rectPts(g.ox, g.oy, g.ox + g.w, g.oy + g.d, i * s.fl), 0x6b6b6b));
     }
   }
 
@@ -86,7 +95,7 @@ function build() {
   const key = s.plot + ":" + Math.round(P);
   if (key !== framed) {
     framed = key;
-    const top = Math.max(ok(R.h) ? R.h : 0, s.mass ? g.H : 0, 6);
+    const top = Math.max(ok(R.h) ? R.h : 0, g.H, 6);
     controls.target.set(P / 2, top / 3, P / 2);
     camera.position.set(P * 1.9, Math.max(P, top) * 1.35, P * 2.15);
     controls.update();

@@ -602,3 +602,49 @@ table.fit th.alt-col b { font-size: 20px; font-weight: 300; color: var(--ink); }
   #vp .viewport { height: 300px; }
   .home-figure svg { width: 74%; }
 }
+
+
+/* =====================================================================
+   שלוש חלופות זו לצד זו, מודלים משורטטים, וכפתורי פרומפט שקטים
+   ===================================================================== */
+code, .import textarea, .io-in textarea { font-family: inherit; font-size: inherit; direction: rtl; }
+.prompt-bar .lnk { border: 0; background: none; padding: 2px 4px; font-size: 13px; color: var(--g3); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--g2); transition: color .2s, text-decoration-color .2s; }
+.prompt-bar .lnk:hover { color: var(--ink); text-decoration-color: var(--ink); }
+.prompt-bar { gap: 8px; }
+
+.model svg, .tmodel svg { display: block; width: 100%; height: 100%; }
+.model { height: 36vh; min-height: 240px; }
+.model.big { height: 46vh; min-height: 300px; }
+.ln { display: inline-block; width: 22px; height: 0; border-top: 1.5px solid var(--ink); vertical-align: middle; }
+.ln.dash { border-top: 1.5px dashed #6f859c; }
+
+.step.io.tri { display: block; }
+.tri-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; background: #fff; padding: 10px 16px; }
+.tri-top .io-q { margin: 0 !important; }
+.step.io.tri > .io-act { background: #fff; margin: 0; padding: 4px 16px 18px; }
+.trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+.tcol { background: #fff; padding: 10px 14px 14px; min-width: 0; box-shadow: inset 0 3px 0 var(--g2); }
+.tcol.on { box-shadow: var(--sh), inset 0 3px 0 var(--ink); }
+.tmodel { display: block; width: 100%; height: 34vh; min-height: 220px; border: 0; background: #fafaf9; padding: 0; cursor: pointer; }
+div.tmodel { cursor: default; }
+.thead { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-top: 8px; }
+.thead b { font-size: 18px; font-weight: 500; }
+.tfit { font-size: 13px; color: var(--g3); display: inline-flex; align-items: center; gap: 6px; }
+.tdata { font-size: 13.5px; color: var(--g3); line-height: 1.5; margin: 2px 0 6px !important; }
+.tdata b { color: var(--ink); font-weight: 500; }
+.orbit { margin-top: 10px; background: #fff; padding: 10px 16px; }
+.orbit #vp .viewport { height: 44vh; }
+.trio.small { margin: 0 0 12px; gap: 6px; }
+.trio.small .tcol { padding: 8px 10px 10px; text-align: center; }
+.trio.small .tmodel { height: 20vh; min-height: 150px; }
+.tscore { display: flex; justify-content: center; align-items: baseline; gap: 8px; margin-top: 4px; }
+.tscore b { font-size: 34px; font-weight: 300; line-height: 1.1; }
+.tscore span { font-size: 13px; color: var(--g3); }
+.tword { font-size: 13.5px; display: flex; justify-content: center; align-items: center; gap: 6px; }
+table.fit th.alt-col { font-size: 12px; color: var(--g3); font-weight: 500; }
+
+@media (max-width: 900px) {
+  .trio, .trio.small { grid-template-columns: 1fr; }
+  .tmodel { height: 240px; }
+  .trio.small .tmodel { height: 170px; }
+}

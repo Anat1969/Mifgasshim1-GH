@@ -61,7 +61,7 @@
           </nav>
         </div>
         <figure class="home-figure" id="homeFigure">
-          <svg id="story" viewBox="0 0 400 400" role="img" aria-label="סיפור החלופות: מגרש, קווי בניין, גובה מרבי, שלוש חלופות והכרעה"></svg>
+          <svg id="story" viewBox="0 0 320 300" role="img" aria-label="סיפור החלופות: מגרש, קווי בניין, גובה מרבי, שלוש חלופות והכרעה"></svg>
           <figcaption><p id="storyCap" aria-live="polite"></p><button class="btn small" type="button" id="storyReplay">הפעלה מחדש</button> <span class="demo-tag">דוגמה · מגרש 633</span></figcaption>
         </figure>
       </section>
@@ -315,9 +315,9 @@
         <div class="step io" data-step="extract" data-label="טבלת זכויות">
           <div class="io-in"><h3>קלט</h3><p class="io-q">פרומפט החילוץ, והתשובה של הבינה</p>
             <div class="prompt" data-he="p1h" data-en="p1e" data-label="פרומפט לחילוץ הזכויות"></div>
-            <div class="prompt" data-he="pjson" data-label="תוספת: פלט שנקלט בכלי"></div>
             <div class="import">
-              <textarea id="importBox" aria-label="הדבקת JSON" placeholder='{"plot": 2000, "cov": 35, "bp": 250, "floors": 8, "h": 28, "units": 40, "sf": 5, "ss": 4, "sr": 4}'></textarea>
+              <p class="io-q">התשובה של הבינה</p>
+              <textarea id="importBox" rows="5" dir="rtl" aria-label="התשובה של הבינה" placeholder="מדביקים כאן את התשובה של הבינה, והכלי קולט ממנה את הערכים."></textarea>
               <div class="io-act"><button class="btn dark" type="button" id="importBtn">קליטת התשובה</button><button class="btn" type="button" id="demoExtract">חילוץ ערכי הדמו</button></div>
               <span id="importMsg" class="tiny"></span>
             </div>
@@ -363,13 +363,33 @@
             <div class="prompt" data-he="p2h" data-en="p2e" data-label="פרומפט למודל ולחלופות"></div>
             <div class="io-act"><button class="btn dark" type="button" id="envGo">בניית המעטפת</button></div>
           </div>
-          <div class="io-out"><h3>פלט</h3><div data-slot="vp" data-when="env"></div></div>
-        </div>
-        <div class="step io" data-step="mass" data-label="חלופות">
-          <div class="io-in"><h3>קלט</h3><p class="io-q">שטח קומה ומספר קומות לכל חלופה</p>
-            <div id="alts"></div>
+          <div class="io-out"><h3>פלט</h3>
+            <div id="envWrap" hidden>
+              <p class="verdict" id="envTitle"></p>
+              <div class="model big" id="envOut"></div>
+              <div class="legend">
+                <span><i class="ln solid"></i>גבול המגרש</span>
+                <span><i class="ln dash"></i>המעטפת המותרת: קווי הבניין, עד הגובה המרבי</span>
+              </div>
+              <p class="tiny">המגרש משורטט כריבוע בשטח הנתון, כי לא נטענה שכבת מגרש.</p>
+            </div>
           </div>
-          <div class="io-out"><h3>פלט</h3><div data-slot="vp" data-when="mass"></div></div>
+        </div>
+        <div class="step io tri" data-step="mass" data-label="חלופות">
+          <div class="tri-top">
+            <p class="io-q">שלוש חלופות בתוך המעטפת. לכל אחת שטח קומה ומספר קומות.</p>
+            <div class="seg" id="viewSeg" aria-label="תצוגה" hidden>
+              <button class="btn on" type="button" data-v="iso">תלת-ממד</button>
+              <button class="btn" type="button" data-v="plan">תוכנית</button>
+              <button class="btn" type="button" data-v="elev">חזית</button>
+            </div>
+          </div>
+          <div class="io-act" id="massAct"><button class="btn dark" type="button" id="massGo">בניית שלוש החלופות</button></div>
+          <div class="trio" id="trio" hidden></div>
+          <div class="orbit" id="orbit" hidden>
+            <button class="btn small" type="button" id="orbitBtn">סיבוב בתלת-ממד</button>
+            <div data-slot="vp"></div>
+          </div>
         </div>
       </section>
 
@@ -399,6 +419,7 @@
           </div>
           <div class="io-out"><h3>פלט</h3>
             <div id="fitWrap" hidden>
+              <div class="trio small" id="fitTrio"></div>
               <table class="t fit" id="fit"></table>
               <div class="legend">
                 <span><i class="dot g"></i>עומד, מרווח של 5% לפחות</span>
@@ -417,6 +438,7 @@
           </div>
           <div class="io-out"><h3>פלט</h3>
             <div id="decideWrap" hidden>
+              <div class="model" id="decideModel"></div>
               <p class="verdict" id="fitTitle"></p>
               <p class="reco" id="reco"></p>
             </div>
@@ -464,21 +486,11 @@
     <!-- חלון המודל: נכנס למסגרת רק בצעד שבו המודל נבנה -->
     <div id="vpStore" hidden>
       <div id="vp">
-        <p class="verdict" id="headline"></p>
-        <div class="focus-tools">
-          <div class="seg" id="viewSeg" aria-label="תצוגה">
-            <button class="btn on" type="button" data-v="iso">תלת-ממד</button>
-            <button class="btn" type="button" data-v="plan">תוכנית</button>
-            <button class="btn" type="button" data-v="elev">חזית</button>
-          </div>
-          <span class="demo-tag" id="vpDemo" hidden>דוגמה · ערכי דמו</span>
-        </div>
+        <p class="io-q" id="headline"></p>
         <div class="viewport">
-          <div id="iso3d"><p id="noThree" hidden>התצוגה התלת-ממדית דורשת חיבור לאינטרנט לטעינת הספרייה. התצוגות תוכנית וחזית זמינות תמיד.</p></div>
-          <div id="flat" hidden></div>
-          <span class="hint" id="hint">סיבוב, הזזה וזום בעכבר · צהוב: גובה מרבי · מקווקו: קווי בניין · אדום: חריגה</span>
+          <div id="iso3d"><p id="noThree" hidden>התצוגה המסתובבת דורשת חיבור לאינטרנט לטעינת הספרייה.</p></div>
+          <span class="hint" id="hint">סיבוב, הזזה וזום בעכבר · מקווקו: המעטפת המותרת</span>
         </div>
-        <div class="metrics" id="metrics"></div>
       </div>
     </div>
   </main>
