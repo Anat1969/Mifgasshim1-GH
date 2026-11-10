@@ -107,8 +107,7 @@ ai-menu { flex: none; }
 .rail-foot { padding: 8px 20px 0; font-size: 12px; color: var(--g3); border-top: 1px solid var(--g2); margin-top: 6px; }
 
 .stage { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 0; min-width: 0; }
-body[data-page="a"] .stage { grid-template-columns: minmax(0, 38fr) minmax(0, 62fr); }
-body[data-page="b"] .stage { grid-template-columns: minmax(0, 62fr) minmax(0, 38fr); }
+
 
 .pane { min-height: 0; overflow-y: auto; padding: 0 32px 16px; }
 .pane-top {
@@ -215,7 +214,7 @@ body[data-page="home"] .pane { padding: 0; }
 
 .view > h1 { font-size: 27px; font-weight: 300; line-height: 1.25; margin: 2px 0 8px; }
 .view > .lead { color: var(--g3); margin-bottom: 18px; }
-body[data-page="a"] .view > h1 { font-size: 22px; font-weight: 400; }
+
 .view h2 { font-size: 17px; font-weight: 700; margin: 22px 0 6px; }
 .view h3 { font-size: 13px; font-weight: 500; color: var(--g3); margin: 18px 0 2px; padding-bottom: 4px; border-bottom: 1px solid var(--ink); }
 .view p, .nlist .more, .nlist .line { text-wrap: pretty; }
@@ -502,4 +501,104 @@ body[data-page="b"] .out2 { margin-top: 30px; }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
+}
+
+
+/* =====================================================================
+   מהלך בצעדים: הסבר (תוכן) מול כלי (קלט ופלט), ודוגמאות מסומנות
+   ===================================================================== */
+:root { --ex: #eaf0f6; --exink: #2f4a66; --tool: #f3f3f1; }
+.demo-tag { display: inline-block; font-size: 12px; font-weight: 500; color: var(--exink); background: var(--ex); padding: 1px 8px; white-space: nowrap; vertical-align: 1px; }
+
+.what { font-size: 19px; line-height: 1.7; font-weight: 300; }
+.view.cover > h1, .view.intro > h1 { font-size: 34px !important; font-weight: 300 !important; margin-top: 8px; }
+
+/* שרשרת קלט ופלט */
+ol.chain { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 0; margin: 22px 0 6px; padding: 0; }
+.chain li { position: relative; background: var(--g1); padding: 10px 16px 12px; margin-inline-end: 34px; min-width: 128px; font-size: 16px; font-weight: 500; }
+.chain li span { display: block; font-size: 11.5px; font-weight: 400; color: var(--g3); }
+.chain li.out { background: #fff; box-shadow: var(--sh), inset 0 3px 0 var(--ink); }
+.chain li::after { content: "←"; position: absolute; inset-inline-end: -26px; top: 50%; transform: translateY(-50%); color: var(--g4); font-size: 18px; }
+.chain li:last-child { margin-inline-end: 0; }
+.chain li:last-child::after { content: none; }
+.explain { margin-top: 18px; border-top: 1px solid var(--ink); }
+
+/* סרגל הצעדים של התחנה */
+.flow-bar { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 16px; }
+.flow-bar .btn { min-width: 132px; justify-content: flex-start; gap: 8px; min-height: 40px; }
+.flow-bar .btn span { font-size: 12px; color: var(--g3); font-variant-numeric: tabular-nums; }
+.flow-bar .btn em { font-style: normal; font-size: 10.5px; color: var(--g3); background: #fff; padding: 0 5px; margin-inline-start: auto; }
+.flow-bar .btn.done::after { content: "✓"; color: var(--gr); font-weight: 700; }
+.flow-bar .btn.done em { margin-inline-start: auto; }
+.flow-foot { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; margin-top: 16px; position: sticky; bottom: -16px; background: #fff; padding: 10px 0 16px; z-index: 4; }
+.explain .fold > .more { display: none; visibility: visible; }
+.explain .fold.open > .more, body.all .explain .fold > .more { display: block; }
+.explain li { grid-template-columns: 26px 1fr; }
+.flow-foot .btn { min-width: 150px; min-height: 40px; }
+.flow-foot .btn.off { color: var(--g4); pointer-events: none; }
+.flow-foot .need { font-size: 14px; color: var(--rd); text-align: center; }
+.view.flow > .step:not(.io) { max-width: 1100px; }
+
+/* הכלי: משטח נפרד מהתוכן, קלט בימין ופלט בשמאל */
+.step.io { display: grid; grid-template-columns: minmax(0, 40fr) minmax(0, 60fr); gap: 0; background: var(--tool); padding: 14px; min-height: 52vh; box-shadow: inset 0 0 0 1px var(--g2); position: relative; }
+.step.io::before { content: "הכלי"; position: absolute; top: -9px; inset-inline-start: 14px; font-size: 11.5px; background: var(--ink); color: #fff; padding: 0 8px; line-height: 18px; }
+.step.io.ex::before { content: "דוגמה"; background: var(--exink); }
+.step.io.ex { background: var(--ex); }
+.io-in, .io-out { background: #fff; padding: 12px 16px 16px; min-width: 0; }
+.io-in { margin-inline-end: 34px; position: relative; }
+.io-in::after { content: "←"; position: absolute; inset-inline-end: -27px; top: 44%; font-size: 22px; color: var(--g4); }
+.io-out { box-shadow: var(--sh), inset 0 3px 0 var(--ink); }
+.step.io h3 { font-size: 12px; font-weight: 500; color: var(--g3); margin: 0 0 8px; padding: 0 0 6px; border-bottom: 1px solid var(--g2); letter-spacing: .02em; }
+.io-q { font-weight: 500; margin-bottom: 8px !important; }
+.io-act { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+.io-act .btn { min-height: 38px; min-width: 150px; }
+.io-out:empty, .io-out > div:empty { min-height: 40px; }
+.big { font-size: 22px; font-weight: 300; line-height: 1.5; }
+.verdict { font-size: 20px; line-height: 1.4; margin-bottom: 8px !important; }
+.outlist { list-style: none; margin: 0; padding: 0; counter-reset: o; border-top: 1px solid var(--ink); }
+.outlist li { counter-increment: o; display: grid; grid-template-columns: 28px 1fr auto; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--g1); align-items: baseline; }
+.outlist li::before { content: counter(o); color: var(--g3); }
+.outlist li b { font-weight: 500; }
+.outlist li span { font-size: 13px; color: var(--g3); }
+dl.kv { margin: 0 0 4px; border-top: 1px solid var(--ink); }
+dl.kv > div { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--g1); }
+dl.kv dt { color: var(--g3); font-size: 14px; }
+dl.kv dd { margin: 0; font-weight: 500; }
+.plot-in { display: flex; gap: 6px; margin-bottom: 10px; }
+.plot-in input { flex: 1; min-width: 0; border: 0; background: var(--g1); height: 38px; padding: 4px 12px; font-size: 18px; direction: ltr; text-align: right; }
+.io-in textarea, .io-out textarea { width: 100%; border: 0; background: var(--g1); padding: 8px 10px; resize: vertical; }
+.io-in .import textarea { margin-top: 10px; }
+#rights tr { animation: rowin .35s ease both; }
+@keyframes rowin { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+table.fit th.alt-col span { display: block; font-size: 12px; color: var(--g3); font-weight: 400; }
+table.fit th.alt-col b { font-size: 20px; font-weight: 300; color: var(--ink); }
+.step .dev { margin: 10px 0; }
+
+/* חלון המודל בתוך הפלט */
+#vp { display: flex; flex-direction: column; min-height: 0; }
+#vp .viewport { flex: none; height: 40vh; min-height: 280px; margin: 8px 0; }
+#vp .focus-tools { align-items: center; }
+#vp .metrics { padding: 6px 0 0; }
+#vp.env-only .metrics { display: none; }
+
+/* דף הבית: הדמיה מונפשת */
+.home-figure { flex-direction: column; gap: 6px; padding: 16px; }
+.home-figure svg { width: 88%; max-height: 70%; }
+.home-figure figcaption { text-align: center; min-height: 86px; }
+#storyCap { font-size: 18px; line-height: 1.5; min-height: 54px; margin-bottom: 8px; }
+
+@media (max-width: 900px) {
+  .step.io { grid-template-columns: 1fr; padding: 12px 10px; min-height: 0; }
+  .io-in { margin-inline-end: 0; margin-bottom: 30px; }
+  .io-in::after { content: "↓"; inset-inline-end: 48%; top: auto; bottom: -27px; }
+  .chain li { min-width: 0; margin-inline-end: 26px; padding: 8px 10px; font-size: 14px; }
+  .chain li::after { inset-inline-end: -21px; }
+  .flow-bar .btn { min-width: 0; flex: 1 1 30%; }
+  .flow-foot { grid-template-columns: 1fr 1fr; }
+  .flow-foot .need { grid-column: 1 / -1; grid-row: 1; }
+  .flow-foot .btn { min-width: 0; }
+  .view.cover > h1, .view.intro > h1 { font-size: 24px !important; }
+  .what { font-size: 16.5px; }
+  #vp .viewport { height: 300px; }
+  .home-figure svg { width: 74%; }
 }

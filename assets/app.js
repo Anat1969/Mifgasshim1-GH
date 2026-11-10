@@ -177,18 +177,52 @@
   var GROUP_ORDER = ["open", "learn", "understand", "do"];
 
   /* ---------- בניית הדפים שנגזרים מנתונים ---------- */
+  var STAGE_INTRO = {
+    a: {
+      learn: { t: "ממסמכים לטבלה אחת.", x: "מעלים את מסמכי התכנית. מזינים מספר מגרש. ==הבינה מחלצת טבלת זכויות, עם מקור לכל ערך.==" },
+      understand: { t: "מהטבלה למודל.", x: "==המודל נבנה רק מהטבלה.== קודם מעטפת הבנייה, ובתוכה **שלוש חלופות**." },
+      do: { t: "מהמודל להכרעה.", x: "כל חלופה נבדקת מול התב\"ע ומול היזם. ==בוחרים אחת, בנימוק.==" }
+    },
+    b: {
+      learn: { t: "מה הכלי מחזיק.", x: "מפרקים את המשרד ל**חמש ישויות**. ==לכל ישות שדות חובה בלבד.==" },
+      understand: { t: "איך הדברים קשורים.", x: "מחברים את הישויות זו לזו. ==קובעים מתי סטייה הופכת לסיכון.==" },
+      do: { t: "בונים ומפעילים.", x: "מזינים **פרויקט אחד** במלואו. ==בונים סקירה שבועית בעמוד אחד.==" }
+    }
+  };
+  function barsHTML() {
+    var total = { b: 0, a: 0 };
+    var rows = EXAMPLE.map(function (r) {
+      total.b += r.b; total.a += r.a;
+      return barRow(r.n, r.a, r.b, r.b ? Math.round(r.a / r.b * 100) : 0, r.st, r.note, "");
+    }).join("");
+    rows += barRow('סה"כ', total.a, total.b, Math.round(total.a / total.b * 100), "", "", " bar-total");
+    return '<p class="verdict"><b class="bad">התכנון חרג ב-8,000 ש"ח.</b> הפרויקט כולו ניצל 91% מהתקציב.</p><div class="bars">' + rows + "</div>" +
+      '<div class="legend"><span>הקו הדק: 80% מהתקציב</span><span>הקו הכהה: 100% מהתקציב</span><span><i class="dot g"></i>בתקציב</span><span><i class="dot r"></i>מעל 100%</span></div>';
+  }
   function buildB() {
     var html = NODES.map(function (n, i) {
-      return '<section class="view" data-page="b" data-group="' + n.g + '" data-id="' + n.id + '" data-title="' + esc(n.t) + '" hidden>' +
+      var k = "b/" + n.id;
+      return '<section class="view flow" data-page="b" data-group="' + n.g + '" data-id="' + n.id + '" data-title="' + esc(n.t) + '" hidden>' +
         "<h1>" + esc(n.t) + "</h1>" +
-        '<p class="lead">' + esc(n.lead) + "</p>" + track(i) +
-        '<div class="prompt" data-label="פרומפט לתחנה ' + (i + 1) + '"><pre>' + esc(n.prompt) + "</pre></div>" +
-        '<div class="out2"><div><span>יוצאים עם דבר אחד שעובד</span><p>' + esc(n.works) + "</p></div><div><span>ושאלה אחת לבינה</span><p>" + esc(n.ask) + "</p></div></div>" +
+        '<div class="step" data-step="explain" data-label="ההסבר"><p class="what">' + rich(n.lead) + "</p></div>" +
+        '<div class="step io" data-step="prompt" data-label="פרומפט">' +
+          '<div class="io-in"><h3>קלט</h3><p class="io-q">הפרומפט לבינה</p><div class="prompt" data-open data-label="פרומפט לתחנה ' + (i + 1) + '"><pre>' + esc(n.prompt) + '</pre></div>' +
+          '<div class="io-act"><button class="btn dark" type="button" data-reveal>מה אמור לצאת</button></div></div>' +
+          '<div class="io-out"><h3>פלט</h3><div data-revealed' + (visited.indexOf(k + ":prompt") === -1 ? " hidden" : "") + '><p class="io-q">דבר אחד שעובד</p><p class="big">' + rich(n.works) + "</p></div></div>" +
+        "</div>" +
+        '<div class="step io" data-step="ask" data-label="שאלה לבינה">' +
+          '<div class="io-in"><h3>קלט</h3><p class="io-q">שאלה אחת לבינה</p><p class="big">' + esc(n.ask) + "</p>" +
+          '<div class="io-act"><button class="btn dark" type="button" data-reveal>כתיבת התשובה</button></div></div>' +
+          '<div class="io-out"><h3>פלט</h3><div data-revealed' + (visited.indexOf(k + ":ask") === -1 ? " hidden" : "") + '><p class="io-q">התשובה שקיבלתי, נשמרת בדפדפן הזה</p><textarea data-note="' + k + '" rows="6" aria-label="התשובה שקיבלתי">' + esc(notes[k] || "") + "</textarea></div></div>" +
+        "</div>" +
+        (n.id === "n4" || n.id === "n5" ? '<div class="step io ex" data-step="example" data-label="דוגמה">' +
+          '<div class="io-in"><h3>קלט</h3><p class="io-q">פרויקט לדוגמה <span class="demo-tag">דוגמה · בדיוני</span></p><p>תקציב משרד לבית פרטי. שכר טרחה מאושר: <b>180,000 ש"ח</b>. העלויות הן של המשרד בלבד.</p>' +
+          '<div class="io-act"><button class="btn dark" type="button" data-reveal>תקציב מול ביצוע</button></div></div>' +
+          '<div class="io-out"><h3>פלט</h3><div data-revealed' + (visited.indexOf(k + ":example") === -1 ? " hidden" : "") + ">" + barsHTML() + "</div></div></div>" : "") +
         "</section>";
     }).join("");
     html += '<section class="view" data-page="b" data-group="do" data-id="materials" data-title="חומרים ל-MVP" hidden>' +
       "<h1>שלושה פרומפטים בונים את הגרסה הראשונה של הכלי.</h1>" +
-      '<p class="lead">אחד לכל שלב. פרויקט הדוגמה שמשמאל משמש כנתוני הבדיקה.</p>' +
       '<table class="t"><thead><tr><th>שלב</th><th>הפרומפט</th><th>מצב</th></tr></thead><tbody>' +
       "<tr><td>נלמד</td><td>מודל הנתונים והמסכים</td><td class=\"muted\">הנוסח טרם התקבל</td></tr>" +
       "<tr><td>נבין</td><td>הקשרים, חישובים וכללים</td><td class=\"muted\">הנוסח טרם התקבל</td></tr>" +
@@ -197,23 +231,21 @@
       '<div class="warn">במסמך המקור מופיעות רק הכותרות של שלושת הפרומפטים. כפתורי ההעתקה יתווספו כשיתקבל הנוסח.</div>' +
       "</section>";
     $("#viewsB").innerHTML = html;
-
-    var total = { b: 0, a: 0 };
-    var rows = EXAMPLE.map(function (r) {
-      total.b += r.b; total.a += r.a;
-      var pct = r.b ? Math.round(r.a / r.b * 100) : 0;
-      return barRow(r.n, r.a, r.b, pct, r.st, r.note, "");
-    }).join("");
-    var tp = Math.round(total.a / total.b * 100);
-    rows += barRow('סה"כ', total.a, total.b, tp, "", "", " bar-total");
-    rows += '<div class="legend"><span>הקו הדק: 80% מהתקציב</span><span>הקו הכהה: 100% מהתקציב</span></div>' +
-      '<div class="legend"><span><i class="dot g"></i>בתקציב</span><span><i class="dot y"></i>מעל 80% בשלב פתוח</span><span><i class="dot r"></i>מעל 100%</span></div>';
-    $("#bars").innerHTML = rows;
   }
-  function track(cur) {
-    return '<nav class="track" aria-label="מסלול המפגש">' + NODES.map(function (n, i) {
-      return '<a href="#b/' + n.id + '"' + (i === cur ? ' class="on" aria-current="step"' : "") + "><span>" + (i + 1) + " · " + GROUPS[n.g][0] + "</span>" + esc(n.t) + "</a>";
-    }).join("") + "</nav>";
+  function buildIntros() {
+    ["a", "b"].forEach(function (p) {
+      ["learn", "understand", "do"].forEach(function (g) {
+        var items = $$('.view[data-page="' + p + '"][data-group="' + g + '"]');
+        if (!items.length) return;
+        var sec = document.createElement("section");
+        sec.className = "view intro";
+        sec.setAttribute("data-page", p); sec.setAttribute("data-group", g); sec.setAttribute("data-id", "_" + g);
+        sec.setAttribute("data-title", GROUPS[g][0]); sec.setAttribute("data-intro", "");
+        sec.innerHTML = "<h1>" + GROUPS[g][0] + ": " + esc(STAGE_INTRO[p][g].t) + '</h1><p class="what">' + rich(STAGE_INTRO[p][g].x) + '</p><ol class="chain">' +
+          items.map(function (v) { return "<li><span>תחנה</span>" + esc(v.getAttribute("data-title")) + "</li>"; }).join("") + "</ol>";
+        items[0].parentNode.insertBefore(sec, items[0]);
+      });
+    });
   }
   function barRow(n, a, b, pct, st, note, cls) {
     var w = Math.min(pct, 120) / 120 * 100;
@@ -222,7 +254,6 @@
       '<div class="bar"><i class="' + st + '" style="width:' + w.toFixed(1) + '%"></i></div>' +
       '<div class="bar-nums"><span class="num">' + fmt(a, 0) + " מתוך " + fmt(b, 0) + ' ש"ח</span><span class="num">' + pct + "%</span></div></div>";
   }
-
   function icon(k, name) {
     var p = window.ICONS && window.ICONS[String(k).toLowerCase()];
     return p ? '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="' + p + '"/></svg>'
@@ -375,7 +406,7 @@
 
   function collectViews() {
     views = $$(".view").map(function (el) {
-      return { el: el, page: el.getAttribute("data-page"), group: el.getAttribute("data-group"), id: el.getAttribute("data-id"), title: el.getAttribute("data-title") };
+      return { el: el, page: el.getAttribute("data-page"), group: el.getAttribute("data-group"), id: el.getAttribute("data-id"), title: el.getAttribute("data-title"), intro: el.hasAttribute("data-intro") };
     });
   }
   function key(v) { return v.page + "/" + v.id; }
@@ -383,11 +414,11 @@
   function find(p, id) { return views.filter(function (v) { return v.page === p && v.id === id; })[0]; }
 
   var openGroup = null;
-  function stations() { return views.filter(function (v) { return v.group !== "open"; }); }
+  function stations() { return views.filter(function (v) { return v.group !== "open" && !v.intro; }); }
   function buildRail(page) {
     var list = pageViews(page), html = "";
     ["learn", "understand", "do"].forEach(function (g, n) {
-      var items = list.filter(function (v) { return v.group === g; });
+      var items = list.filter(function (v) { return v.group === g && !v.intro; });
       if (!items.length) return;
       var open = openGroup === g;
       html += '<div class="rail-group' + (open ? " open" : "") + '">' +
@@ -411,7 +442,7 @@
     var mark = $("#mark");
     mark.textContent = isDone ? "נלמד. בטל" : "סמן כנלמד";
     mark.classList.toggle("on", !!isDone);
-    mark.hidden = !current || current.group === "open";
+    mark.hidden = !current || current.group === "open" || current.intro || current.el.classList.contains("flow");
     $("#progress").textContent = done.length + " מתוך " + stations().length + " נלמדו";
   }
 
@@ -428,8 +459,9 @@
       if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
     var list = pageViews(v.page), i = list.indexOf(v);
+    var st = stations().filter(function (x) { return x.page === v.page; });
     $("#kicker").textContent = PAGES[v.page] + (v.group === "open" ? "" : " · " + GROUPS[v.group][0] + " · " + GROUPS[v.group][1]);
-    $("#where").textContent = v.group === "open" ? "" : i + " מתוך " + (list.length - 1);
+    $("#where").textContent = v.group === "open" || v.intro ? "" : (st.indexOf(v) + 1) + " מתוך " + st.length;
     $("#prev").disabled = i === 0;
     $("#next").disabled = i === list.length - 1;
     paintRail();
@@ -438,6 +470,8 @@
     if (pageChanged) window.scrollTo(0, 0);
     document.title = (v.page === "home" ? "" : v.title + " · ") + "בינה מלאכותית לאדריכלים";
     if (v.page === "a") refreshA();
+    renderFlow();
+    if (v.page === "home") story();
   }
 
   function route() {
@@ -499,7 +533,7 @@
         h.parentNode.insertBefore(box, h.nextSibling);
         h.classList.add("sec-t"); h.setAttribute("role", "button"); h.setAttribute("tabindex", "0"); h.setAttribute("aria-expanded", "false");
       });
-      $$(".grid3 > div, .steps > div > div, ul.plain > li, .gloss, .out2 > div, .app-row > div:first-child", view).forEach(function (it) {
+      $$(".grid3 > div, .steps > div > div, ul.plain > li, .gloss, .out2 > div, .app-row > div:first-child, .explain > li > div", view).forEach(function (it) {
         if (it.closest(".sec-more") || it.closest("[data-subview]")) return;
         makeFold(it, it.firstElementChild);
       });
@@ -510,7 +544,7 @@
         if (seen.indexOf(k) !== -1) el.classList.add("seen");
       });
       $$(":scope > .lead, :scope > p, .warn, .tiny", view).forEach(function (el) {
-        if (el.closest(".sec-more") || el.classList.contains("reco")) return;
+        if (el.closest(".sec-more") || el.classList.contains("reco") || el.classList.contains("what") || el.closest(".io-out")) return;
         el.classList.add("more-all");
       });
     });
@@ -520,7 +554,7 @@
       el.classList.add("seen");
       if (seen.indexOf(k) === -1) { seen.push(k); save("seen", seen); }
       /* כשכל הרשומות בתחנה נפתחו, התחנה מסומנת כנלמדה */
-      if (!current || current.group === "open") return;
+      if (!current || current.group === "open" || current.intro || current.el.classList.contains("flow")) return;
       var all = $$("[data-seen]", current.el);
       if (all.length && all.every(function (x) { return x.classList.contains("seen"); }) && done.indexOf(key(current)) === -1) {
         done.push(key(current)); save("done", done); paintRail();
@@ -564,6 +598,74 @@
       var n = stations().filter(function (v) { return v.page === el.getAttribute("data-count"); }).length;
       el.textContent = n + " תחנות";
     });
+  }
+
+  /* ---------- דף הבית: סיפור החלופות בהנפשה, מנתוני מגרש 633 ---------- */
+  var storyRun = 0;
+  function story() {
+    var svg = $("#story"), cap = $("#storyCap"); if (!svg) return;
+    var run = ++storyRun;
+    var R = JSON.parse(JSON.stringify(DEMO["633"])), p = { R: R, src: {}, alts: defaultAlts(R), dev: defaultDev(R) };
+    var S = Math.sqrt(R.plot), sc = 4.1, CX = 200, CY = 196;
+    function pt(x, y, z) { return ((x - y) * 0.866 * sc + CX).toFixed(1) + "," + ((x + y) * 0.5 * sc - z * sc + CY).toFixed(1); }
+    function poly(a) { return a.map(function (q) { return pt(q[0], q[1], q[2]); }).join(" "); }
+    function rect(x1, y1, x2, y2, z) { return poly([[x1, y1, z], [x2, y1, z], [x2, y2, z], [x1, y2, z]]); }
+    var info = ALT_KEYS.map(function (k) {
+      var a = p.alts[k], ch = checks(a, p), g = geom(a, p), reds = ch.filter(function (x) { return x.st === "r"; });
+      return { k: k, a: a, g: g, reds: reds, s: score(ch), units: calc(a, p).units };
+    });
+    var best = info.slice().sort(function (x, y) { return x.reds.length - y.reds.length || y.s - x.s; })[0];
+    function draw(st) {
+      var h = "";
+      h += '<polygon points="' + rect(0, 0, S, S, 0) + '" fill="#f1f1ef" stroke="#151515" stroke-width="1.5" opacity="' + st.ground + '"/>';
+      h += '<polygon points="' + rect(R.ss, R.sr, S - R.ss, S - R.sf, 0) + '" fill="none" stroke="#8a8a8a" stroke-dasharray="5 5" opacity="' + st.setb + '"/>';
+      if (st.m > 0) {
+        var w = st.w, d = st.d, H = st.H * st.m, ox = (S - w) / 2, oy = (S - d) / 2, x2 = ox + w, y2 = oy + d;
+        var side = st.red ? "#e3b0aa" : "#cfcfcc", front = st.red ? "#eccac6" : "#e9e9e6", line = st.red ? "#7a2219" : "#6b6b6b";
+        h += '<polygon points="' + poly([[ox, y2, 0], [x2, y2, 0], [x2, y2, H], [ox, y2, H]]) + '" fill="' + front + '" stroke="#151515" stroke-width="1.5" stroke-linejoin="round"/>';
+        h += '<polygon points="' + poly([[x2, oy, 0], [x2, y2, 0], [x2, y2, H], [x2, oy, H]]) + '" fill="' + side + '" stroke="#151515" stroke-width="1.5" stroke-linejoin="round"/>';
+        h += '<polygon points="' + rect(ox, oy, x2, y2, H) + '" fill="#fff" stroke="#151515" stroke-width="1.5" stroke-linejoin="round"/>';
+        for (var f = 1; f * p.dev.fl < H - 0.2; f++) h += '<polyline points="' + poly([[ox, y2, f * p.dev.fl], [x2, y2, f * p.dev.fl], [x2, oy, f * p.dev.fl]]) + '" fill="none" stroke="' + line + '" stroke-width=".8"/>';
+      }
+      h += '<polygon points="' + rect(0, 0, S, S, R.h * st.ring) + '" fill="none" stroke="#d4a017" stroke-width="1.5" opacity="' + (st.ring > 0 ? 1 : 0) + '"/>';
+      svg.innerHTML = h;
+    }
+    function shape(i) { return { w: i.g.w, d: i.g.d, H: i.g.H, red: i.reds.length > 0 }; }
+    function altCap(i) { return "<b>חלופה " + i.k + ".</b> " + i.a.fl + " קומות, " + fmt(i.a.fp, 0) + ' מ"ר לקומה. ' + (i.reds.length ? '<span class="bad">' + i.units + ' יח"ד, מעל המותר.</span>' : '<span class="good">עומדת בכל הדרישות.</span>'); }
+    var A0 = shape(info[0]);
+    var scenes = [
+      { t: 900, cap: "<b>המגרש.</b> " + fmt(R.plot, 0) + ' מ"ר.', to: { ground: 1 } },
+      { t: 900, cap: "<b>קווי הבניין.</b> " + R.sf + ", " + R.ss + ", " + R.sr + " מ'.", to: { setb: 1 } },
+      { t: 1100, cap: "<b>הגובה המרבי.</b> " + R.h + " מ'.", to: { ring: 1 } },
+      { t: 1300, cap: altCap(info[0]), to: { m: 1, w: A0.w, d: A0.d, H: A0.H }, red: A0.red, set: { w: A0.w, d: A0.d, H: A0.H } },
+      { t: 1300, cap: altCap(info[1]), to: shape(info[1]), red: info[1].reds.length > 0 },
+      { t: 1300, cap: altCap(info[2]), to: shape(info[2]), red: info[2].reds.length > 0 },
+      { t: 1300, cap: "<mark><b>ההכרעה: חלופה " + best.k + ".</b> " + best.s + "% התאמה.</mark>", to: shape(best), red: false }
+    ];
+    var st = { ground: 0, setb: 0, ring: 0, m: 0, w: A0.w, d: A0.d, H: A0.H, red: false };
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      var b = shape(best); draw({ ground: 1, setb: 1, ring: 1, m: 1, w: b.w, d: b.d, H: b.H, red: false }); cap.innerHTML = scenes[6].cap; return;
+    }
+    var idx = 0;
+    function play() {
+      if (run !== storyRun) return;
+      if (idx >= scenes.length) return;
+      var sn = scenes[idx++], from = {}, keys = Object.keys(sn.to).filter(function (k) { return k !== "red"; }), t0 = null;
+      if (sn.set) Object.keys(sn.set).forEach(function (k) { st[k] = sn.set[k]; });
+      keys.forEach(function (k) { from[k] = st[k]; });
+      if (typeof sn.red === "boolean") st.red = sn.red;
+      cap.innerHTML = sn.cap;
+      function frame(ts) {
+        if (run !== storyRun) return;
+        if (t0 === null) t0 = ts;
+        var u = Math.min(1, (ts - t0) / sn.t), e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+        keys.forEach(function (k) { st[k] = from[k] + (sn.to[k] - from[k]) * e; });
+        draw(st);
+        if (u < 1) requestAnimationFrame(frame); else setTimeout(play, idx >= scenes.length ? 0 : 1100);
+      }
+      requestAnimationFrame(frame);
+    }
+    draw(st); play();
   }
 
   /* ---------- לשוניות בתוך שלב: הכלי, ההסבר, הפרומפט ---------- */
@@ -615,7 +717,8 @@
     { id: "annex", n: "נספחים", hint: "מים, ביוב, תנועה", req: false }
   ];
 
-  var A = load("a", { plot: "633", alt: "א", mode: "iso", data: {} });
+  var A = load("a2", { plot: null, alt: "א", mode: "iso", data: {}, demoDocs: false });
+  var notes = load("notes", {});
   function r10(n) { return Math.max(10, Math.round(n / 10) * 10); }
   function defaultAlts(R) {
     var max = (R.plot || 1000) * (R.cov || 30) / 100, f = R.floors || 6;
@@ -628,21 +731,22 @@
   }
   function plotData(id) {
     if (!A.data[id]) {
-      var R = JSON.parse(JSON.stringify(DEMO[id]));
+      var R = {};
+      PARAMS.forEach(function (x) { R[x.k] = x.text ? "" : null; });
       A.data[id] = { R: R, src: {}, alts: defaultAlts(R), dev: defaultDev(R) };
     }
     return A.data[id];
   }
-  function P() { return plotData(A.plot); }
+  function P() { return plotData(A.plot || "_"); }
   var savedTimer = null;
   function saveA() {
-    save("a", A);
+    save("a2", A);
     var s = $("#savedA"); if (s) { s.textContent = "נשמר"; clearTimeout(savedTimer); savedTimer = setTimeout(function () { s.textContent = ""; }, 1500); }
     var m = $("ai-menu"); if (m) { try { m.status = "נשמר"; } catch (e) { /* הרכיב עוד לא נטען */ } }
   }
 
-  function calc(a) {
-    var p = P(), R = p.R, d = p.dev;
+  function calc(a, p) {
+    p = p || P(); var R = p.R, d = p.dev;
     var gross = a.fp * a.fl;
     return {
       gross: gross,
@@ -653,8 +757,8 @@
       use: has(R.plot) && has(R.bp) ? (gross / R.plot * 100) / R.bp * 100 : NaN
     };
   }
-  function geom(a) {
-    var p = P(), R = p.R;
+  function geom(a, p) {
+    p = p || P(); var R = p.R;
     var side = Math.sqrt(has(R.plot) ? R.plot : 1000), w = Math.sqrt(a.fp * 1.4), d = a.fp / w;
     return { P: side, w: w, d: d, H: a.fl * p.dev.fl, ox: (side - w) / 2, oy: (side - d) / 2 };
   }
@@ -666,8 +770,8 @@
     if (v >= m * 0.95) return "עומד, מרווח קטן מ-5%";
     return "עומד";
   }
-  function checks(a) {
-    var p = P(), R = p.R, d = p.dev, c = calc(a), g = geom(a), out = [];
+  function checks(a, p) {
+    p = p || P(); var R = p.R, d = p.dev, c = calc(a, p), g = geom(a, p), out = [];
     function lim(v, pre, u) { return has(v) ? pre + fmt(v) + u : "חסר"; }
     out.push({ n: "תכסית מרבית", lim: lim(R.cov, "עד ", "%"), val: fmt(c.cov) + "%", st: stMax(c.cov, R.cov), note: noteMax(c.cov, R.cov, "%") });
     out.push({ n: "אחוזי בנייה", lim: lim(R.bp, "עד ", "%"), val: fmt(c.bp, 0) + "%", st: stMax(c.bp, R.bp), note: noteMax(c.bp, R.bp, "%") });
@@ -742,20 +846,25 @@
     });
   }
   function size(n) { return n > 1048576 ? fmt(n / 1048576) + " MB" : fmt(Math.max(1, n / 1024), 0) + " KB"; }
+  var REQ_DOCS = DOCS.filter(function (d) { return d.req; });
+  function docOf(id) { return docsCache["plan:" + id] || (A.demoDocs ? { name: "מסמך דמו", demo: true } : null); }
+  function docsLoaded() { return REQ_DOCS.filter(function (d) { return !!docOf(d.id); }).length; }
   function renderDocs() {
-    var loaded = 0, req = 0;
     $("#docs").innerHTML = DOCS.map(function (d) {
-      var f = docsCache[A.plot + ":" + d.id];
-      if (d.req) { req++; if (f) loaded++; }
-      return '<li><div class="dn">' + esc(d.n) + "<small>" + (f ? esc(f.name) + " · " + size(f.size) : (d.hint ? d.hint : (d.req ? "לא נטען" : "אופציונלי"))) + "</small></div>" +
+      var f = docsCache["plan:" + d.id];
+      return '<li><div class="dn">' + esc(d.n) + "<small>" + (d.hint ? d.hint : (d.req ? "חובה" : "אופציונלי")) + "</small></div>" +
         '<div class="da">' + (f
           ? '<button class="btn small" type="button" data-open="' + d.id + '">פתיחה</button><button class="btn small" type="button" data-del="' + d.id + '">הסרה</button>'
           : '<label class="btn small">העלאה<input type="file" data-up="' + d.id + '" aria-label="העלאת ' + esc(d.n) + '"></label>') +
         "</div></li>";
     }).join("");
-    $("#docsCount").textContent = "· " + loaded + " מתוך " + req + " נטענו · נשמרים בדפדפן בלבד";
+    var got = DOCS.filter(function (d) { return !!docOf(d.id); });
+    $("#docsOut").innerHTML = got.length ? '<p class="io-q">' + docsLoaded() + " מתוך " + REQ_DOCS.length + " מסמכי חובה נטענו</p><ol class=\"outlist\">" + got.map(function (d) {
+      var f = docOf(d.id);
+      return "<li><b>" + esc(d.n) + "</b><span>" + (f.demo ? '<span class="demo-tag">דוגמה</span>' : esc(f.name) + " · " + size(f.size)) + "</span></li>";
+    }).join("") + "</ol>" : "";
   }
-  function loadDocs() { return docAll().then(function (all) { docsCache = all; renderDocs(); }); }
+  function loadDocs() { return docAll().then(function (all) { docsCache = all; renderDocs(); renderFlow(); }); }
 
   function srcStatus(k) {
     var p = P();
@@ -772,18 +881,24 @@
     });
     var c = srcCoverage();
     $("#srcCount").textContent = "· " + c + "% מקושרים למקור";
-    $("#trustSrc").textContent = c + "%";
+    $("#trustSrc").textContent = A.plot ? c + "%" : "טרם נבחר מגרש";
   }
-  function renderPlotSeg() {
+  function renderPlotStep() {
     $("#plotSeg").innerHTML = Object.keys(DEMO).map(function (id) {
       return '<button class="btn' + (id === A.plot ? " on" : "") + '" type="button" data-plot="' + id + '">מגרש ' + id + "</button>";
-    }).join("") + '<button class="btn" type="button" data-reset>איפוס לדמו</button>';
+    }).join("");
+    $("#plotOut").innerHTML = A.plot
+      ? '<p class="verdict"><b>מגרש ' + esc(A.plot) + " נבחר.</b></p><p>" + (DEMO[A.plot] ? 'הכלי יאתר אותו בטבלת הזכויות ובתשריט. <span class="demo-tag">דוגמה · מגרש דמו</span>' : "אין למגרש הזה ערכי דמו. הערכים ייקלטו מהתשובה של הבינה.") + "</p>"
+      : "";
   }
   function renderRights() {
     var p = P();
-    $("#rights").innerHTML = PARAMS.map(function (x) {
+    $("#rightsWrap").hidden = !(A.plot && p.extracted);
+    $("#demoTag").hidden = !p.fromDemo;
+    $("#demoExtract").hidden = !DEMO[A.plot];
+    $("#rights").innerHTML = PARAMS.map(function (x, i) {
       var v = p.R[x.k];
-      return "<tr><td>" + x.n + "</td>" +
+      return '<tr style="animation-delay:' + (i * 70) + 'ms"><td>' + x.n + "</td>" +
         '<td><input class="val" ' + (x.text ? 'type="text" style="width:78px;direction:rtl;text-align:right"' : 'type="number" step="any" inputmode="decimal"') + ' data-k="' + x.k + '" value="' + (has(v) ? esc(v) : "") + '" placeholder="חסר" aria-label="' + esc(x.n) + '"></td>' +
         '<td class="unit">' + x.u + "</td>" +
         '<td><input type="text" data-src="' + x.k + '" value="' + esc(p.src[x.k] || "") + '" placeholder="מסמך, עמוד, סעיף" aria-label="מקור: ' + esc(x.n) + '"></td>' +
@@ -791,11 +906,19 @@
     }).join("");
     paintRightsStatus();
   }
+  function kv(rows) { return rows.map(function (r) { return "<div><dt>" + r[0] + "</dt><dd class=\"num\">" + r[1] + "</dd></div>"; }).join(""); }
+  function renderKV(sum) {
+    var p = P(), R = p.R;
+    function v(x, u) { return has(x) ? fmt(x) + u : "חסר"; }
+    $("#envIn").innerHTML = kv([["שטח מגרש", v(R.plot, ' מ"ר')], ["תכסית מרבית", v(R.cov, "%")], ["קומות מרבי", v(R.floors, "")], ["גובה מרבי", v(R.h, " מ'")], ["קווי בניין", [R.sf, R.ss, R.sr].map(function (x) { return has(x) ? x : "?"; }).join(" / ") + " מ'"]]);
+    $("#checkIn").innerHTML = kv(ALT_KEYS.map(function (k) { var a = p.alts[k]; return ["חלופה " + k, fmt(a.fp, 0) + ' מ"ר × ' + a.fl + " קומות"]; }));
+    $("#decideIn").innerHTML = kv(ALT_KEYS.map(function (k) { return ["חלופה " + k, sum.all[k].s + "% התאמה · " + sum.all[k].reds.length + " חריגות"]; }));
+  }
   function renderAlts() {
     var p = P(), maxFp = r10((p.R.plot || 1000) * 0.6), maxFl = (p.R.floors || 8) + 4;
     $("#alts").innerHTML = ALT_KEYS.map(function (k) {
       var a = p.alts[k];
-      return '<div class="alt"><div class="alt-head"><button class="btn' + (k === A.alt ? " on" : "") + '" type="button" data-alt="' + k + '">חלופה ' + k + '</button><span class="sum num" data-sum="' + k + '"></span></div>' +
+      return '<div class="alt"><div class="alt-head"><button class="btn' + (p.mass && k === A.alt ? " on" : "") + '" type="button" data-alt="' + k + '">חלופה ' + k + '</button><span class="sum num" data-sum="' + k + '"></span></div>' +
         '<div class="slide"><span>שטח קומה</span><input type="range" min="100" max="' + maxFp + '" step="10" value="' + a.fp + '" data-fp="' + k + '" aria-label="שטח קומה, חלופה ' + k + '"><output class="num" data-ofp="' + k + '"></output></div>' +
         '<div class="slide"><span>קומות</span><input type="range" min="1" max="' + maxFl + '" step="1" value="' + a.fl + '" data-fl="' + k + '" aria-label="קומות, חלופה ' + k + '"><output class="num" data-ofl="' + k + '"></output></div></div>';
     }).join("");
@@ -811,13 +934,13 @@
       $('[data-ofp="' + k + '"]').textContent = fmt(a.fp, 0) + ' מ"ר';
       $('[data-ofl="' + k + '"]').textContent = a.fl;
       $('[data-sum="' + k + '"]').textContent = "שטח כולל " + fmt(c.gross, 0) + ' מ"ר · ' + c.units + ' יח"ד';
-      var b = $('[data-alt="' + k + '"]'); if (b) b.classList.toggle("on", k === A.alt);
+      var b = $('#alts [data-alt="' + k + '"]'); if (b) b.classList.toggle("on", !!p.mass && k === A.alt);
     });
   }
   function renderFit(sum) {
-    var names = sum.all[ALT_KEYS[0]].ch;
+    var p = P(), names = sum.all[ALT_KEYS[0]].ch;
     var head = "<thead><tr><th>בדיקה</th>" + ALT_KEYS.map(function (k) {
-      return '<th class="alt-col"><button class="btn' + (k === A.alt ? " on" : "") + '" type="button" data-alt="' + k + '"><span>חלופה ' + k + "</span><b>" + sum.all[k].s + "%</b></button></th>";
+      return '<th class="alt-col"><span>חלופה ' + k + "</span><b>" + sum.all[k].s + "%</b></th>";
     }).join("") + "</tr></thead>";
     var body = "<tbody>" + names.map(function (row, i) {
       return "<tr><td>" + row.n + "<small>" + esc(row.lim) + "</small></td>" + ALT_KEYS.map(function (k) {
@@ -826,18 +949,20 @@
       }).join("") + "</tr>";
     }).join("") + "</tbody>";
     $("#fit").innerHTML = head + body;
+    $("#fitWrap").hidden = !p.check;
     var b = sum.all[sum.best];
-    $("#fitTitle").textContent = "חלופה " + sum.best + " מובילה: " + b.s + "% התאמה, " + (b.reds.length ? b.reds.length + " חריגות." : "בלי חריגות.");
-    $("#reco").innerHTML = "<b>המלצה לתצוגה:</b> חלופה " + sum.best + ". הכלי מציג את ההמלצה ואת הנתונים שמאחוריה, ולא מחליט במקום היזם או הרשות.";
+    $("#fitTitle").innerHTML = "<b>חלופה " + sum.best + " מובילה.</b> " + b.s + "% התאמה, " + (b.reds.length ? b.reds.length + " חריגות." : "בלי חריגות.");
+    $("#reco").textContent = "הכלי מציג את ההמלצה ואת הנתונים שמאחוריה. הוא לא מחליט במקום היזם או הרשות.";
+    $("#decideWrap").hidden = !p.decided;
   }
   function renderFocus(sum) {
-    var p = P(), a = p.alts[A.alt], c = calc(a), cur = sum.all[A.alt], R = p.R;
-    $("#headline").innerHTML = cur.reds.length
-      ? "<b>חלופה " + A.alt + " חורגת ב-" + cur.reds.length + (cur.reds.length === 1 ? " דרישה" : " דרישות") + ":</b> " + cur.reds.map(function (x) { return x.n; }).join(", ") + "."
-      : "<b>חלופה " + A.alt + " עומדת בכל הדרישות שנבדקו.</b> " + cur.s + "% התאמה, מגרש " + A.plot + ".";
-    $("#altSeg").innerHTML = ALT_KEYS.map(function (k) {
-      return '<button class="btn' + (k === A.alt ? " on" : "") + '" type="button" data-alt="' + k + '">חלופה ' + k + "</button>";
-    }).join("");
+    var p = P(), a = p.alts[A.alt], c = calc(a), cur = sum.all[A.alt], R = p.R, mass = showMass();
+    $("#vp").classList.toggle("env-only", !mass);
+    $("#vpDemo").hidden = !p.fromDemo;
+    $("#headline").innerHTML = !mass ? "<b>מעטפת הבנייה של מגרש " + esc(A.plot || "") + ".</b> המגרש, קווי הבניין והגובה המרבי."
+      : (cur.reds.length
+        ? '<b class="bad">חלופה ' + A.alt + " חורגת ב-" + cur.reds.length + (cur.reds.length === 1 ? " דרישה" : " דרישות") + ":</b> " + cur.reds.map(function (x) { return x.n; }).join(", ") + "."
+        : '<b class="good">חלופה ' + A.alt + " עומדת בכל הדרישות שנבדקו.</b> " + cur.s + "% התאמה.");
     $$("#viewSeg button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-v") === A.mode); });
     function lim(v, u) { return has(v) ? "עד " + fmt(v) + u : "הגבול חסר"; }
     var tested = cur.ch.filter(function (x) { return x.st !== "n"; }).length;
@@ -859,25 +984,25 @@
     if (iso) { if (window.update3D) window.update3D(); } else renderFlat();
   }
   function renderFlat() {
-    var p = P(), R = p.R, a = p.alts[A.alt], c = calc(a), g = geom(a), S = g.P, X = function (v) { return v * 7; }, svg;
+    var p = P(), R = p.R, a = p.alts[A.alt], c = calc(a), g = geom(a), S = g.P, X = function (v) { return v * 7; }, svg, mass = showMass();
     if (A.mode === "plan") {
       var sb = has(R.ss) && has(R.sr) && has(R.sf);
       svg = '<svg viewBox="-12 -12 ' + (X(S) + 24) + " " + (X(S) + 24) + '" xmlns="http://www.w3.org/2000/svg" direction="rtl" font-family="Heebo, Arial">' +
         '<rect x="0" y="0" width="' + X(S) + '" height="' + X(S) + '" fill="#fafafa" stroke="#111" stroke-dasharray="4 3"/>' +
         (sb ? '<rect x="' + X(R.ss) + '" y="' + X(R.sr) + '" width="' + X(S - 2 * R.ss) + '" height="' + X(S - R.sf - R.sr) + '" fill="none" stroke="#8a8a8a" stroke-dasharray="2 3"/>' +
           '<text x="' + (X(S - R.ss) - 4) + '" y="' + (X(R.sr) + 12) + '" font-size="9" fill="#6b6b6b" text-anchor="start">קו בניין</text>' : "") +
-        '<rect x="' + X(g.ox) + '" y="' + X(g.oy) + '" width="' + X(g.w) + '" height="' + X(g.d) + '" fill="' + (stMax(c.cov, R.cov) === "r" ? "#e7b8b3" : "#cfcfcf") + '" stroke="#111"/>' +
-        '<text x="' + (X(g.ox + g.w) - 5) + '" y="' + (X(g.oy) + 14) + '" font-size="10" fill="#111" text-anchor="start">תכסית ' + fmt(c.cov) + "%</text>" +
+        (mass ? '<rect x="' + X(g.ox) + '" y="' + X(g.oy) + '" width="' + X(g.w) + '" height="' + X(g.d) + '" fill="' + (stMax(c.cov, R.cov) === "r" ? "#e7b8b3" : "#cfcfcf") + '" stroke="#111"/>' +
+          '<text x="' + (X(g.ox + g.w) - 5) + '" y="' + (X(g.oy) + 14) + '" font-size="10" fill="#111" text-anchor="start">תכסית ' + fmt(c.cov) + "%</text>" : "") +
         '<text x="' + (X(S) - 4) + '" y="' + (X(S) - 5) + '" font-size="9" fill="#6b6b6b" text-anchor="start">גבול מגרש · חזית</text></svg>';
     } else {
-      var top = Math.max(has(R.h) ? R.h : 0, c.h), floors = "";
+      var top = Math.max(has(R.h) ? R.h : 0, mass ? c.h : 0, 6), floors = "";
       for (var i = 1; i < a.fl; i++) floors += '<line x1="0" x2="' + X(g.w) + '" y1="' + (-X(i * p.dev.fl)) + '" y2="' + (-X(i * p.dev.fl)) + '" stroke="#6b6b6b" stroke-width=".6"/>';
       svg = '<svg viewBox="-70 ' + (-X(top) - 30) + " " + (X(g.w) + 140) + " " + (X(top) + 50) + '" xmlns="http://www.w3.org/2000/svg" direction="rtl" font-family="Heebo, Arial">' +
         '<line x1="-300" x2="' + (X(g.w) + 300) + '" y1="0" y2="0" stroke="#111"/>' +
         (has(R.h) ? '<line x1="-300" x2="' + (X(g.w) + 300) + '" y1="' + (-X(R.h)) + '" y2="' + (-X(R.h)) + '" stroke="#d4a017" stroke-dasharray="4 3"/>' +
           '<text x="-8" y="' + (-X(R.h) - 5) + '" font-size="10" fill="#8a6a10" text-anchor="start">גובה מרבי ' + R.h + " מ'</text>" : "") +
-        '<rect x="0" y="' + (-X(c.h)) + '" width="' + X(g.w) + '" height="' + X(c.h) + '" fill="' + (stMax(c.h, R.h) === "r" ? "#e7b8b3" : "#cfcfcf") + '" stroke="#111"/>' + floors +
-        '<text x="' + (X(g.w) + 60) + '" y="' + (-X(c.h) + 12) + '" font-size="10" fill="#111" text-anchor="start">' + fmt(c.h) + " מ'</text></svg>";
+        (mass ? '<rect x="0" y="' + (-X(c.h)) + '" width="' + X(g.w) + '" height="' + X(c.h) + '" fill="' + (stMax(c.h, R.h) === "r" ? "#e7b8b3" : "#cfcfcf") + '" stroke="#111"/>' + floors +
+          '<text x="' + (X(g.w) + 60) + '" y="' + (-X(c.h) + 12) + '" font-size="10" fill="#111" text-anchor="start">' + fmt(c.h) + " מ'</text>" : "") + "</svg>";
     }
     $("#flat").innerHTML = svg;
   }
@@ -885,63 +1010,170 @@
   function refreshA(opts) {
     opts = opts || {};
     var sum = summary();
-    if (!opts.keepRights) { renderPlotSeg(); renderRights(); renderDocs(); }
+    if (!opts.keepRights) { renderPlotStep(); renderRights(); renderDocs(); }
     else paintRightsStatus();
     if (!opts.keepAlts) renderAlts(); else paintAlts();
+    renderKV(sum);
     renderFit(sum);
     renderFocus(sum);
+  }
+
+  /* ---------- מהלך בצעדים: הסבר, ואז קלט ופלט ---------- */
+  var visited = load("flowv", []);
+  var flowPos = {};
+  var STEP_DONE = {
+    docs: function () { return docsLoaded() >= REQ_DOCS.length; },
+    plot: function () { return !!A.plot; },
+    extract: function () { return !!A.plot && !!P().extracted; },
+    envelope: function () { return !!A.plot && !!P().env; },
+    mass: function () { return !!A.plot && !!P().mass; },
+    check: function () { return !!A.plot && !!P().check; },
+    decide: function () { return !!A.plot && !!P().decided; }
+  };
+  var VIEW_NEEDS = {
+    "a/model": { ok: function () { return STEP_DONE.extract(); }, text: "קודם משלימים את מיפוי הזכויות.", to: "#a/rights" },
+    "a/fit": { ok: function () { return STEP_DONE.extract() && STEP_DONE.mass(); }, text: "קודם בונים את המודל ואת החלופות.", to: "#a/model" }
+  };
+  function flowSteps(v) { return $$(":scope > .step", v.el); }
+  function stepId(st) { return st.getAttribute("data-step"); }
+  function stepKey(v, st) { return key(v) + ":" + stepId(st); }
+  function isDone(v, st) {
+    var f = v.page === "a" && STEP_DONE[stepId(st)];
+    return f ? f() : visited.indexOf(stepKey(v, st)) !== -1;
+  }
+  function markVisited(k) { if (visited.indexOf(k) === -1) { visited.push(k); save("flowv", visited); } }
+  function unlocked(v, steps, i) {
+    if (i === 0) return true;
+    var need = VIEW_NEEDS[key(v)];
+    if (need && !need.ok()) return false;
+    for (var j = 0; j < i; j++) if (!isDone(v, steps[j])) return false;
+    return true;
+  }
+  function curStep() {
+    if (!current || !current.el.classList.contains("flow")) return null;
+    var steps = flowSteps(current);
+    return steps[flowPos[key(current)] || 0] || null;
+  }
+  function showMass() { var st = curStep(); return !!st && stepId(st) === "mass" && !!P().mass; }
+  function mountVP() {
+    var st = curStep(), vp = $("#vp"), slot = st && $('[data-slot="vp"]', st), p = P();
+    var ok = slot && A.plot && (slot.getAttribute("data-when") === "env" ? p.env : p.mass);
+    if (ok) { if (vp.parentNode !== slot) slot.appendChild(vp); }
+    else if (vp.parentNode !== $("#vpStore")) $("#vpStore").appendChild(vp);
+  }
+  function renderFlow() {
+    var v = current;
+    if (!v || !v.el.classList.contains("flow")) { mountVP(); return; }
+    var steps = flowSteps(v), k = key(v), pos = Math.min(flowPos[k] || 0, steps.length - 1);
+    while (pos > 0 && !unlocked(v, steps, pos)) pos--;
+    flowPos[k] = pos;
+    var bar = $(":scope > .flow-bar", v.el);
+    if (!bar) { bar = document.createElement("nav"); bar.className = "flow-bar"; bar.setAttribute("aria-label", "צעדי התחנה"); v.el.insertBefore(bar, steps[0]); }
+    bar.innerHTML = steps.map(function (st, i) {
+      var d = isDone(v, st), io = st.classList.contains("io");
+      return '<button class="btn' + (i === pos ? " on" : "") + (d ? " done" : "") + '" type="button" data-go="' + i + '"' + (unlocked(v, steps, i) ? "" : " disabled") + "><span>" + (i + 1) + "</span>" + esc(st.getAttribute("data-label")) + (io ? "<em>כלי</em>" : "") + "</button>";
+    }).join("");
+    steps.forEach(function (st, i) { st.hidden = i !== pos; });
+    var foot = $(":scope > .flow-foot", v.el);
+    if (!foot) { foot = document.createElement("div"); foot.className = "flow-foot"; v.el.appendChild(foot); }
+    var cur = steps[pos], need = VIEW_NEEDS[k], needOk = !need || need.ok(), last = pos === steps.length - 1;
+    var canNext = stepId(cur) === "explain" ? needOk : isDone(v, cur);
+    var list = pageViews(v.page), nextView = list[list.indexOf(v) + 1];
+    foot.innerHTML = (pos > 0 ? '<button class="btn" type="button" data-go="' + (pos - 1) + '">חזרה</button>' : "<span></span>") +
+      (!needOk ? '<span class="need">' + need.text + ' <a href="' + need.to + '">לתחנה</a></span>' : "<span></span>") +
+      (last ? (nextView ? '<a class="btn dark' + (canNext ? "" : " off") + '" href="#' + key(nextView) + '">הלאה: ' + esc(nextView.title) + "</a>" : "<span></span>")
+        : '<button class="btn dark" type="button" data-next' + (canNext ? "" : " disabled") + ">המשך: " + esc(steps[pos + 1].getAttribute("data-label")) + "</button>");
+    if (steps.every(function (st) { return isDone(v, st); }) && done.indexOf(k) === -1) { done.push(k); save("done", done); paintRail(); }
+    mountVP();
+    if (v.page === "a") renderFocus(summary());
+  }
+  function wireFlow() {
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest && e.target.closest("[data-go], [data-next], [data-reveal]");
+      if (!t || !current) return;
+      var k = key(current), steps = flowSteps(current);
+      if (t.hasAttribute("data-reveal")) {
+        var st = t.closest(".step"), out = $("[data-revealed]", st);
+        if (out) out.hidden = false;
+        markVisited(stepKey(current, st)); renderFlow(); return;
+      }
+      if (t.hasAttribute("data-next")) { markVisited(stepKey(current, steps[flowPos[k] || 0])); flowPos[k] = (flowPos[k] || 0) + 1; }
+      else flowPos[k] = Number(t.getAttribute("data-go"));
+      renderFlow();
+      $("#pane").scrollTop = 0;
+    });
+    document.addEventListener("input", function (e) {
+      var t = e.target;
+      if (t.matches && t.matches("textarea[data-note]")) { notes[t.getAttribute("data-note")] = t.value; save("notes", notes); }
+    });
   }
 
   /* המודל התלת-ממדי קורא מכאן את המצב */
   window.TOOL = {
     snapshot: function () {
-      var p = P(), a = p.alts[A.alt], c = calc(a), ch = checks(a);
-      return { R: p.R, a: a, c: c, g: geom(a), fl: p.dev.fl, plot: A.plot, breach: ch.some(function (x) { return x.st === "r"; }) };
+      var p = P(), a = p.alts[A.alt], c = calc(a), ch = checks(a), mass = showMass();
+      return { R: p.R, a: a, c: c, g: geom(a), fl: p.dev.fl, plot: A.plot, mass: mass, breach: mass && ch.some(function (x) { return x.st === "r"; }) };
     },
-    visible: function () { return document.body.getAttribute("data-page") === "a" && A.mode === "iso"; }
+    visible: function () { var h = $("#iso3d"); return document.body.getAttribute("data-page") === "a" && A.mode === "iso" && !!h && h.offsetParent !== null; }
   };
 
+  function choosePlot(id) {
+    id = String(id).trim(); if (!id) return;
+    A.plot = id; saveA(); refreshA(); renderFlow();
+  }
   function wireA() {
     document.addEventListener("click", function (e) {
-      var t = e.target.closest("[data-alt],[data-plot],[data-reset],[data-v],[data-open],[data-del]");
+      var t = e.target.closest("[data-alt],[data-plot],[data-v],[data-open],[data-del]");
       if (!t) return;
-      if (t.hasAttribute("data-alt")) { A.alt = t.getAttribute("data-alt"); saveA(); refreshA({ keepRights: true, keepAlts: true }); }
-      else if (t.hasAttribute("data-plot")) { A.plot = t.getAttribute("data-plot"); saveA(); refreshA(); }
-      else if (t.hasAttribute("data-reset")) { delete A.data[A.plot]; saveA(); refreshA(); }
+      if (t.hasAttribute("data-alt")) { A.alt = t.getAttribute("data-alt"); P().mass = true; saveA(); refreshA({ keepRights: true, keepAlts: true }); renderFlow(); }
+      else if (t.hasAttribute("data-plot")) choosePlot(t.getAttribute("data-plot"));
       else if (t.hasAttribute("data-v")) { A.mode = t.getAttribute("data-v"); saveA(); refreshA({ keepRights: true, keepAlts: true }); }
       else if (t.hasAttribute("data-open")) {
-        var f = docsCache[A.plot + ":" + t.getAttribute("data-open")];
+        var f = docsCache["plan:" + t.getAttribute("data-open")];
         if (f && f.file) { var u = URL.createObjectURL(f.file); window.open(u, "_blank", "noopener"); setTimeout(function () { URL.revokeObjectURL(u); }, 60000); }
       } else if (t.hasAttribute("data-del")) {
-        var k = A.plot + ":" + t.getAttribute("data-del");
-        delete docsCache[k]; renderDocs(); docDel(k);
+        var k = "plan:" + t.getAttribute("data-del");
+        delete docsCache[k]; renderDocs(); renderFlow(); docDel(k);
       }
     });
     document.addEventListener("change", function (e) {
       var up = e.target.closest("input[data-up]");
       if (!up || !up.files || !up.files[0]) return;
-      var file = up.files[0], k = A.plot + ":" + up.getAttribute("data-up");
+      var file = up.files[0], k = "plan:" + up.getAttribute("data-up");
       var rec = { name: file.name, size: file.size, type: file.type, file: file, ts: Date.now() };
-      docsCache[k] = rec; renderDocs(); docPut(k, rec);
+      docsCache[k] = rec; renderDocs(); renderFlow(); docPut(k, rec);
     });
     document.addEventListener("input", function (e) {
       var t = e.target, p = P(), k;
+      if (!t.matches) return;
       if (t.matches("[data-k]")) {
         k = t.getAttribute("data-k");
         var x = PARAMS.filter(function (q) { return q.k === k; })[0];
         p.R[k] = x.text ? t.value.trim() : (t.value === "" ? null : Number(t.value));
+        p.fromDemo = false;
         saveA(); refreshA({ keepRights: true, keepAlts: true });
       } else if (t.matches("[data-src]")) {
         p.src[t.getAttribute("data-src")] = t.value.trim(); saveA(); paintRightsStatus();
       } else if (t.matches("[data-fp]")) {
-        p.alts[t.getAttribute("data-fp")].fp = Number(t.value); A.alt = t.getAttribute("data-fp"); saveA(); refreshA({ keepRights: true, keepAlts: true });
+        p.alts[t.getAttribute("data-fp")].fp = Number(t.value); A.alt = t.getAttribute("data-fp"); p.mass = true; saveA(); refreshA({ keepRights: true, keepAlts: true }); renderFlow();
       } else if (t.matches("[data-fl]")) {
-        p.alts[t.getAttribute("data-fl")].fl = Number(t.value); A.alt = t.getAttribute("data-fl"); saveA(); refreshA({ keepRights: true, keepAlts: true });
+        p.alts[t.getAttribute("data-fl")].fl = Number(t.value); A.alt = t.getAttribute("data-fl"); p.mass = true; saveA(); refreshA({ keepRights: true, keepAlts: true }); renderFlow();
       } else if (t.matches("[data-dev]")) {
         var v = Number(t.value); if (!(v > 0)) return;
         p.dev[t.getAttribute("data-dev")] = v; saveA(); refreshA({ keepRights: true, keepAlts: true });
       }
     });
+    $("#demoDocs").addEventListener("click", function () { A.demoDocs = true; saveA(); renderDocs(); renderFlow(); });
+    $("#plotGo").addEventListener("click", function () { choosePlot($("#plotNum").value); });
+    $("#plotNum").addEventListener("keydown", function (e) { if (e.key === "Enter") choosePlot($("#plotNum").value); });
+    $("#demoExtract").addEventListener("click", function () {
+      if (!DEMO[A.plot]) return;
+      var p = P(); p.R = JSON.parse(JSON.stringify(DEMO[A.plot])); p.alts = defaultAlts(p.R); p.dev = defaultDev(p.R);
+      p.extracted = true; p.fromDemo = true; saveA(); refreshA(); renderFlow();
+    });
+    $("#envGo").addEventListener("click", function () { P().env = true; saveA(); renderFlow(); });
+    $("#checkGo").addEventListener("click", function () { P().check = true; saveA(); refreshA({ keepRights: true, keepAlts: true }); renderFlow(); });
+    $("#decideGo").addEventListener("click", function () { P().decided = true; saveA(); refreshA({ keepRights: true, keepAlts: true }); renderFlow(); });
     $("#importBtn").addEventListener("click", function () {
       var msg = $("#importMsg"), raw = $("#importBox").value, m = raw.match(/\{[\s\S]*\}/), obj;
       try { obj = JSON.parse(m ? m[0] : raw); } catch (err) { msg.textContent = "לא נמצא JSON תקין. מדביקים את הבלוק שבין הסוגריים המסולסלים."; return; }
@@ -955,9 +1187,9 @@
       });
       if (obj.sources && typeof obj.sources === "object") PARAMS.forEach(function (x) { if (typeof obj.sources[x.k] === "string") p.src[x.k] = obj.sources[x.k]; });
       if (!n) { msg.textContent = "לא נמצאו שדות מוכרים ב-JSON."; return; }
-      p.alts = defaultAlts(p.R);
-      saveA(); refreshA();
-      msg.textContent = "נקלטו " + n + " ערכים למגרש " + A.plot + ". החלופות חושבו מחדש.";
+      p.alts = defaultAlts(p.R); p.extracted = true; p.fromDemo = false;
+      saveA(); refreshA(); renderFlow();
+      msg.textContent = "נקלטו " + n + " ערכים למגרש " + A.plot + ".";
     });
   }
 
@@ -973,7 +1205,10 @@
           edits = { lists: {}, texts: {} }; save("edits", edits); location.reload();
         } },
         { label: "איפוס סימוני נלמד", onSelect: function () { done = []; seen = []; save("done", done); save("seen", seen); location.reload(); } },
-        { label: "איפוס המגרש לערכי הדמו", onSelect: function () { delete A.data[A.plot]; saveA(); refreshA(); } }
+        { label: "התחלת מפגש א מחדש", onSelect: function () {
+          A = { plot: null, alt: "א", mode: "iso", data: {}, demoDocs: false }; save("a2", A);
+          visited = visited.filter(function (k) { return k.indexOf("a/") !== 0; }); save("flowv", visited); location.reload();
+        } }
       ];
     } catch (e) { /* הרכיב עוד לא נטען */ }
   }
@@ -985,6 +1220,7 @@
   /* ---------- הפעלה ---------- */
   document.addEventListener("DOMContentLoaded", function () {
     buildB();
+    buildIntros();
     buildApps();
     initPrompts();
     initSubtabs();
@@ -998,10 +1234,14 @@
     applyTexts();
     wireEditing();
     document.addEventListener("click", function (e) {
-      var g = e.target.closest("button[data-group]"); if (g) toggleGroup(g.getAttribute("data-group"));
+      var g = e.target.closest("button[data-group]"); if (!g) return;
+      var gid = g.getAttribute("data-group"), intro = find(current.page, "_" + gid);
+      if (intro && current !== intro) location.hash = key(intro); else toggleGroup(gid);
     });
     wireA();
+    wireFlow();
     wireMenu();
+    $("#storyReplay").addEventListener("click", story);
     $("#prev").addEventListener("click", function () { step(-1); });
     $("#next").addEventListener("click", function () { step(1); });
     $("#mark").addEventListener("click", function () {

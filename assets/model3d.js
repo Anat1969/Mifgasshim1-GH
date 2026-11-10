@@ -67,24 +67,26 @@ function build() {
   if (ok(R.ss) && ok(R.sr) && ok(R.sf)) group.add(lineOf(rectPts(R.ss, R.sr, P - R.ss, P - R.sf, 0.04), 0x8a8a8a, true));
   if (ok(R.h)) group.add(lineOf(rectPts(0, 0, P, P, R.h), 0xd4a017));
 
-  const body = new THREE.Mesh(
-    new THREE.BoxGeometry(g.w, g.H, g.d),
-    new THREE.MeshStandardMaterial({ color: s.breach ? 0xb83a2e : 0xb9b9b6, roughness: 0.85, transparent: true, opacity: 0.94 })
-  );
-  body.position.set(g.ox + g.w / 2, g.H / 2, g.oy + g.d / 2);
-  group.add(body);
-  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(body.geometry), new THREE.LineBasicMaterial({ color: 0x151515 }));
-  edges.position.copy(body.position);
-  group.add(edges);
-  for (let i = 1; i < s.a.fl; i++) {
-    group.add(lineOf(rectPts(g.ox, g.oy, g.ox + g.w, g.oy + g.d, i * s.fl), s.breach ? 0x7a2219 : 0x6b6b6b));
+  if (s.mass) {
+    const body = new THREE.Mesh(
+      new THREE.BoxGeometry(g.w, g.H, g.d),
+      new THREE.MeshStandardMaterial({ color: s.breach ? 0xb83a2e : 0xb9b9b6, roughness: 0.85, transparent: true, opacity: 0.94 })
+    );
+    body.position.set(g.ox + g.w / 2, g.H / 2, g.oy + g.d / 2);
+    group.add(body);
+    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(body.geometry), new THREE.LineBasicMaterial({ color: 0x151515 }));
+    edges.position.copy(body.position);
+    group.add(edges);
+    for (let i = 1; i < s.a.fl; i++) {
+      group.add(lineOf(rectPts(g.ox, g.oy, g.ox + g.w, g.oy + g.d, i * s.fl), s.breach ? 0x7a2219 : 0x6b6b6b));
+    }
   }
 
   /* המצלמה ממוסגרת מחדש רק כשהמגרש מתחלף, כדי שהסיבוב של המשתמש יישמר בין חלופות */
   const key = s.plot + ":" + Math.round(P);
   if (key !== framed) {
     framed = key;
-    const top = Math.max(ok(R.h) ? R.h : 0, g.H);
+    const top = Math.max(ok(R.h) ? R.h : 0, s.mass ? g.H : 0, 6);
     controls.target.set(P / 2, top / 3, P / 2);
     camera.position.set(P * 1.9, Math.max(P, top) * 1.35, P * 2.15);
     controls.update();
