@@ -61,15 +61,8 @@
           </nav>
         </div>
         <figure class="home-figure" id="homeFigure">
-          <svg viewBox="0 0 400 420" role="img" aria-label="מסה על מגרש, עם קו הגובה המרבי">
-            <path d="M200 250 380 330 200 410 20 330Z" fill="#f1f1ef" stroke="#151515" stroke-width="1.5"/>
-            <path d="M200 268 344 332 200 396 56 332Z" fill="none" stroke="#8a8a8a" stroke-width="1" stroke-dasharray="5 5"/>
-            <path d="M200 30 380 110 200 190 20 110Z" fill="none" stroke="#d4a017" stroke-width="1.5"/>
-            <path d="M200 120 300 165 200 210 100 165Z" fill="#fff" stroke="#151515" stroke-width="1.5" stroke-linejoin="round"/>
-            <path d="M100 165V325L200 370V210Z" fill="#e9e9e6" stroke="#151515" stroke-width="1.5" stroke-linejoin="round"/>
-            <path d="M300 165V325L200 370V210Z" fill="#cfcfcc" stroke="#151515" stroke-width="1.5" stroke-linejoin="round"/>
-            <g stroke="#6b6b6b" stroke-width=".8" fill="none"><path d="M100 197 200 242 300 197M100 229 200 274 300 229M100 261 200 306 300 261M100 293 200 338 300 293"/></g>
-          </svg>
+          <svg id="story" viewBox="0 0 400 400" role="img" aria-label="סיפור החלופות: מגרש, קווי בניין, גובה מרבי, שלוש חלופות והכרעה"></svg>
+          <figcaption><p id="storyCap" aria-live="polite"></p><button class="btn small" type="button" id="storyReplay">הפעלה מחדש</button> <span class="demo-tag">דוגמה · מגרש 633</span></figcaption>
         </figure>
       </section>
 
@@ -272,119 +265,169 @@
 
       <!-- ===================== מפגש א ===================== -->
 
+      <!-- ===================== מפגש א: הסבר, ואז קלט ופלט, ורק בסוף המודל ===================== -->
+
       <section class="view cover" data-page="a" data-group="open" data-id="start" data-title="פתיחה">
         <h1>מזכויות בנייה למודל, ומהמודל להכרעה.</h1>
-        <div class="stages3" data-stages="a"></div>
+        <ol class="chain" aria-label="התהליך של המפגש">
+          <li><span>קלט</span>מסמכי התכנית</li>
+          <li><span>קלט</span>מספר מגרש</li>
+          <li class="out"><span>פלט</span>טבלת זכויות</li>
+          <li class="out"><span>פלט</span>מעטפת בנייה</li>
+          <li><span>קלט</span>שלוש חלופות</li>
+          <li class="out"><span>פלט</span>בדיקת התאמה</li>
+          <li class="out"><span>פלט</span>הכרעה מנומקת</li>
+        </ol>
       </section>
 
-      <section class="view" data-page="a" data-group="learn" data-id="rights" data-title="מיפוי זכויות">
+      <section class="view flow" data-page="a" data-group="learn" data-id="rights" data-title="מיפוי זכויות">
         <h1>זכויות בנייה הן שרשרת נתונים שניתן לאמת, לא מספר אחד.</h1>
-        <div class="subtabs" data-subtabs>
-          <button class="btn on" type="button" data-sub="tool">הכלי</button>
-          <button class="btn" type="button" data-sub="explain">ההסבר</button>
-          <button class="btn" type="button" data-sub="prompt">הפרומפט</button>
-        </div>
-        <div data-subview="tool">
-          <div class="field-lbl">מגרש (ערכי דמו, ניתנים לעריכה)</div>
-          <div class="seg" id="plotSeg"></div>
-          <div class="field-lbl">מסמכי התכנית <span id="docsCount"></span></div>
-          <ul class="docs" id="docs"></ul>
-          <div class="field-lbl">פרמטרים מהתב"ע <span id="srcCount"></span></div>
-          <table class="t rights">
-            <thead><tr><th>פרמטר</th><th>ערך</th><th></th><th>מקור</th><th></th></tr></thead>
-            <tbody id="rights"></tbody>
-          </table>
-          <div class="legend">
-            <span><i class="dot g"></i>ערך עם מקור</span>
-            <span><i class="dot y"></i>ערך בלי מקור</span>
-            <span><i class="dot r"></i>ערך חסר</span>
-            <span id="savedA" class="toast"></span>
-          </div>
-        </div>
-        <div data-subview="explain" hidden>
+        <div class="step" data-step="explain" data-label="ההסבר">
+          <p class="what"><mark>שלושה קלטים הופכים לטבלה אחת.</mark> מעלים את מסמכי התכנית. מזינים מספר מגרש. הבינה מחלצת את הזכויות, עם <b>מקור לכל ערך</b>.</p>
+          <ol class="chain">
+            <li><span>קלט</span>מסמכי התכנית</li>
+            <li><span>קלט</span>מספר מגרש</li>
+            <li><span>קלט</span>פרומפט החילוץ</li>
+            <li class="out"><span>פלט</span>טבלת זכויות</li>
+          </ol>
           <ol class="explain">
             <li><div><b>מה משנה במספר אחוזי הבנייה</b><p>מאז תיקון דצמבר 2023 לתקנות חישוב השטחים (התשנ"ב-1992), אין חובה לפצל בתכנית בין שטחים עיקריים לשטחי שירות. לכן הקלט חייב לזהות איזה נוסח חל על התכנית לפני שמחשבים אחוזים. <span class="flag">טעון בדיקה משפטית לפני פרסום</span></p><p><b>נבין:</b> האם הטבלה מציגה שטח כולל או פיצול? מה קורה כשהתכנית ישנה יותר מ-1992?</p></div></li>
-            <li><div><b>שטח מגרש, תכסית וקווי בניין</b><p>שטח המגרש נלקח מטבלת הזכויות ומתואם לשכבת המגרש. סטייה של עד 0.5% בין השכבה לטבלה נחשבת תקינה. תכסית וקווי בניין מגיעים מההוראות, לא מהתשריט בלבד.</p></div></li>
+            <li><div><b>שטח מגרש, תכסית וקווי בניין</b><p>שטח המגרש נלקח מטבלת הזכויות ומתואם לשכבת המגרש. סטייה של עד <b>0.5%</b> בין השכבה לטבלה נחשבת תקינה. תכסית וקווי בניין מגיעים מההוראות, לא מהתשריט בלבד.</p></div></li>
             <li><div><b>קומות, גובה וזכויות מתחת לקרקע</b><p>מספר הקומות מעל ומתחת לקרקע מופיע בהוראות. גובה מרבי נמדד לפי ההגדרה שבתכנית, לא לפי הנחה כללית.</p></div></li>
             <li><div><b>יחידות דיור ושימושים</b><p>מספר יח"ד מרבי וצפיפות מופיעים בהוראות או בטבלה. כל שימוש שאינו מוגדר במפורש נשאר "לא נמצא" ולא מוסק.</p></div></li>
             <li><div><b>בקרת עקביות</b><p>רכיבי השטח חייבים להסתכם לסה"כ. אחוזי הבנייה חייבים להתאים לשטחים. כל פער נרשם כממצא לאימות, ולא מתוקן בשקט.</p></div></li>
           </ol>
-          <p class="tiny" style="margin-top:10px">כלי קשור לשלב: <a href="https://korelaztiot.vercel.app" target="_blank" rel="noopener">קורלציות בין שכבות</a>, לבקרת עקביות בין השכבות. הכלי לא אומת מול התיאור שלו.</p>
         </div>
-        <div data-subview="prompt" hidden>
-          <div class="prompt" data-he="p1h" data-en="p1e" data-label="פרומפט לשלב 1: מיפוי זכויות"></div>
-          <div class="prompt" data-he="pjson" data-label="תוספת: פלט שנקלט בכלי"></div>
-          <div class="import">
-            <div class="field-lbl">הדבקת התשובה של הבינה (JSON)</div>
-            <textarea id="importBox" aria-label="הדבקת JSON" placeholder='{"plot": 2000, "cov": 35, "bp": 250, "floors": 8, "h": 28, "units": 40, "sf": 5, "ss": 4, "sr": 4, "sources": {"plot": "טבלת זכויות, עמ 3"}}'></textarea>
-            <div class="row"><button class="btn dark" type="button" id="importBtn">קלוט ערכים למודל</button><span id="importMsg" class="tiny"></span></div>
+        <div class="step io" data-step="docs" data-label="מסמכים">
+          <div class="io-in"><h3>קלט</h3><p class="io-q">מסמכי התכנית</p>
+            <ul class="docs" id="docs"></ul>
+            <div class="io-act"><button class="btn dark" type="button" id="demoDocs">טעינת מסמכי דמו</button><span class="tiny">הקבצים נשמרים בדפדפן הזה בלבד.</span></div>
+          </div>
+          <div class="io-out"><h3>פלט</h3><div id="docsOut"></div></div>
+        </div>
+        <div class="step io" data-step="plot" data-label="מגרש">
+          <div class="io-in"><h3>קלט</h3><p class="io-q">מספר מגרש או תא שטח</p>
+            <div class="plot-in"><input type="text" id="plotNum" inputmode="numeric" aria-label="מספר מגרש" placeholder="למשל 633"><button class="btn dark" type="button" id="plotGo">איתור</button></div>
+            <div class="seg" id="plotSeg"></div>
+          </div>
+          <div class="io-out"><h3>פלט</h3><div id="plotOut"></div></div>
+        </div>
+        <div class="step io" data-step="extract" data-label="טבלת זכויות">
+          <div class="io-in"><h3>קלט</h3><p class="io-q">פרומפט החילוץ, והתשובה של הבינה</p>
+            <div class="prompt" data-he="p1h" data-en="p1e" data-label="פרומפט לחילוץ הזכויות"></div>
+            <div class="prompt" data-he="pjson" data-label="תוספת: פלט שנקלט בכלי"></div>
+            <div class="import">
+              <textarea id="importBox" aria-label="הדבקת JSON" placeholder='{"plot": 2000, "cov": 35, "bp": 250, "floors": 8, "h": 28, "units": 40, "sf": 5, "ss": 4, "sr": 4}'></textarea>
+              <div class="io-act"><button class="btn dark" type="button" id="importBtn">קליטת התשובה</button><button class="btn" type="button" id="demoExtract">חילוץ ערכי הדמו</button></div>
+              <span id="importMsg" class="tiny"></span>
+            </div>
+          </div>
+          <div class="io-out"><h3>פלט</h3>
+            <div id="rightsWrap" hidden>
+              <p class="io-q">טבלת הזכויות <span id="srcCount" class="tiny"></span> <span class="demo-tag" id="demoTag" hidden>דוגמה · ערכי דמו</span></p>
+              <table class="t rights">
+                <thead><tr><th>פרמטר</th><th>ערך</th><th></th><th>מקור</th><th></th></tr></thead>
+                <tbody id="rights"></tbody>
+              </table>
+              <div class="legend">
+                <span><i class="dot g"></i>ערך עם מקור</span>
+                <span><i class="dot y"></i>ערך בלי מקור</span>
+                <span><i class="dot r"></i>ערך חסר</span>
+                <span id="savedA" class="toast"></span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="view" data-page="a" data-group="understand" data-id="model" data-title="מודל וחלופות">
+      <section class="view flow" data-page="a" data-group="understand" data-id="model" data-title="מודל וחלופות">
         <h1>כל חלופה היא שילוב אחר של שטח קומה ומספר קומות.</h1>
-        <div class="subtabs" data-subtabs>
-          <button class="btn on" type="button" data-sub="tool">הכלי</button>
-          <button class="btn" type="button" data-sub="explain">ההסבר</button>
-          <button class="btn" type="button" data-sub="prompt">הפרומפט</button>
-        </div>
-        <div data-subview="tool">
-          <p class="tiny">המודל נבנה רק מהזכויות של שלב 1. מזיזים שטח קומה וקומות, והמסה משתנה מיד.</p>
-          <div id="alts"></div>
-          <div class="field-lbl">הנחות היזם</div>
-          <div class="dev" id="dev"></div>
-        </div>
-        <div data-subview="explain" hidden>
+        <div class="step" data-step="explain" data-label="ההסבר">
+          <p class="what"><mark>המודל נבנה רק מהטבלה.</mark> קודם המעטפת: מגרש, קווי בניין וגובה מרבי. אחר כך המסה: <b>שטח קומה</b> ו<b>מספר קומות</b> לכל חלופה.</p>
+          <ol class="chain">
+            <li><span>קלט</span>טבלת זכויות</li>
+            <li class="out"><span>פלט</span>מעטפת בנייה</li>
+            <li><span>קלט</span>שטח קומה וקומות</li>
+            <li class="out"><span>פלט</span>מסה, תוכנית וחזית</li>
+          </ol>
           <ol class="explain">
             <li><div><b>מהטבלה למסה</b><p>המסה נבנית רק מהזכויות שחולצו בשלב 1. תכסית קובעת שטח קומה מרבי, קומות וגובה קובעים נפח. כל חלופה היא שילוב אחר של שני המשתנים.</p></div></li>
             <li><div><b>שלוש חלופות</b><p>חלופה א: קומות נמוכות ושטח קומה גדול. חלופה ב: מגדל צר וגבוה. חלופה ג: ביניים. כל אחת מוגבלת לתוך קווי הבניין.</p></div></li>
-            <li><div><b>תצוגות: איזומטרי, תוכנית, חזית</b><p>האיזומטרי מראה נפח. התוכנית מראה קווי בניין ותכסית. החזית מראה גובה מול הגבול המותר. בודקים את שלושתן יחד.</p></div></li>
+            <li><div><b>תצוגות: תלת-ממד, תוכנית, חזית</b><p>התלת-ממד מראה נפח. התוכנית מראה קווי בניין ותכסית. החזית מראה גובה מול הגבול המותר. בודקים את שלושתן יחד.</p></div></li>
             <li><div><b>רמת פירוט גאומטרית</b><p>רמה בינונית: רצפות, רצועות חלונות וגג. פירוט מפורט (פתחים, חדרים) לא נכנס לשלב זה, כי הוא לא משנה את ההכרעה בין חלופות.</p></div></li>
           </ol>
-          <p class="tiny" style="margin-top:10px">כלים קשורים: <a href="https://chalufot-gh.vercel.app" target="_blank" rel="noopener">חלופה שעוברת בדיקה</a>, <a href="https://tamhil-gh.vercel.app" target="_blank" rel="noopener">איזה תמהיל עדיף</a>.</p>
         </div>
-        <div data-subview="prompt" hidden>
-          <div class="prompt" data-he="p2h" data-en="p2e" data-label="פרומפט לשלב 2: מודל וחלופות"></div>
+        <div class="step io" data-step="envelope" data-label="מעטפת">
+          <div class="io-in"><h3>קלט</h3><p class="io-q">הערכים מטבלת הזכויות</p>
+            <dl class="kv" id="envIn"></dl>
+            <div class="prompt" data-he="p2h" data-en="p2e" data-label="פרומפט למודל ולחלופות"></div>
+            <div class="io-act"><button class="btn dark" type="button" id="envGo">בניית המעטפת</button></div>
+          </div>
+          <div class="io-out"><h3>פלט</h3><div data-slot="vp" data-when="env"></div></div>
+        </div>
+        <div class="step io" data-step="mass" data-label="חלופות">
+          <div class="io-in"><h3>קלט</h3><p class="io-q">שטח קומה ומספר קומות לכל חלופה</p>
+            <div id="alts"></div>
+          </div>
+          <div class="io-out"><h3>פלט</h3><div data-slot="vp" data-when="mass"></div></div>
         </div>
       </section>
 
-      <section class="view" data-page="a" data-group="do" data-id="fit" data-title="בדיקת התאמה">
-        <h1 id="fitTitle">בדיקת התאמה: תב"ע ועירייה מול יזם.</h1>
-        <div class="subtabs" data-subtabs>
-          <button class="btn on" type="button" data-sub="tool">הכלי</button>
-          <button class="btn" type="button" data-sub="explain">ההסבר</button>
-          <button class="btn" type="button" data-sub="prompt">הפרומפט</button>
-        </div>
-        <div data-subview="tool">
-          <table class="t fit" id="fit"></table>
-          <p class="reco" id="reco"></p>
-          <div class="legend">
-            <span><i class="dot g"></i>עומד, מרווח של 5% לפחות</span>
-            <span><i class="dot y"></i>עומד, מרווח קטן מ-5%</span>
-            <span><i class="dot r"></i>חורג</span>
-            <span><i class="dot"></i>לא נבדק</span>
-          </div>
-        </div>
-        <div data-subview="explain" hidden>
+      <section class="view flow" data-page="a" data-group="do" data-id="fit" data-title="בדיקת התאמה">
+        <h1>כל חלופה נבדקת פעמיים: מול התב"ע, ומול היזם.</h1>
+        <div class="step" data-step="explain" data-label="ההסבר">
+          <p class="what"><mark>ההכרעה נשענת על בדיקות, לא על תחושה.</mark> כל פרמטר מהטבלה נבדק מול כל חלופה. <span class="good">ירוק: עומד.</span> <span class="bad">אדום: חורג.</span></p>
+          <ol class="chain">
+            <li><span>קלט</span>שלוש חלופות</li>
+            <li><span>קלט</span>הנחות היזם</li>
+            <li class="out"><span>פלט</span>מטריצת התאמה</li>
+            <li class="out"><span>פלט</span>הכרעה מנומקת</li>
+          </ol>
           <ol class="explain">
-            <li><div><b>צד תב"ע ועירייה</b><p>כל פרמטר מהשלב הראשון נבדק מול החלופה. ירוק: עומד בתנאי עם מרווח של לפחות 5%. צהוב: עומד בתנאי, במרווח קטן מ-5%. אדום: חורג.</p></div></li>
-            <li><div><b>צד יזם</b><p>שטח נטו למכירה מתוך השטח הכולל (ברירת מחדל 80%), מספר יח"ד מול יעד היזם, שטח יח"ד ממוצע, וניצול זכויות מתוך המותר. ניצול מעל 90% ירוק, בין 75% ל-90% צהוב, מתחת ל-75% אדום.</p></div></li>
+            <li><div><b>צד תב"ע ועירייה</b><p>כל פרמטר מהשלב הראשון נבדק מול החלופה. ירוק: עומד בתנאי עם מרווח של לפחות <b>5%</b>. צהוב: עומד בתנאי, במרווח קטן מ-5%. אדום: חורג.</p></div></li>
+            <li><div><b>צד יזם</b><p>שטח נטו למכירה מתוך השטח הכולל (ברירת מחדל <b>80%</b>), מספר יח"ד מול יעד היזם, שטח יח"ד ממוצע, וניצול זכויות מתוך המותר. ניצול מעל <b>90%</b> ירוק, בין 75% ל-90% צהוב, מתחת ל-75% אדום.</p></div></li>
             <li><div><b>אחוזי התאמה</b><p>ירוק = 1, צהוב = 0.5, אדום = 0. הממוצע על כל הבדיקות כפול 100. המספר מסייע להשוואה, ולא מחליף את הפירוט.</p></div></li>
             <li><div><b>דוח השוואה</b><p>מסקנה בשלושה משפטים, טבלת השוואה, יתרון וחיסרון לכל חלופה, המלצה והנחות, ומקור לכל מספר. הדוח לא מציג מסקנה בלי הנתונים שעליה היא נשענת.</p></div></li>
           </ol>
-          <p class="tiny" style="margin-top:10px">כלי קשור לשלב: <a href="https://programa-gh.vercel.app" target="_blank" rel="noopener">מחשבון פרוגרמות</a>, מקור הדרישות של הצד העירוני. הכלי מתואר לפי התיאור במערכת, ולא נבדק עדיין.</p>
         </div>
-        <div data-subview="prompt" hidden>
-          <div class="prompt" data-he="p3h" data-en="p3e" data-label="פרומפט לשלב 3: בדיקת התאמה"></div>
-          <div class="prompt" data-he="p4h" data-en="p4e" data-label="פרומפט לדוח ההשוואה"></div>
+        <div class="step io" data-step="check" data-label="בדיקה">
+          <div class="io-in"><h3>קלט</h3><p class="io-q">שלוש החלופות, והנחות היזם</p>
+            <dl class="kv" id="checkIn"></dl>
+            <div class="dev" id="dev"></div>
+            <div class="prompt" data-he="p3h" data-en="p3e" data-label="פרומפט לבדיקת ההתאמה"></div>
+            <div class="io-act"><button class="btn dark" type="button" id="checkGo">הרצת הבדיקה</button></div>
+          </div>
+          <div class="io-out"><h3>פלט</h3>
+            <div id="fitWrap" hidden>
+              <table class="t fit" id="fit"></table>
+              <div class="legend">
+                <span><i class="dot g"></i>עומד, מרווח של 5% לפחות</span>
+                <span><i class="dot y"></i>עומד, מרווח קטן מ-5%</span>
+                <span><i class="dot r"></i>חורג</span>
+                <span><i class="dot"></i>לא נבדק</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step io" data-step="decide" data-label="הכרעה">
+          <div class="io-in"><h3>קלט</h3><p class="io-q">תוצאות הבדיקה</p>
+            <dl class="kv" id="decideIn"></dl>
+            <div class="prompt" data-he="p4h" data-en="p4e" data-label="פרומפט לדוח ההשוואה"></div>
+            <div class="io-act"><button class="btn dark" type="button" id="decideGo">הצגת ההכרעה</button></div>
+          </div>
+          <div class="io-out"><h3>פלט</h3>
+            <div id="decideWrap" hidden>
+              <p class="verdict" id="fitTitle"></p>
+              <p class="reco" id="reco"></p>
+            </div>
+          </div>
         </div>
       </section>
 
       <section class="view" data-page="a" data-group="do" data-id="trust" data-title="אמינות הכלי">
         <h1>כלי אמין מזהה לבד את מה שנמצא בבדיקה ידנית.</h1>
         <h2>מקרה מבחן ראשון: תב"ע 603</h2>
-        <p>התכנית כבר נבדקה ידנית, ונמצאו בה שישה ממצאים לאימות: סיכומי שטח שאינם תואמים לרכיבים, שורת סיכום שמשתנה לאחר תיקון, ושגיאת הקלדה באחוזי הבנייה. הכלי צריך לזהות את כל הממצאים האלה לבד.</p>
+        <p>התכנית כבר נבדקה ידנית, ונמצאו בה <b>שישה ממצאים</b> לאימות: סיכומי שטח שאינם תואמים לרכיבים, שורת סיכום שמשתנה לאחר תיקון, ושגיאת הקלדה באחוזי הבנייה. <mark>הכלי צריך לזהות את כל הממצאים האלה לבד.</mark></p>
         <h2>שלושה מדדים</h2>
         <table class="t">
           <thead><tr><th>מדד</th><th>יעד</th><th>במגרש הנוכחי</th></tr></thead>
@@ -394,45 +437,50 @@
             <tr><td>ממצאי עקביות שלא זוהו במקרה המבחן</td><td class="num">0</td><td class="muted">טרם נבדק</td></tr>
           </tbody>
         </table>
-        <div class="warn">הערכים בכלי הם דמו. בשימוש אמיתי הם מחולצים ממסמכי התכנית, וכל ערך מקבל מקור: מסמך, עמוד וסעיף או תא.</div>
+        <h2>כלים קשורים</h2>
+        <ol class="plain">
+          <li><a href="https://korelaztiot.vercel.app" target="_blank" rel="noopener">קורלציות בין שכבות</a>: בקרת עקביות בין השכבות. לא אומת מול התיאור שלו.</li>
+          <li><a href="https://chalufot-gh.vercel.app" target="_blank" rel="noopener">חלופה שעוברת בדיקה</a>: חלופות בינוי מול תכנית המתאר.</li>
+          <li><a href="https://tamhil-gh.vercel.app" target="_blank" rel="noopener">איזה תמהיל עדיף</a>: שני תמהילים על אותו מגרש.</li>
+          <li><a href="https://programa-gh.vercel.app" target="_blank" rel="noopener">מחשבון פרוגרמות</a>: מקור הדרישות של הצד העירוני. לא נבדק עדיין.</li>
+        </ol>
       </section>
 
       <!-- ===================== מפגש ב: נבנה מהנתונים ב-app.js ===================== -->
       <section class="view cover" data-page="b" data-group="open" data-id="start" data-title="פתיחה">
         <h1>מהנתון לשליטה במשרד.</h1>
-        <div class="stages3" data-stages="b"></div>
+        <ol class="chain" aria-label="התהליך של המפגש">
+          <li><span>קלט</span>המשרד כפי שהוא</li>
+          <li class="out"><span>פלט</span>חמש ישויות</li>
+          <li class="out"><span>פלט</span>שלבים ועלויות</li>
+          <li class="out"><span>פלט</span>קשרים וספי סטייה</li>
+          <li><span>קלט</span>פרויקט אחד</li>
+          <li class="out"><span>פלט</span>כלי וסקירה שבועית</li>
+        </ol>
       </section>
-
       <div id="viewsB"></div>
     </div>
 
-    <aside class="focus" id="focusA" aria-label="מודל המגרש">
-      <div class="focus-head">
-        <h2 id="headline"></h2>
+    <!-- חלון המודל: נכנס למסגרת רק בצעד שבו המודל נבנה -->
+    <div id="vpStore" hidden>
+      <div id="vp">
+        <p class="verdict" id="headline"></p>
         <div class="focus-tools">
-          <div class="seg" id="altSeg" aria-label="חלופה"></div>
           <div class="seg" id="viewSeg" aria-label="תצוגה">
             <button class="btn on" type="button" data-v="iso">תלת-ממד</button>
             <button class="btn" type="button" data-v="plan">תוכנית</button>
             <button class="btn" type="button" data-v="elev">חזית</button>
           </div>
+          <span class="demo-tag" id="vpDemo" hidden>דוגמה · ערכי דמו</span>
         </div>
+        <div class="viewport">
+          <div id="iso3d"><p id="noThree" hidden>התצוגה התלת-ממדית דורשת חיבור לאינטרנט לטעינת הספרייה. התצוגות תוכנית וחזית זמינות תמיד.</p></div>
+          <div id="flat" hidden></div>
+          <span class="hint" id="hint">סיבוב, הזזה וזום בעכבר · צהוב: גובה מרבי · מקווקו: קווי בניין · אדום: חריגה</span>
+        </div>
+        <div class="metrics" id="metrics"></div>
       </div>
-      <div class="viewport">
-        <div id="iso3d"><p id="noThree" hidden>התצוגה התלת-ממדית דורשת חיבור לאינטרנט לטעינת הספרייה. התצוגות תוכנית וחזית זמינות תמיד.</p></div>
-        <div id="flat" hidden></div>
-        <span class="hint" id="hint">סיבוב, הזזה וזום בעכבר · צהוב: גובה מרבי · מקווקו: קווי בניין · אדום: חריגה</span>
-      </div>
-      <div class="metrics" id="metrics"></div>
-    </aside>
-
-    <aside class="focus" id="focusB" aria-label="פרויקט לדוגמה">
-      <div class="focus-head">
-        <h2><b>התכנון חרג ב-8,000 ש"ח.</b> הפרויקט כולו ניצל 91% מהתקציב.</h2>
-        <p class="tiny">פרויקט לדוגמה, בדיוני: תקציב משרד לבית פרטי. שכר טרחה מאושר: 180,000 ש"ח. העלויות הן של המשרד בלבד.</p>
-      </div>
-      <div class="bars" id="bars"></div>
-    </aside>
+    </div>
   </main>
 </div>
 
