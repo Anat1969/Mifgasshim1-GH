@@ -648,3 +648,49 @@ table.fit th.alt-col { font-size: 12px; color: var(--g3); font-weight: 500; }
   .tmodel { height: 240px; }
   .trio.small .tmodel { height: 170px; }
 }
+
+
+/* =====================================================================
+   מפגש א החדש: תכנית, דרישות, חלופות והכרעה
+   ===================================================================== */
+#vp .viewport { height: 44vh; min-height: 300px; margin: 6px 0 8px; }
+.ln.blue { border-top: 3px solid #1f5fbf; }
+.sw { display: inline-block; width: 14px; height: 10px; vertical-align: middle; box-shadow: inset 0 0 0 1px #151515; background: #fff; }
+.sw.road { background: #d6d6d2; box-shadow: none; }
+.docs.one { grid-template-columns: 1fr; }
+.docs .da { flex-wrap: nowrap; }
+h4.sub { font-size: 12.5px; font-weight: 500; color: var(--g3); margin: 18px 0 6px; padding-top: 10px; border-top: 1px solid var(--g2); }
+h4.fold-h { cursor: pointer; display: inline-block; background: var(--g1); padding: 4px 10px; border-top: 0; color: var(--ink); font-size: 14px; margin-top: 14px; transition: background .2s, box-shadow .2s; }
+h4.fold-h:hover { background: #e9e9e6; box-shadow: var(--sh); }
+h4.fold-h.open { background: linear-gradient(transparent 68%, var(--mark) 68%) #fff; box-shadow: var(--sh); }
+.rec { display: flex; gap: 6px; align-items: stretch; }
+.rec textarea { flex: 1; }
+.rec .btn { min-width: 84px; }
+.step .dev { grid-template-columns: 1fr 1fr 1.3fr; }
+.dev select { width: 100%; border: 0; background: var(--g1); height: 28px; padding: 2px 8px; }
+.io-in > .prompt { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--g2); }
+.tri-top .prompt { margin: 0; flex: 1 1 100%; }
+.tunique { font-size: 14.5px; margin: 2px 0 8px !important; }
+dl.kv.tight > div { padding: 3px 0; }
+dl.kv.tight dt { font-size: 13px; }
+dl.kv.tight dd { font-size: 14px; }
+.pc { font-size: 13.5px; text-align: right; line-height: 1.5; margin-top: 6px !important; }
+.pc b { display: inline-block; font-size: 12px; margin-inline-end: 8px; font-weight: 700; }
+.trio.small .tcol.on { box-shadow: var(--sh), inset 0 3px 0 var(--ink); background: linear-gradient(transparent 97%, var(--mark) 97%) #fff; }
+.outlist.req li { grid-template-columns: 28px 1fr auto; }
+.outlist.req li span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+#verifyOut .what { font-size: 17px; }
+#buildList .prompt { margin-top: 8px; }
+.view > .io-act { margin: 12px 0 4px; }
+@media (max-width: 900px) {
+  .step .dev { grid-template-columns: 1fr 1fr; }
+  .dev .wide { grid-column: 1 / -1; }
+  #vp .viewport { height: 300px; }
+  .io-in, .io-out, .tcol, .tri-top { overflow-x: auto; }
+  .flow-bar .btn { overflow: hidden; padding-inline: 8px; gap: 5px; font-size: 13px; }
+  .flow-bar .btn em { display: none; }
+  .docs .da { flex-wrap: wrap; justify-content: flex-end; }
+  table.rights input[data-src] { min-width: 90px; }
+  .outlist.req li { grid-template-columns: 22px 1fr; }
+  .outlist.req li span { grid-column: 2; white-space: normal; }
+}
