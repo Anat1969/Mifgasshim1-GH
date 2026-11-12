@@ -1376,15 +1376,7 @@
       }
       return out;
     },
-    volume: function () {
-      var ids = Object.keys(A.data).filter(function (id) { var d = A.data[id]; return d.decided && d.alts && PLAN.plots[id]; });
-      if (!ids.length) return null;
-      var id = A.plot && ids.indexOf(A.plot) !== -1 ? A.plot : ids[0], p = A.data[id], sum = summary(p);
-      if (!sum.best) return { none: true, plotId: id };
-      var x = sum.all[sum.best], g = geom(x.a, p), L = limits(p);
-      return { mode: MODE, plotId: id, key: sum.best, kind: x.a.kind, name: ALT_NAME[x.a.kind], W: g.W, D: g.D, boxes: JSON.parse(JSON.stringify(g.boxes)),
-        flh: FLH, R: JSON.parse(JSON.stringify(p.R)), c: JSON.parse(JSON.stringify(x.c)), tone: x.tone, why: sum.why, area: L.area, parkRate: SYS().park };
-    },
+    volume: function () { return volumeNow(); },
     pick: function (id) { var st = curStep(); if (st && stepId(st) === "plot") choosePlot(id); },
     visible: function () { var h = $("#iso3d"); return document.body.getAttribute("data-page") === "a" && !!h && h.offsetParent !== null; }
   };
@@ -1720,10 +1712,53 @@
     customElements.whenDefined("ai-menu").then(setMenu);
   }
 
+  /* הוולום של החלופה שנבחרה, מהמצב הנוכחי */
+  function volumeNow() {
+    var ids = Object.keys(A.data).filter(function (id) { var d = A.data[id]; return d.decided && d.alts && PLAN.plots[id]; });
+    if (!ids.length) return null;
+    var id = A.plot && ids.indexOf(A.plot) !== -1 ? A.plot : ids[0], p = A.data[id], sum = summary(p);
+    if (!sum.best) return { none: true, plotId: id };
+    var x = sum.all[sum.best], g = geom(x.a, p), L = limits(p);
+    return { mode: MODE, plotId: id, key: sum.best, kind: x.a.kind, name: ALT_NAME[x.a.kind], W: g.W, D: g.D, boxes: JSON.parse(JSON.stringify(g.boxes)),
+      flh: FLH, R: JSON.parse(JSON.stringify(p.R)), c: JSON.parse(JSON.stringify(x.c)), tone: x.tone, why: sum.why, area: L.area, parkRate: SYS().park };
+  }
+  /* חישוב על מצב אחר של מפגש ב, בלי לגעת במצב הפתוח: מחליפים זמנית את המשתנים ומחזירים */
+  function withState(st, mode, fn) {
+    var sA = A, sM = MODE, sP = PLAN, sD = DEMO, sF = FLH;
+    try {
+      A = st; MODE = mode;
+      if (mode === "live") { PLAN = buildLivePlan(); DEMO = A.live.rights; } else { PLAN = EX_PLAN; DEMO = EX_DEMO; }
+      syncFlh();
+      return fn();
+    } finally { A = sA; MODE = sM; PLAN = sP; DEMO = sD; FLH = sF; }
+  }
+  var exVol = null;
+  /* מגרש 633 מהדוגמה, עם כל מקורות הדרישות מחוברים: החלופה הנבחרת, קבועה ולא תלויה בעבודה של המשתמש */
+  function exampleVolume() {
+    if (exVol) return JSON.parse(JSON.stringify(exVol));
+    var st = freshA(); st.plot = "633"; st.planBuilt = true;
+    st.req = { src: { guide: true, ogdan: true, takanot: true }, files: {}, text: "", target: 32, avg: 90, prio: "util", done: true, found: "" };
+    exVol = withState(st, "example", function () {
+      var R = JSON.parse(JSON.stringify(EX_DEMO["633"])), src = {};
+      PARAMS.forEach(function (x) { if (has(R[x.k])) src[x.k] = "טבלה 5, שורת מגרש 633"; });
+      var p = { id: "633", R: R, src: src, alts: null, fromDemo: true, decided: true };
+      p.alts = genAlts(p); st.data["633"] = p;
+      return volumeNow();
+    });
+    return JSON.parse(JSON.stringify(exVol));
+  }
+  /* הוולום של מפגש ב: "example" קבוע, "live" מההדגמה החיה השמורה */
+  function volumeFor(which) {
+    if (which === "example") return exampleVolume();
+    if (MODE === "live") return volumeNow();
+    var st = fixA(load("a3live", freshA()));
+    return withState(st, "live", volumeNow);
+  }
+
   /* גשר לדפים נוספים (מפגש ג) */
   window.APP = { load: load, save: save, esc: esc, fmt: fmt, has: has, copy: copy, $: $, $$: $$, rich: rich, lines: lines, ext: EXT, needs: VIEW_NEEDS,
     refresh: function () { renderFlow(); }, docPut: docPut, docDel: docDel, docs: function () { return docsCache; },
-    sys: function () { return SYS(); }, volume: function () { return window.TOOL.volume(); }, current: function () { return current; }, FLH: function () { return FLH; } };
+    sys: function () { return SYS(); }, volume: function (which) { return volumeFor(which || "live"); }, current: function () { return current; }, FLH: function () { return FLH; } };
 
   /* ---------- הפעלה ---------- */
   document.addEventListener("DOMContentLoaded", function () {

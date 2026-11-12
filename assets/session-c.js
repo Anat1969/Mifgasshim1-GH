@@ -15,10 +15,28 @@
       date: "2026-12-21", hour: 9, wx: null, aerial: true, wiki: null, climDone: false, feasDone: false,
       intentText: "", keys: { style: [], mat: [], tone: "" }, intent: null, palette: [], expDone: false };
   }
-  var C = APP.load("c1", fresh());
-  (function fix() { var f = fresh(); Object.keys(f).forEach(function (k) { if (C[k] === undefined) C[k] = f[k]; }); })();
+  /* שני מצבים: דוגמה (ממולאת מראש, על מגרש 633 מהדוגמה של מפגש ב) והדגמה חיה (הנתונים של המשתמש) */
+  var CMODE = APP.load("cmode", "example") === "live" ? "live" : "example";
+  function ckey(m) { return (m || CMODE) === "live" ? "c1" : "c1ex"; }
+  function DK(x) { return (CMODE === "live" ? "c:" : "ce:") + x; }
+  function exampleState() {
+    var f = fresh();
+    f.addr = "אשדוד, רחוב הרצל (מיקום לדוגמה)"; f.lat = 31.8; f.lon = 34.65; f.front = 180;
+    f.nb = [{ kind: "man", name: "מגדל משרדים", h: 30, dist: 12, dir: 0, w: 25, d: 30 }, { kind: "man", name: "בניין מגורים", h: 12.8, dist: 8, dir: 270, w: 30, d: 15 }, { kind: "man", name: "בית נמוך", h: 7, dist: 10, dir: 90, w: 15, d: 15 }];
+    f.dem = { z: 22, slope: 0.6, down: 270 };
+    f.site = { exist: "להריסה", trees: "שני עצי פיקוס בחזית", soil: "חול", hist: "אין", water: "חיבור מהרחוב", sewer: "לכיוון דרום", elec: "עמדה בפינה", comm: "כבלים" };
+    f.app = { maxH: 28, maxFl: 8 };
+    f.wx = { year: 2025, partial: false, example: true, rain: 310, rdays: 41, rad: 5.5, wind: ["דרום", "צפון", "צפון", "צפון-מערב", "צפון-מערב", "מערב", "מערב", "צפון-מערב", "צפון-מערב", "צפון", "דרום-מערב", "דרום"] };
+    f.intentText = "אני רוצה בניין שמרגיש פתוח לכיוון הים, חומרים גסים, חזית מינימליסטית, השראה מהמחסנים הישנים של הנמל.";
+    f.keys = { style: ["תעשייתי", "מינימליסטי"], mat: ["בטון"], tone: "" };
+    f.palette = ["#7a746b", "#c9bfae", "#3c4650", "#a8a39a"];
+    return f;
+  }
+  function freshFor(m) { return m === "example" ? exampleState() : fresh(); }
+  function fixC(x) { var f = fresh(); Object.keys(f).forEach(function (k) { if (x[k] === undefined) x[k] = f[k]; }); return x; }
+  var C = fixC(APP.load(ckey(), freshFor(CMODE)));
   var saveT = null;
-  function save() { APP.save("c1", C); }
+  function save() { APP.save(ckey(), C); }
   function parseNum(v) { return v === "" || v === null || v === undefined ? null : Number(v); }
 
   /* ---------- שמש: חישוב לפי קואורדינטות, תאריך ושעה (אותה שיטה שמשמשת את SunCalc) ---------- */
@@ -61,11 +79,12 @@
       c: { gross: gross, floors: fl, h: fl * flh, cov: fp / (W * D) * 100, bp: gross / (W * D) * 100, units: has(R.units) ? R.units : Math.floor(gross * 0.8 / 90), util: 0 }, why: "" };
   }
   function getVol() {
-    var v = C.useMan ? null : APP.volume();
-    if (v && !v.none) { v.src = "a"; return v; }
-    return C.useMan ? manualVol() : null;
+    if (C.useMan) return manualVol();
+    var v = APP.volume(CMODE);
+    if (v && !v.none) { v.src = CMODE === "example" ? "ex" : "a"; return v; }
+    return null;
   }
-  function aVolState() { var v = APP.volume(); return v ? (v.none ? "none" : "ok") : "empty"; }
+  function aVolState() { var v = APP.volume(CMODE); return v ? (v.none ? "none" : "ok") : "empty"; }
   function volStats(v) {
     var H = v.boxes.reduce(function (m, b) { return Math.max(m, b.z0 + b.H); }, 0), top = v.boxes[v.boxes.length - 1];
     return { H: H, roof: top.w * top.d, floors: v.c.floors };
@@ -156,10 +175,10 @@
   function placedOk() { return !!(C.placed && has(C.lat) && has(C.lon) && getVol()); }
   function bar() {
     var v = getVol(), t;
-    if (!v) t = "עוד אין וולום. מכריעים חלופה במפגש ב, או מזינים וולום ידנית בצומת 1.";
+    if (!v) t = "עוד אין וולום. מכריעים חלופה בהדגמה החיה של מפגש ב, או מזינים וולום ידנית בצומת 1.";
     else {
       var f = C.feasDone ? feasCounts() : null;
-      t = "<b>פרויקט:</b> " + (v.src === "a" ? "מגרש " + esc(v.plotId) + ", חלופה " + esc(v.key) + " (" + esc(v.name) + ")" : "וולום ידני") + " · " + v.c.floors + " קומות · " + fmt(v.c.h) + " מ' · " + fmt(v.c.gross, 0) + ' מ"ר · ' + (C.addr ? esc(C.addr) : "בלי כתובת") +
+      t = "<b>פרויקט:</b> " + (CMODE === "example" ? '<span class="demo-tag">דוגמה</span> ' : "") + (v.src !== "man" ? "מגרש " + esc(v.plotId) + ", חלופה " + esc(v.key) + " (" + esc(v.name) + ")" : "וולום ידני") + " · " + v.c.floors + " קומות · " + fmt(v.c.h) + " מ' · " + fmt(v.c.gross, 0) + ' מ"ר · ' + (C.addr ? esc(C.addr) : "בלי כתובת") +
         (f ? " · היתכנות: " + f.r + " חריגות, " + f.y + " אזהרות" : " · היתכנות: טרם נבדקה");
     }
     return t;
@@ -185,9 +204,9 @@
 
   /* ---------- צומת 1: הצבת הוולום ---------- */
   function renderVol() {
-    var st = aVolState(), v = C.useMan ? null : APP.volume(), box = $("#cVol"), html = "";
+    var st = aVolState(), v = C.useMan ? null : APP.volume(CMODE), box = $("#cVol"), html = "";
     if (v && !v.none && !C.useMan) {
-      html = '<dl class="kv">' + [["מקור", "מפגש ב, " + (v.mode === "live" ? "הדגמה חיה" : "דוגמה")], ["מגרש", v.plotId], ["חלופה", v.key + " · " + v.name], ["קומות", v.c.floors], ["גובה", fmt(v.c.h) + " מ'"], ['שטח כולל', fmt(v.c.gross, 0) + ' מ"ר'], ['יח"ד', v.c.units]]
+      html = '<dl class="kv">' + [["מקור", "מפגש ב, " + (v.mode === "live" ? "הדגמה חיה" : "דוגמה, מגרש 633")], ["מגרש", v.plotId], ["חלופה", v.key + " · " + v.name], ["קומות", v.c.floors], ["גובה", fmt(v.c.h) + " מ'"], ['שטח כולל', fmt(v.c.gross, 0) + ' מ"ר'], ['יח"ד', v.c.units]]
         .map(function (r) { return "<div><dt>" + r[0] + "</dt><dd class=\"num\">" + esc(r[1]) + "</dd></div>"; }).join("") + "</dl>" +
         '<div class="io-act"><button class="btn small" type="button" id="cUseMan">הזנה ידנית במקום</button></div>';
     } else {
@@ -328,7 +347,8 @@
   var SITE_F = [["exist", "מבנה קיים", ["", "אין", "לשימור", "להריסה"]], ["soil", "סוג קרקע", ["", "לא ידוע", "סלע", "חול", "חרסית", "מילוי"]], ["trees", "עצים ופריטי גינה לשימור"], ["hist", "תכנון היסטורי על המגרש"],
     ["water", "מד מים וחיבור"], ["sewer", "כיוון ביוב"], ["elec", "עמדות חשמל"], ["comm", "תקשורת"]];
   function renderSiteF() {
-    var box = $("#cSiteF"); if (box.children.length) return;
+    var box = $("#cSiteF");
+    if (box.children.length) { $$("[data-site]").forEach(function (el) { if (document.activeElement !== el) el.value = C.site[el.getAttribute("data-site")] || ""; }); return; }
     box.innerHTML = SITE_F.map(function (f) {
       return '<div class="' + (f[2] ? "" : "wide2") + '"><label>' + f[1] + (f[2] ? '<select data-site="' + f[0] + '">' + f[2].map(function (o) { return "<option>" + o + "</option>"; }).join("") + "</select>" : '<input type="text" dir="rtl" data-site="' + f[0] + '">') + "</label></div>";
     }).join("");
@@ -336,19 +356,23 @@
   }
   function docsFor(prefix) { var all = APP.docs(), out = {}; Object.keys(all).forEach(function (k) { if (k.indexOf(prefix) === 0) out[k] = all[k]; }); return out; }
   function renderPhotos() {
-    var d = docsFor("c:photo:");
+    var d = docsFor(DK("photo:"));
     $("#cPhotos").innerHTML = PHOTOS.map(function (n, i) {
-      var f = d["c:photo:" + i];
+      var f = d[DK("photo:") + i];
       return '<li><div class="dn">' + esc(n) + "<small>" + (f ? esc(f.name) : "חסר") + '</small></div><div class="da">' +
-        (f ? '<button class="btn small" type="button" data-pdel="c:photo:' + i + '">הסרה</button>' : '<label class="btn small">העלאה<input type="file" accept="image/*" data-pup="c:photo:' + i + '" aria-label="העלאת תמונה: ' + esc(n) + '"></label>') + "</div></li>";
-    }).join("");
+        (f ? '<button class="btn small" type="button" data-pdel="' + DK("photo:") + i + '">הסרה</button>' : '<label class="btn small">העלאה<input type="file" accept="image/*" data-pup="' + DK("photo:") + i + '" aria-label="העלאת תמונה: ' + esc(n) + '"></label>') + "</div></li>";
+    }).join("") + (function () {
+      var g = d[DK("geo")];
+      return '<li><div class="dn">דוח גיאוטכני<small>' + (g ? esc(g.name) : "אופציונלי, נשמר ואינו נקרא") + '</small></div><div class="da">' +
+        (g ? '<button class="btn small" type="button" data-pdel="' + DK("geo") + '">הסרה</button>' : '<label class="btn small">העלאה<input type="file" data-pup="' + DK("geo") + '" aria-label="העלאת דוח גיאוטכני"></label>') + "</div></li>";
+    })();
   }
   function siteReady() {
-    var v = getVol(), items = [has(C.lat), !!C.dem, !!C.site.exist, !!C.site.soil, !!C.site.water, !!C.site.sewer, !!C.site.elec, !!v, nbList(v || { W: 1, D: 1, boxes: [] }).length > 0, Object.keys(docsFor("c:photo:")).length >= 6];
+    var v = getVol(), items = [has(C.lat), !!C.dem, !!C.site.exist, !!C.site.soil, !!C.site.water, !!C.site.sewer, !!C.site.elec, !!v, nbList(v || { W: 1, D: 1, boxes: [] }).length > 0, Object.keys(docsFor(DK("photo:"))).length >= 6];
     return Math.round(items.filter(Boolean).length / items.length * 100);
   }
   function cardRows() {
-    var v = getVol(), n = nbList(v || { W: 1, D: 1, boxes: [] }), photos = Object.keys(docsFor("c:photo:")).length, tall = n.reduce(function (m, b) { return Math.max(m, b.h); }, 0);
+    var v = getVol(), n = nbList(v || { W: 1, D: 1, boxes: [] }), photos = Object.keys(docsFor(DK("photo:"))).length, tall = n.reduce(function (m, b) { return Math.max(m, b.h); }, 0);
     return [
       ["מקום", C.addr || "לא הוזן", has(C.lat) ? "g" : "r"],
       ["קואורדינטות", has(C.lat) ? C.lat + ", " + C.lon : "חסר", has(C.lat) ? "g" : "r"],
@@ -363,7 +387,7 @@
       ["ביוב", C.site.sewer || "לא הוזן", C.site.sewer ? "g" : "y"],
       ["חשמל ותקשורת", [C.site.elec, C.site.comm].filter(Boolean).join(" · ") || "לא הוזן", C.site.elec || C.site.comm ? "g" : "y"],
       ["תכנון היסטורי", C.site.hist || "לא הוזן", C.site.hist ? "g" : "n"],
-      ["דוח גיאוטכני", docsFor("c:geo")["c:geo"] ? docsFor("c:geo")["c:geo"].name : "לא הועלה", docsFor("c:geo")["c:geo"] ? "g" : "n"],
+      ["דוח גיאוטכני", docsFor(DK("geo"))[DK("geo")] ? docsFor(DK("geo"))[DK("geo")].name : "לא הועלה", docsFor(DK("geo"))[DK("geo")] ? "g" : "n"],
       ["תיעוד שטח", photos + " מתוך 8 תמונות", photos >= 6 ? "g" : (photos ? "y" : "r")]
     ];
   }
@@ -424,7 +448,7 @@
     var sh = nbShadow(v, C.date, 8, 10), bad = sh.filter(function (x) { return x.pct >= 10; });
     $("#cShadowAlert").innerHTML = sh.length ? (bad.length ? '<div class="warn"><b>הצללה על שכנים, בין 8:00 ל-10:00 ב-' + esc(C.date) + ":</b> " + bad.map(function (x) { return esc(x.name) + " " + fmt(x.pct, 0) + "%"; }).join(", ") + ". ההצללה מחושבת על שטח הקרקע של השכן.</div>" : '<p class="small muted">ביום שנבחר, בין 8:00 ל-10:00, הוולום מצל פחות מ-10% מהשטח של כל שכן.</p>') : '<p class="small muted">לא הוזנו שכנים, ולכן לא נבדקה הצללה עליהם.</p>';
     var w = C.wx, roof = volStats(v).roof, pv = w && w.rad ? Math.round(roof * 0.6 * w.rad * 365 * 0.18 * 0.8) : null, wd = w ? w.wind.filter(Boolean) : [];
-    var span = w ? (w.partial ? "92 הימים האחרונים" : "שנת " + w.year) : "";
+    var span = w ? (w.example ? "נתוני דוגמה, אשדוד " + w.year : (w.partial ? "92 הימים האחרונים" : "שנת " + w.year)) : "";
     $("#cWx").innerHTML = w ? '<p class="io-q">אקלים, ' + span + " (Open-Meteo)</p><dl class=\"kv\">" + [[w.partial ? "גשם בתקופה" : "גשם שנתי", fmt(w.rain, 0) + ' מ"מ'], [w.partial ? "ימי גשם בתקופה" : "ימי גשם", w.rdays], ["קרינה ממוצעת", fmt(w.rad, 1) + " קוט\"ש למ\"ר ליום"], ["רוח שולטת", wd.length ? mode(wd) : "אין נתון"], ["פוטנציאל פנלים בגג", pv ? fmt(pv, 0) + " קוט\"ש בשנה" : "אין נתון"]].map(function (r) { return "<div><dt>" + r[0] + '</dt><dd class="num">' + esc(r[1]) + "</dd></div>"; }).join("") + "</dl>" +
       '<p class="small muted">רוח שולטת לפי חודש: ' + w.wind.map(function (x, i) { return x ? (i + 1) + " " + x : null; }).filter(Boolean).join(" · ") + ". הפנלים: 60% משטח הגג, נצילות 18%, ויחס ביצוע 0.8. הערכה גסה" + (w.partial ? ", ועל תקופה חלקית של השנה" : "") + ".</p>" : '<p class="small muted">נתוני האקלים (רוח, גשם, קרינה) לא נשלפו.</p>';
     if (window.update3Dc) window.update3Dc();
@@ -491,7 +515,7 @@
     box.innerHTML = grp("סגנון", "style", Object.keys(STYLES)) + grp("חומרים ראשיים", "mat", MATS) + grp("גוון", "tone", TONES, true);
   }
   function renderMood() {
-    var d = docsFor("c:mood:"), keys = Object.keys(d).sort();
+    var d = docsFor(DK("mood:")), keys = Object.keys(d).sort();
     $("#cMood").innerHTML = (keys.length ? keys.map(function (k) { return '<li><div class="dn">' + esc(d[k].name) + '<small>' + size(d[k].size) + '</small></div><div class="da"><button class="btn small" type="button" data-pdel="' + k + '">הסרה</button></div></li>'; }).join("") : "") +
       '<li><div class="dn">הוספת תמונות<small>' + keys.length + " מתוך 3 עד 10</small></div><div class=\"da\"><label class=\"btn small\">העלאה<input type=\"file\" accept=\"image/*\" multiple data-mood aria-label=\"העלאת תמונות השראה\"></label></div></li>";
   }
@@ -760,6 +784,28 @@
         radius: Math.max(40, Math.ceil(ext * 1.25 / 10) * 10), aerial: C.aerial !== false && has(C.lat), lat: has(C.lat) ? C.lat : null, lon: has(C.lon) ? C.lon : null, sun: id === "clim" || id === "vol" ? (id === "clim" ? sunAt(C.date, C.hour) : sunAt("2026-12-21", 9)) : null };
     }
   };
+  function paintCMode() {
+    document.body.setAttribute("data-cmode", CMODE);
+    $$("button[data-cmode]").forEach(function (b) { var on = b.getAttribute("data-cmode") === CMODE; b.classList.toggle("on", on); b.setAttribute("aria-pressed", String(on)); });
+  }
+  function syncOut() {
+    var show = !!(C.placed && getVol() && has(C.lat));
+    $("#cPlaceOut").hidden = !show; if (show) placeVerdict();
+    $("#cGeoMsg").textContent = ""; $("#cWikiMsg").textContent = ""; $("#cDemMsg").textContent = ""; $("#cWxMsg").textContent = "";
+  }
+  function setCMode(m) {
+    if (m === CMODE) return;
+    clearTimeout(saveT); save(); CMODE = m; APP.save("cmode", m);
+    C = fixC(APP.load(ckey(), freshFor(m)));
+    paintCMode(); sync(); syncOut(); APP.refresh();
+    var cur = APP.current();
+    if (cur && cur.page === "c" && cur.id !== "start") location.hash = "c/start";
+  }
+  /* הרצת כל הדוגמה בבת אחת, כדי לראות את התוצאות בכל הצמתים */
+  function runAll() {
+    C.placed = true; C.siteDone = true; C.statDone = true; C.climDone = true; C.feasDone = true; C.intent = translateIntent();
+    save(); sync(); syncOut(); APP.refresh(); location.hash = "c/volume";
+  }
   var weekT = null;
   function runWeek() {
     var w = $("#cWeek"); if (!w) return;
@@ -792,7 +838,9 @@
         if (k === "tone") C.keys.tone = C.keys.tone === val ? "" : val; else { var i = C.keys[k].indexOf(val); if (i === -1) C.keys[k].push(val); else C.keys[k].splice(i, 1); }
         save(); renderChips(); paintPrompts(); return;
       }
-      if ((b = t.closest("[data-pdel]"))) { var key = b.getAttribute("data-pdel"); APP.docDel(key); delete APP.docs()[key]; if (key.indexOf("c:mood:") === 0) updatePalette(); renderPhotos(); renderMood(); renderCard(); APP.refresh(); return; }
+      if ((b = t.closest("[data-pdel]"))) { var key = b.getAttribute("data-pdel"); APP.docDel(key); delete APP.docs()[key]; if (key.indexOf(DK("mood:")) === 0) updatePalette(); renderPhotos(); renderMood(); renderCard(); APP.refresh(); return; }
+      if ((b = t.closest("button[data-cmode]"))) { setCMode(b.getAttribute("data-cmode")); return; }
+      if (t.closest("#cRunAll")) { runAll(); return; }
       if (t.closest("#cUseManGo")) { C.useMan = true; save(); sync(); refresh(); return; }
       if (t.closest("#cUseMan")) { C.useMan = true; save(); refresh(); sync(); return; }
       if (t.closest("#cUseA")) { C.useMan = false; save(); refresh(); sync(); return; }
@@ -811,7 +859,7 @@
     $("#cWiki").addEventListener("click", fetchWiki);
     $("#cSiteGo").addEventListener("click", function () { C.siteDone = true; save(); renderCard(); refresh(); });
     $("#cStatGo").addEventListener("click", function () { C.statDone = true; save(); renderStat(); refresh(); });
-    $("#cClimGo").addEventListener("click", function () { C.climDone = true; save(); renderClim(); refresh(); if (!C.wx) fetchWx(); });
+    $("#cClimGo").addEventListener("click", function () { C.climDone = true; save(); renderClim(); refresh(); if (!C.wx && CMODE === "live") fetchWx(); });
     $("#cFeasGo").addEventListener("click", function () { C.feasDone = true; save(); renderFeas(); refresh(); });
     $("#cFeasCopy").addEventListener("click", function () { copy(feasText(), $("#cFeasToast")); });
     $("#cIntentGo").addEventListener("click", function () { var I = translateIntent(); if (!I) { $("#cIntentOut").innerHTML = '<p class="small bad">אין מה לתרגם. כותבים תיאור או בוחרים מילות מפתח.</p>'; return; } C.intent = I; save(); renderIntent(); refresh(); });
@@ -860,8 +908,8 @@
         APP.docs()[k] = rec; APP.docPut(k, rec); renderPhotos(); renderCard(); APP.refresh();
       }
       if (t.matches("[data-mood]") && t.files && t.files.length) {
-        var have = Object.keys(docsFor("c:mood:")).length, files = Array.prototype.slice.call(t.files, 0, Math.max(0, 10 - have));
-        files.forEach(function (f, i) { var k = "c:mood:" + (Date.now() + i), rec = { name: f.name, size: f.size, type: f.type, file: f, ts: Date.now() }; APP.docs()[k] = rec; APP.docPut(k, rec); });
+        var have = Object.keys(docsFor(DK("mood:"))).length, files = Array.prototype.slice.call(t.files, 0, Math.max(0, 10 - have));
+        files.forEach(function (f, i) { var k = DK("mood:") + (Date.now() + i), rec = { name: f.name, size: f.size, type: f.type, file: f, ts: Date.now() }; APP.docs()[k] = rec; APP.docPut(k, rec); });
         renderMood(); updatePalette();
       }
     });
@@ -879,9 +927,11 @@
     }
   }
   function updatePalette() {
-    var d = docsFor("c:mood:"), files = Object.keys(d).map(function (k) { return d[k].file; }).filter(Boolean);
+    var d = docsFor(DK("mood:")), files = Object.keys(d).map(function (k) { return d[k].file; }).filter(Boolean);
     palette(files).then(function (p) { C.palette = p; save(); if (C.intent) { C.intent.palette = p; renderIntent(); } });
   }
-  document.addEventListener("DOMContentLoaded", function () { wire(); sync(); if (C.placed && getVol() && has(C.lat)) { placeVerdict(); $("#cPlaceOut").hidden = false; } setTimeout(function () { sync(); if (!window.update3Dc) { var n = $("#noThreeC"); if (n) n.hidden = false; } }, 1500); });
-  window.SESSIONC = { state: function () { return C; }, sunAt: sunAt, buildIFC: buildIFC, feasChecks: feasChecks, facadeHours: facadeHours, nbShadow: nbShadow, translate: translateIntent };
+  paintCModeEarly();
+  function paintCModeEarly() { document.body.setAttribute("data-cmode", CMODE); }
+  document.addEventListener("DOMContentLoaded", function () { wire(); paintCMode(); sync(); syncOut(); setTimeout(function () { sync(); if (!window.update3Dc) { var n = $("#noThreeC"); if (n) n.hidden = false; } }, 1500); });
+  window.SESSIONC = { state: function () { return C; }, mode: function () { return CMODE; }, sunAt: sunAt, buildIFC: buildIFC, feasChecks: feasChecks, facadeHours: facadeHours, nbShadow: nbShadow, translate: translateIntent };
 })();
