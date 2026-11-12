@@ -694,3 +694,17 @@ dl.kv.tight dd { font-size: 14px; }
   .outlist.req li { grid-template-columns: 22px 1fr; }
   .outlist.req li span { grid-column: 2; white-space: normal; }
 }
+
+/* מצב: דוגמה או הדגמה חיה */
+.modebar { display: inline-flex; gap: 4px; margin-inline-start: 14px; }
+.modebar .btn { min-height: 32px; }
+body:not([data-page="a"]) .modebar { display: none; }
+body[data-mode="live"] .demo-tag.ex { display: none; }
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 22px; max-width: 760px; }
+.modes p { margin: 6px 0 0; font-size: 13.5px; color: var(--g3); }
+.live-box { margin: 12px 0; padding: 12px 0; border-top: 1px solid var(--g1); }
+.live-box textarea { width: 100%; box-sizing: border-box; }
+.live-plots { margin-top: 8px; }
+.live-plots input, .live-plots select { width: 100%; min-width: 0; box-sizing: border-box; }
+.live-plots td, .live-plots th { padding: 3px 6px; }
+@media (max-width: 900px) { .modes { grid-template-columns: 1fr; } .modebar { margin-inline-start: 6px; } }

@@ -611,7 +611,7 @@
   function story() {
     var svg = $("#story"), cap = $("#storyCap"); if (!svg) return;
     var run = ++storyRun;
-    var p = { id: "633", R: JSON.parse(JSON.stringify(DEMO["633"])), src: {}, alts: null };
+    var p = { id: "633", R: JSON.parse(JSON.stringify(EX_DEMO["633"])), src: {}, alts: null };
     p.alts = genAlts(p);
     var dm = dims(p), top = topOf(p), sum = summary(p), R = p.R;
     function draw(st) {
@@ -783,7 +783,7 @@
     { k: "parking", n: "חניה", u: "", text: true }
   ];
   /* תכנית הדוגמה: חמישה מגרשים, דרך ביניהם, והקו הכחול מסביב. הכול דמו. */
-  var PLAN = {
+  var EX_PLAN = {
     name: 'תב"ע 603',
     margin: 6,
     road: { y1: 50, y2: 62 },
@@ -795,13 +795,16 @@
       "635": { x: 37.5, y: 62, w: 80, d: 40, front: "n" }
     }
   };
-  var DEMO = {
+  var EX_DEMO = {
     "631": { plot: 1875, cov: 35, bp: 220, floors: 7, h: 25, sf: 5, ss: 4, sr: 4, units: 34, parking: "" },
     "632": { plot: 2000, cov: 35, bp: 250, floors: 8, h: 28, sf: 5, ss: 4, sr: 4, units: 40, parking: "" },
     "633": { plot: 2000, cov: 35, bp: 250, floors: 8, h: 28, sf: 5, ss: 4, sr: 4, units: 40, parking: "" },
     "634": { plot: 1500, cov: 40, bp: 200, floors: 6, h: 22, sf: 5, ss: 3, sr: 4, units: 28, parking: "" },
     "635": { plot: 3200, cov: 30, bp: 300, floors: 12, h: 42, sf: 6, ss: 5, sr: 5, units: 80, parking: "" }
   };
+  var EX_SYS = { open: 60, front: 60, park: 1.5, flh: 3.2 };
+  var MODE = load("mode", "example") === "live" ? "live" : "example";
+  var PLAN = EX_PLAN, DEMO = EX_DEMO;
   var FLH = 3.2, SELL = 0.8;
   var ALT_KEYS = ["א", "ב", "ג"];
   var ALT_KIND = { "א": "wide", "ב": "tower", "ג": "step" };
@@ -818,15 +821,38 @@
     { id: "annex", n: "נספחים", hint: "מים, ביוב, תנועה", req: false }
   ];
   var SOURCES = [
-    { id: "guide", n: "הנחיות מרחביות", url: "https://hanchayit-gh.vercel.app/", reqs: ["שטח פתוח של 60% לפחות מהמגרש", "רוחב הבניין לפחות 60% מרוחב החזית"] },
-    { id: "ogdan", n: "אוגדן הדרישות", hint: "גורמי העירייה ומחוצה לה", url: "https://ogdan-gh.vercel.app", reqs: ['1.5 מקומות חניה לכל יח"ד'] },
-    { id: "takanot", n: "תקנות התכנון והבנייה", url: "https://takanot-merhav-gh.vercel.app/", reqs: ["גובה קומה: 3.2 מ'"] }
+    { id: "guide", n: "הנחיות מרחביות", url: "https://hanchayit-gh.vercel.app/", reqs: function () { return ["שטח פתוח של " + fmt(SYS().open) + "% לפחות מהמגרש", "רוחב הבניין לפחות " + fmt(SYS().front) + "% מרוחב החזית"]; } },
+    { id: "ogdan", n: "אוגדן הדרישות", hint: "גורמי העירייה ומחוצה לה", url: "https://ogdan-gh.vercel.app", reqs: function () { return [fmt(SYS().park) + ' מקומות חניה לכל יח"ד']; } },
+    { id: "takanot", n: "תקנות התכנון והבנייה", url: "https://takanot-merhav-gh.vercel.app/", reqs: function () { return ["גובה קומה: " + fmt(FLH) + " מ'"]; } }
   ];
   var PRIOS = { util: "מיצוי זכויות", big: "דירות גדולות", open: "שטח פתוח" };
 
-  function freshA() { return { plot: null, planBuilt: false, demoDocs: false, data: {}, req: { src: {}, files: {}, text: "", target: null, avg: 90, prio: "util", done: false, found: "" } }; }
-  var A = load("a3", freshA());
-  if (!A.req) A.req = freshA().req;
+  function freshLive() { return { plots: [], rights: {}, sys: { open: 60, front: 60, park: 1.5, flh: 3.2 }, file: "" }; }
+  function freshA() { return { plot: null, planBuilt: false, demoDocs: false, data: {}, live: freshLive(), req: { src: {}, files: {}, text: "", target: null, avg: 90, prio: "util", done: false, found: "" } }; }
+  function aKey() { return MODE === "live" ? "a3live" : "a3"; }
+  function fixA(x) { if (!x.req) x.req = freshA().req; if (!x.live) x.live = freshLive(); if (!x.live.sys) x.live.sys = freshLive().sys; return x; }
+  var A = fixA(load(aKey(), freshA()));
+  function SYS() { return MODE === "live" ? A.live.sys : EX_SYS; }
+  function syncFlh() { var f = SYS().flh; FLH = MODE === "live" && A.req.src.takanot && f >= 2.5 && f <= 6 ? f : 3.2; }
+  /* פריסת התכנית מהמגרשים שהמשתמש הגדיר: שורה מעל הדרך ושורה מתחתיה */
+  function buildLivePlan() {
+    var up = A.live.plots.filter(function (q) { return q.side !== "b"; }), dn = A.live.plots.filter(function (q) { return q.side === "b"; });
+    var maxUp = up.reduce(function (m, q) { return Math.max(m, q.d); }, 0) || 30, plots = {}, x;
+    x = 0; up.forEach(function (q) { plots[q.id] = { x: x, y: maxUp - q.d, w: q.w, d: q.d, front: "s" }; x += q.w; });
+    var y2 = maxUp + 12; x = 0; dn.forEach(function (q) { plots[q.id] = { x: x, y: y2, w: q.w, d: q.d, front: "n" }; x += q.w; });
+    return { name: "התכנית שלך", margin: 6, road: { y1: maxUp, y2: y2 }, plots: plots };
+  }
+  function applyLivePlan() {
+    PLAN = buildLivePlan(); DEMO = A.live.rights;
+    if (A.plot && !PLAN.plots[A.plot]) A.plot = null;
+    if (!A.live.plots.length) A.planBuilt = false;
+  }
+  function applyMode() {
+    if (MODE === "live") applyLivePlan(); else { PLAN = EX_PLAN; DEMO = EX_DEMO; }
+    syncFlh();
+    document.body.setAttribute("data-mode", MODE);
+  }
+  applyMode();
   var notes = load("notes", {});
   function r10(n) { return Math.max(10, Math.round(n / 10) * 10); }
   function f10(n) { return Math.max(10, Math.floor(n / 10) * 10); }
@@ -836,16 +862,17 @@
       PARAMS.forEach(function (x) { R[x.k] = x.text ? "" : null; });
       if (DEMO[id]) {
         R = JSON.parse(JSON.stringify(DEMO[id]));
-        PARAMS.forEach(function (x) { if (has(R[x.k])) src[x.k] = "טבלה 5, שורת מגרש " + id; });
+        PARAMS.forEach(function (x) { if (has(R[x.k])) src[x.k] = MODE === "live" ? (A.live.file || "הטבלה שהוזנה") + ", מגרש " + id : "טבלה 5, שורת מגרש " + id; });
       }
-      A.data[id] = { id: id, R: R, src: src, alts: null, fromDemo: !!DEMO[id] };
+      if (MODE === "live" && !has(R.plot) && PLAN.plots[id]) R.plot = Math.round(PLAN.plots[id].w * PLAN.plots[id].d);
+      A.data[id] = { id: id, R: R, src: src, alts: null, fromDemo: MODE !== "live" && !!DEMO[id] };
     }
     return A.data[id];
   }
   function P() { return plotData(A.plot || "_"); }
   var savedTimer = null;
   function saveA() {
-    save("a3", A);
+    save(aKey(), A);
     var s = $("#savedA"); if (s) { s.textContent = "נשמר"; clearTimeout(savedTimer); savedTimer = setTimeout(function () { s.textContent = ""; }, 1500); }
     var m = $("ai-menu"); if (m) { try { m.status = "נשמר"; } catch (e) { /* הרכיב עוד לא נטען */ } }
   }
@@ -905,7 +932,7 @@
     return {
       gross: gross, floors: a.n, h: a.n * FLH, cov: a.fp / L.area * 100, bp: gross / L.area * 100,
       util: gross / L.maxGross * 100, units: units, avg: units ? net / units : 0, open: 100 - a.fp / L.area * 100,
-      parking: Math.ceil(units * 1.5), front: g.w / L.zw * 100, terrace: t.length > 1 ? t[0].fp - t[1].fp : 0
+      parking: Math.ceil(units * SYS().park), front: g.w / L.zw * 100, terrace: t.length > 1 ? t[0].fp - t[1].fp : 0
     };
   }
   function stHard(v, m) { if (!has(m) || !has(v)) return "n"; return v > m + 1e-9 ? "r" : "g"; }
@@ -922,11 +949,11 @@
     out.push({ n: "קווי בניין", lim: sb ? R.sf + " / " + R.ss + " / " + R.sr + " מ'" : "חסר", val: !sb ? "חסר" : (g.inside ? "בפנים" : "חורג"), st: !sb ? "n" : (g.inside ? "g" : "r"), src: T });
     out.push({ n: 'יח"ד מרבי', lim: lim(R.units, "עד ", ""), val: String(c.units), st: stHard(c.units, R.units), src: T });
     if (q.src.guide) {
-      out.push({ n: "שטח פתוח", lim: "לפחות 60%", val: fmt(c.open) + "%", st: stMin(c.open, 60), src: "הנחיות מרחביות" });
-      out.push({ n: "רוחב מול החזית", lim: "לפחות 60%", val: fmt(c.front, 0) + "%", st: stMin(c.front, 60), src: "הנחיות מרחביות" });
+      out.push({ n: "שטח פתוח", lim: "לפחות " + fmt(SYS().open) + "%", val: fmt(c.open) + "%", st: stMin(c.open, SYS().open), src: "הנחיות מרחביות" });
+      out.push({ n: "רוחב מול החזית", lim: "לפחות " + fmt(SYS().front) + "%", val: fmt(c.front, 0) + "%", st: stMin(c.front, SYS().front), src: "הנחיות מרחביות" });
     }
-    if (q.src.ogdan) out.push({ n: "מקומות חניה", lim: '1.5 ליח"ד', val: String(c.parking), st: "n", src: "אוגדן הדרישות" });
-    if (q.src.takanot) out.push({ n: "גובה קומה", lim: "3.2 מ'", val: "3.2 מ'", st: "g", src: "תקנות" });
+    if (q.src.ogdan) out.push({ n: "מקומות חניה", lim: fmt(SYS().park) + ' ליח"ד', val: String(c.parking), st: "n", src: "אוגדן הדרישות" });
+    if (q.src.takanot) out.push({ n: "גובה קומה", lim: fmt(FLH) + " מ'", val: fmt(FLH) + " מ'", st: "g", src: "תקנות" });
     if (has(q.target)) out.push({ n: 'יח"ד מול היעד', lim: "לפחות " + q.target, val: String(c.units), st: stMin(c.units, q.target), src: "היזם" });
     if (has(q.avg)) out.push({ n: 'שטח יח"ד ממוצע', lim: "לפחות " + q.avg + ' מ"ר', val: fmt(c.avg, 0) + ' מ"ר', st: c.avg + 0.5 < q.avg ? "r" : "g", src: "היזם" });
     return out;
@@ -1021,22 +1048,24 @@
     });
   }
   function size(n) { return n > 1048576 ? fmt(n / 1048576) + " MB" : fmt(Math.max(1, n / 1024), 0) + " KB"; }
+  function PK(id) { return (MODE === "live" ? "live:" : "plan:") + id; }
   var REQ_DOCS = DOCS.filter(function (d) { return d.req; });
-  function docOf(id) { return docsCache["plan:" + id] || (A.demoDocs ? { name: "מסמך דמו", demo: true } : null); }
+  function docOf(id) { return docsCache[PK(id)] || (MODE !== "live" && A.demoDocs ? { name: "מסמך דמו", demo: true } : null); }
   function docsLoaded() { return REQ_DOCS.filter(function (d) { return !!docOf(d.id); }).length; }
   function renderDocs() {
     $("#docs").innerHTML = DOCS.map(function (d) {
-      var f = docsCache["plan:" + d.id], any = docOf(d.id);
-      return '<li><div class="dn">' + esc(d.n) + "<small>" + (f ? esc(f.name) + " · " + size(f.size) : (any ? "מסמך דמו" : (d.hint ? d.hint + (d.req ? " · חובה" : " · אופציונלי") : (d.req ? "חובה" : "אופציונלי")))) + "</small></div>" +
+      var f = docsCache[PK(d.id)], any = docOf(d.id);
+      return '<li><div class="dn">' + esc(d.n) + "<small>" + (f ? esc(f.name) + " · " + size(f.size) : (any ? "מסמך דמו" : (d.hint ? d.hint + (d.req && MODE !== "live" ? " · חובה" : " · אופציונלי") : (d.req && MODE !== "live" ? "חובה" : "אופציונלי")))) + "</small></div>" +
         '<div class="da">' + (f
           ? '<button class="btn small" type="button" data-open="' + d.id + '">פתיחה</button><button class="btn small" type="button" data-del="' + d.id + '">הסרה</button>'
           : '<label class="btn small">העלאה<input type="file" data-up="' + d.id + '" aria-label="העלאת ' + esc(d.n) + '"></label>') +
         "</div></li>";
     }).join("");
-    $("#planGo").disabled = docsLoaded() < REQ_DOCS.length;
+    $("#planGo").disabled = MODE === "live" ? !A.live.plots.length : docsLoaded() < REQ_DOCS.length;
     $("#planOut").hidden = !A.planBuilt;
     $("#planCount").textContent = PLAN.name + ": " + Object.keys(PLAN.plots).length + " מגרשים.";
-    var real = Object.keys(docsCache).some(function (k) { return k.indexOf("plan:") === 0; });
+    var real = Object.keys(docsCache).some(function (k) { return k.indexOf(PK("")) === 0; });
+    if (MODE === "live") { $("#planNote").textContent = "המודל נבנה מהמגרשים שבטבלה שלך. שינוי של רוחב או עומק מתעדכן מיד."; return; }
     $("#planNote").textContent = real ? "המודל מציג את תכנית הדוגמה. קריאה של תכנית אמיתית נעשית בעזרת הבינה, עם פרומפט החילוץ שבצעד הבא." : "";
   }
   function loadDocs() { return docAll().then(function (all) { docsCache = all; renderDocs(); renderFlow(); }); }
@@ -1064,6 +1093,7 @@
     $("#plotOut").hidden = !A.plot;
     $("#plotTitle").innerHTML = "<b>מגרש " + esc(A.plot || "") + ".</b> הבניין נבנה לפי טבלה 5.";
     $("#demoTag").hidden = !p.fromDemo;
+    $("#plotNum").placeholder = MODE === "live" ? "מספר מגרש מהטבלה שלך" : "למשל 633";
     $("#rights").innerHTML = PARAMS.map(function (x, i) {
       var v = p.R[x.k];
       return '<tr style="animation-delay:' + (i * 60) + 'ms"><td>' + x.n + "</td>" +
@@ -1089,7 +1119,7 @@
     var q = A.req, p = P();
     $("#sources").innerHTML = SOURCES.map(function (s) {
       var on = !!q.src[s.id], f = q.files[s.id];
-      return '<li><div class="dn">' + esc(s.n) + "<small>" + (on ? "מחובר · דרישות דמו" : (f ? esc(f) + " · נשמר, לא נקרא אוטומטית" : (s.hint || "לא מחובר"))) + "</small></div>" +
+      return '<li><div class="dn">' + esc(s.n) + "<small>" + (on ? (MODE === "live" ? "מחובר · לפי הערכים שהזנת" : "מחובר · דרישות דמו") : (f ? esc(f) : (s.hint || "לא מחובר"))) + (f ? " · " + esc((q.read && q.read[s.id]) || "נשמר, לא נקרא אוטומטית") : "") + "</small></div>" +
         '<div class="da"><button class="btn small' + (on ? " on" : "") + '" type="button" data-conn="' + s.id + '">' + (on ? "ניתוק" : "חיבור") + "</button>" +
         '<label class="btn small">העלאה<input type="file" data-srcup="' + s.id + '" aria-label="העלאת קובץ: ' + esc(s.n) + '"></label>' +
         '<a class="btn small" href="' + s.url + '" target="_blank" rel="noopener">פתיחה</a></div></li>';
@@ -1105,12 +1135,12 @@
     if (!q.done) { $("#reqOut").innerHTML = ""; return; }
     var sys = [], T5 = p.R;
     sys.push(["טבלה 5", "תכסית עד " + fmt(T5.cov) + "%, אחוזי בנייה עד " + fmt(T5.bp) + "%, עד " + T5.floors + " קומות ו-" + fmt(T5.h) + " מ', עד " + T5.units + ' יח"ד.']);
-    SOURCES.forEach(function (s) { if (q.src[s.id]) s.reqs.forEach(function (r) { sys.push([s.n, r + "."]); }); });
+    SOURCES.forEach(function (s) { if (q.src[s.id]) s.reqs().forEach(function (r) { sys.push([s.n, r + "."]); }); });
     var dev = [["יעד", "לפחות " + q.target + ' יח"ד.'], ["יעד", 'שטח יח"ד ממוצע של ' + q.avg + ' מ"ר לפחות.'], ["עדיפות", PRIOS[q.prio] + "."]];
     if (q.text) dev.push(["תיאור", q.text]);
     function list(rows) { return '<ol class="outlist req">' + rows.map(function (r) { return "<li><b>" + esc(r[1]) + "</b><span>" + esc(r[0]) + "</span></li>"; }).join("") + "</ol>"; }
     var none = !SOURCES.some(function (s) { return q.src[s.id]; });
-    $("#reqOut").innerHTML = '<p class="io-q">דרישות המערכת <span class="demo-tag">דוגמה · דרישות דמו</span></p>' + list(sys) +
+    $("#reqOut").innerHTML = '<p class="io-q">דרישות המערכת ' + (MODE === "live" ? "" : '<span class="demo-tag">דוגמה · דרישות דמו</span>') + '</p>' + list(sys) +
       (none ? '<p class="small muted">לא חובר מקור. החלופות ייבדקו מול טבלה 5 בלבד.</p>' : "") +
       '<p class="io-q" style="margin-top:14px">דרישות היזם</p>' + list(dev) +
       (q.found ? '<p class="small muted">זוהה מהתיאור: ' + esc(q.found) + "</p>" : "");
@@ -1363,23 +1393,37 @@
       var t = e.target.closest("[data-open],[data-del],[data-conn]");
       if (!t) return;
       if (t.hasAttribute("data-open")) {
-        var f = docsCache["plan:" + t.getAttribute("data-open")];
+        var f = docsCache[PK(t.getAttribute("data-open"))];
         if (f && f.file) { var u = URL.createObjectURL(f.file); window.open(u, "_blank", "noopener"); setTimeout(function () { URL.revokeObjectURL(u); }, 60000); }
       } else if (t.hasAttribute("data-del")) {
-        var k = "plan:" + t.getAttribute("data-del");
+        var k = PK(t.getAttribute("data-del"));
         delete docsCache[k]; renderDocs(); renderFlow(); docDel(k);
       } else if (t.hasAttribute("data-conn")) {
-        var id = t.getAttribute("data-conn"); A.req.src[id] = !A.req.src[id]; saveA(); refreshA({ keepAlts: true }); renderFlow();
+        var id = t.getAttribute("data-conn"); A.req.src[id] = !A.req.src[id]; syncFlh(); regenAll(); saveA(); refreshA({ keepAlts: true }); renderFlow();
       }
     });
     document.addEventListener("change", function (e) {
       var up = e.target.closest("input[data-up]"), su = e.target.closest("input[data-srcup]");
       if (up && up.files && up.files[0]) {
-        var file = up.files[0], k = "plan:" + up.getAttribute("data-up");
+        var file = up.files[0], k = PK(up.getAttribute("data-up"));
         var rec = { name: file.name, size: file.size, type: file.type, file: file, ts: Date.now() };
         docsCache[k] = rec; renderDocs(); renderFlow(); docPut(k, rec);
+        if (MODE === "live") {
+          if (isTextFile(file)) readText(file).then(function (t) { $("#liveMsg").textContent = file.name + ": " + importTable(t, file.name); });
+          else $("#liveMsg").textContent = file.name + " נשמר ואפשר לפתוח אותו. הוא לא נקרא אוטומטית: מדביקים את הטבלה מ-Excel, או מעלים אותה כ-CSV.";
+        }
       }
-      if (su && su.files && su.files[0]) { A.req.files[su.getAttribute("data-srcup")] = su.files[0].name; saveA(); renderReqs(); }
+      if (su && su.files && su.files[0]) {
+        var sid = su.getAttribute("data-srcup"), sf = su.files[0];
+        A.req.files[sid] = sf.name; A.req.read = A.req.read || {}; A.req.read[sid] = "";
+        if (MODE === "live" && isTextFile(sf)) {
+          readText(sf).then(function (t) {
+            var got = parseSys(t); A.req.read[sid] = got.length ? "נקראו: " + got.join(", ") : "לא נמצאו ערכים מוכרים";
+            if (got.length) A.req.src[sid] = true;
+            syncFlh(); regenAll(); renderLive(); saveA(); refreshA({ keepRights: true }); renderReqs();
+          });
+        } else { saveA(); renderReqs(); }
+      }
       var rq = e.target.closest("[data-req]");
       if (rq) {
         var key = rq.getAttribute("data-req");
@@ -1456,6 +1500,175 @@
     });
   }
 
+  /* ---------- הדגמה חיה: הנתונים של המשתמש, מקצה לקצה ---------- */
+  var HCOL = [["sf", /קדמי/], ["ss", /צדדי/], ["sr", /אחורי/], ["cov", /תכסית/], ["bp", /אחוז|בנייה|בניה/], ["floors", /קומות/], ["h", /גובה/],
+    ["units", /יח.?ד|יחידות/], ["parking", /חניה/], ["plot", /שטח/], ["w", /רוחב/], ["d", /עומק|אורך/], ["side", /מיקום|צד|דרך/], ["id", /מגרש|מספר|מס/]];
+  var TPL_HEAD = ["מספר מגרש", "רוחב", "עומק", "מיקום", "שטח מגרש", "תכסית", "אחוזי בנייה", "קומות", "גובה", "קו בניין קדמי", "קו בניין צדדי", "קו בניין אחורי", 'יח"ד'];
+  var TPL_ROW = ["101", "30", "45", "מעל הדרך", "1350", "40", "200", "6", "22", "5", "3", "4", "26"];
+  function numOf(v) { var m = String(v == null ? "" : v).replace(/,/g, "").match(/-?\d+(\.\d+)?/); return m ? Number(m[0]) : null; }
+  /* קורא טבלה בטקסט: טאב, פסיק, נקודה-פסיק או קו אנכי. שורת הכותרות קובעת את העמודות. */
+  function parseTable(text) {
+    var rows = String(text || "").replace(/\r/g, "").split("\n").filter(function (l) { return l.trim(); });
+    if (rows.length < 2) return { err: "צריך שורת כותרות ולפחות שורה אחת של מגרש." };
+    var best = "\t", cnt = -1;
+    ["\t", ";", "|", ","].forEach(function (d) { var n = rows[0].split(d).length; if (n > cnt) { cnt = n; best = d; } });
+    var head = rows[0].split(best).map(function (h) { return h.replace(/["'״׳]/g, "").trim(); }), col = {};
+    head.forEach(function (h, i) { for (var j = 0; j < HCOL.length; j++) if (HCOL[j][1].test(h) && col[HCOL[j][0]] === undefined) { col[HCOL[j][0]] = i; break; } });
+    if (col.id === undefined) return { err: 'לא נמצאה עמודה "מספר מגרש" בשורת הכותרות.' };
+    var out = [], skipped = 0, derived = 0;
+    rows.slice(1).forEach(function (l) {
+      var c = l.split(best).map(function (x) { return x.trim(); }), id = (c[col.id] || "").replace(/["']/g, "").trim();
+      if (!id) return;
+      var R = {}, any = false;
+      PARAMS.forEach(function (x) { var i = col[x.k]; if (i === undefined) return; var v = c[i]; if (v === undefined || v === "") return; if (x.text) { R[x.k] = v; any = true; } else { var n = numOf(v); if (n !== null) { R[x.k] = n; any = true; } } });
+      var w = col.w !== undefined ? numOf(c[col.w]) : null, d = col.d !== undefined ? numOf(c[col.d]) : null;
+      if (!(w > 0 && d > 0)) {
+        if (R.plot > 0) { w = Math.round(Math.sqrt(R.plot * 0.8) * 10) / 10; d = Math.round(R.plot / w * 10) / 10; derived++; } else { skipped++; return; }
+      }
+      var side = col.side !== undefined && /מתחת|דרום|^b$|^2$/i.test(c[col.side] || "") ? "b" : "a";
+      out.push({ id: id, w: w, d: d, side: side, R: R, any: any });
+    });
+    if (!out.length) return { err: "לא נמצא מגרש עם רוחב ועומק, או עם שטח." };
+    return { plots: out, skipped: skipped, derived: derived };
+  }
+  function importTable(text, name) {
+    var r = parseTable(text);
+    if (r.err) return r.err;
+    r.plots.forEach(function (q) {
+      var cur = A.live.plots.filter(function (x) { return x.id === q.id; })[0];
+      if (cur) { cur.w = q.w; cur.d = q.d; cur.side = q.side; } else A.live.plots.push({ id: q.id, w: q.w, d: q.d, side: q.side });
+      if (q.any) A.live.rights[q.id] = q.R;
+      delete A.data[q.id];
+    });
+    A.live.file = name || "הטבלה שהודבקה";
+    applyLivePlan(); saveA(); renderLive(); renderDocs(); refreshA(); renderFlow();
+    return "נקלטו " + r.plots.length + " מגרשים" + (r.derived ? ", " + r.derived + " עם מידות שנגזרו מהשטח" : "") + (r.skipped ? ", " + r.skipped + " שורות דולגו (בלי מידות ובלי שטח)" : "") + ".";
+  }
+  /* קובץ שהועלה: טקסט נקרא, והשאר נשמר בלבד */
+  function readText(file) {
+    return new Promise(function (res) {
+      var fr = new FileReader();
+      fr.onload = function () {
+        var buf = fr.result, t;
+        try { t = new TextDecoder("utf-8", { fatal: true }).decode(buf); } catch (e) { try { t = new TextDecoder("windows-1255").decode(buf); } catch (e2) { t = ""; } }
+        res(t);
+      };
+      fr.onerror = function () { res(""); };
+      fr.readAsArrayBuffer(file);
+    });
+  }
+  function isTextFile(f) { return /\.(csv|tsv|txt|md)$/i.test(f.name) || /^text\//.test(f.type); }
+  function parseSys(text) {
+    var found = [], S = A.live.sys, m;
+    function take(re, key, label, unit) { if ((m = text.match(re))) { var v = Number(m[1]); if (v > 0) { S[key] = v; found.push(label + " " + fmt(v) + unit); } } }
+    take(/שטח פתוח[^\d\n]{0,25}(\d+(?:\.\d+)?)/, "open", "שטח פתוח", "%");
+    take(/חזית[^\d\n]{0,25}(\d+(?:\.\d+)?)/, "front", "רוחב מול חזית", "%");
+    take(/חניה[^\d\n]{0,25}(\d+(?:\.\d+)?)/, "park", "חניה ליח\"ד", "");
+    take(/גובה קומה[^\d\n]{0,25}(\d+(?:\.\d+)?)/, "flh", "גובה קומה", " מ'");
+    return found;
+  }
+  function regenAll() { Object.keys(A.data).forEach(function (id) { var q = A.data[id]; if (q.alts && PLAN.plots[id]) q.alts = genAlts(q); }); }
+  var SYS_FIELDS = [["open", "הנחיות מרחביות: שטח פתוח מזערי, %"], ["front", "הנחיות מרחביות: רוחב הבניין מול החזית, % לפחות"], ["park", 'אוגדן הדרישות: מקומות חניה ליח"ד'], ["flh", "תקנות: גובה קומה, מ'"]];
+  function renderLive() {
+    var on = MODE === "live";
+    $("#liveDocs").hidden = !on; $("#demoDocs").hidden = on; $("#sysEdit").hidden = !on;
+    if (!on) return;
+    $("#livePlots").innerHTML = A.live.plots.length ? A.live.plots.map(function (q, i) {
+      return '<tr><td><input type="text" data-lp="id" data-i="' + i + '" value="' + esc(q.id) + '" aria-label="מספר מגרש"></td>' +
+        '<td><input type="number" step="any" min="1" data-lp="w" data-i="' + i + '" value="' + q.w + '" aria-label="רוחב"></td>' +
+        '<td><input type="number" step="any" min="1" data-lp="d" data-i="' + i + '" value="' + q.d + '" aria-label="עומק"></td>' +
+        '<td><select data-lp="side" data-i="' + i + '" aria-label="מיקום"><option value="a"' + (q.side !== "b" ? " selected" : "") + '>מעל הדרך</option><option value="b"' + (q.side === "b" ? " selected" : "") + '>מתחת לדרך</option></select></td>' +
+        '<td><button class="btn small" type="button" data-lpdel="' + i + '">הסרה</button></td></tr>';
+    }).join("") : '<tr><td colspan="5" class="muted small">עוד אין מגרשים. מעלים או מדביקים טבלה, או מוסיפים מגרש.</td></tr>';
+    $("#sysFields").innerHTML = SYS_FIELDS.map(function (f) {
+      return '<div><label>' + f[1] + '<input type="number" step="any" min="0" data-sys="' + f[0] + '" value="' + A.live.sys[f[0]] + '"></label></div>';
+    }).join("");
+  }
+  function renderModeBar() {
+    $$("button[data-mode]").forEach(function (b) { var on = b.getAttribute("data-mode") === MODE; b.classList.toggle("on", on); b.setAttribute("aria-pressed", String(on)); });
+  }
+  function setMode(m) {
+    if (m === MODE) return;
+    saveA(); MODE = m; save("mode", m);
+    A = fixA(load(aKey(), freshA())); applyMode();
+    $("#plotNum").value = A.plot || ""; $("#devText").value = A.req.text || ""; $("#dev").innerHTML = ""; $("#importMsg").textContent = ""; $("#liveMsg").textContent = "";
+    $("#plotMsg").textContent = "אפשר גם ללחוץ על מגרש במודל.";
+    flowSteps_reset();
+    renderModeBar(); renderLive(); refreshA(); renderFlow();
+    if (current && current.page === "a" && current.id !== "start") location.hash = "a/start";
+  }
+  function flowSteps_reset() { Object.keys(flowPos).forEach(function (k) { if (k.indexOf("a/") === 0) flowPos[k] = 0; }); }
+  function decisionText() {
+    var sum = summary(), p = P();
+    if (!A.plot || !p.alts || !sum.best) return "";
+    var out = ["מגרש " + A.plot + ": " + (sum.best ? "נבחרה חלופה " + sum.best + ", " + ALT_NAME[sum.all[sum.best].a.kind] + "." : "אין חלופה שעומדת בכל הדרישות."), sum.why, ""];
+    ALT_KEYS.forEach(function (k) {
+      var x = sum.all[k];
+      out.push("חלופה " + k + " (" + ALT_NAME[x.a.kind] + "): מיצוי " + fmt(x.c.util, 0) + "%, " + x.c.floors + " קומות, " + fmt(x.c.gross, 0) + ' מ"ר, ' + x.c.units + ' יח"ד. ' + TONE_WORD[x.tone] + ".");
+      out.push("יתרון: " + x.pro); out.push("חיסרון: " + x.con); out.push("");
+    });
+    return out.join("\n");
+  }
+  function wireLive() {
+    document.addEventListener("click", function (e) {
+      var m = e.target.closest("button[data-mode]");
+      if (m) { setMode(m.getAttribute("data-mode")); return; }
+      var del = e.target.closest("[data-lpdel]");
+      if (del) {
+        var i = Number(del.getAttribute("data-lpdel")), q = A.live.plots[i]; if (!q) return;
+        A.live.plots.splice(i, 1); delete A.live.rights[q.id]; delete A.data[q.id];
+        applyLivePlan(); saveA(); renderLive(); renderDocs(); refreshA(); renderFlow(); return;
+      }
+    });
+    $("#liveAdd").addEventListener("click", function () {
+      var n = A.live.plots.reduce(function (m, q) { var v = parseInt(q.id, 10); return isNaN(v) ? m : Math.max(m, v); }, 100) + 1;
+      A.live.plots.push({ id: String(n), w: 30, d: 40, side: "a" });
+      applyLivePlan(); saveA(); renderLive(); renderDocs(); refreshA(); renderFlow();
+    });
+    $("#liveClear").addEventListener("click", function () {
+      if (A.live.plots.length && !window.confirm("למחוק את כל המגרשים והזכויות שהוזנו?")) return;
+      A.live.plots = []; A.live.rights = {}; A.data = {}; A.plot = null; A.planBuilt = false; A.live.file = "";
+      applyLivePlan(); saveA(); renderLive(); renderDocs(); refreshA(); renderFlow(); $("#liveMsg").textContent = "";
+    });
+    $("#livePasteBtn").addEventListener("click", function () {
+      var t = $("#livePaste").value;
+      if (!t.trim()) { $("#liveMsg").textContent = "מדביקים כאן טבלה עם שורת כותרות."; return; }
+      $("#liveMsg").textContent = importTable(t, "הטבלה שהודבקה");
+    });
+    $("#liveTpl").addEventListener("click", function () { copy(TPL_HEAD.join("\t") + "\n" + TPL_ROW.join("\t"), $("#liveMsg")); });
+    document.addEventListener("input", function (e) {
+      var t = e.target; if (!t.matches) return;
+      if (t.matches("[data-lp='w'],[data-lp='d']")) {
+        var q = A.live.plots[Number(t.getAttribute("data-i"))], v = Number(t.value); if (!q || !(v > 0)) return;
+        var old = Math.round(q.w * q.d), pd = A.data[q.id];
+        q[t.getAttribute("data-lp")] = v;
+        if (pd && pd.R.plot === old && !pd.src.plot) pd.R.plot = Math.round(q.w * q.d);
+        if (pd && pd.alts) pd.alts = genAlts(pd);
+        applyLivePlan(); saveA(); refreshA({ keepRights: true });
+      } else if (t.matches("[data-sys]")) {
+        var k = t.getAttribute("data-sys"), n = Number(t.value); if (!(n > 0)) return;
+        A.live.sys[k] = n; syncFlh(); regenAll(); saveA(); refreshA({ keepRights: true }); if (A.req.done) renderReqs();
+      }
+    });
+    document.addEventListener("change", function (e) {
+      var t = e.target; if (!t.matches) return;
+      if (t.matches("[data-lp='side']")) {
+        var q = A.live.plots[Number(t.getAttribute("data-i"))]; if (!q) return;
+        q.side = t.value; applyLivePlan(); saveA(); refreshA({ keepRights: true });
+      } else if (t.matches("[data-lp='id']")) {
+        var i = Number(t.getAttribute("data-i")), q2 = A.live.plots[i], nid = t.value.trim();
+        if (!q2) return;
+        if (!nid || A.live.plots.some(function (x, j) { return j !== i && x.id === nid; })) { t.value = q2.id; $("#liveMsg").textContent = "מספר המגרש חייב להיות ייחודי ולא ריק."; return; }
+        var oid = q2.id;
+        if (A.live.rights[oid]) { A.live.rights[nid] = A.live.rights[oid]; delete A.live.rights[oid]; }
+        if (A.data[oid]) { A.data[nid] = A.data[oid]; A.data[nid].id = nid; delete A.data[oid]; }
+        if (A.plot === oid) A.plot = nid;
+        q2.id = nid; applyLivePlan(); saveA(); refreshA(); renderFlow(); $("#liveMsg").textContent = "";
+      }
+    });
+    $("#decideCopy").addEventListener("click", function () { var t = decisionText(); if (t) copy(t, $("#decideCopyMsg")); });
+  }
+
   function renderVerify() {
     var v = VERIFY, box = $("#verifyOut");
     if (!v) { box.innerHTML = '<p class="muted">הבדיקה עוד לא הורצה.</p>'; return; }
@@ -1479,7 +1692,7 @@
         } },
         { label: "איפוס סימוני נלמד", onSelect: function () { done = []; seen = []; save("done", done); save("seen", seen); location.reload(); } },
         { label: "התחלת מפגש א מחדש", onSelect: function () {
-          A = freshA(); save("a3", A);
+          A = freshA(); save(aKey(), A);
           visited = visited.filter(function (k) { return k.indexOf("a/") !== 0; }); save("flowv", visited); location.reload();
         } }
       ];
@@ -1514,6 +1727,8 @@
       if (intro && current !== intro) location.hash = key(intro); else toggleGroup(gid);
     });
     wireA();
+    wireLive();
+    applyMode(); renderModeBar(); renderLive();
     wireFlow();
     wireMenu();
     $("#storyReplay").addEventListener("click", story);
