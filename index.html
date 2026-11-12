@@ -17,10 +17,11 @@
 
 <header class="top" dir="rtl">
   <a class="brand" href="#home" aria-label="בינה מלאכותית לאדריכלים, לדף הבית"><svg class="mark" viewBox="-1 -1 57 36" aria-hidden="true"><g fill="none" stroke="#151515" stroke-width=".9"><rect x="0" y="0" width="55" height="34"/><path d="M34 0V34M34 21H55M42 21V34M34 26H42M39 21V26M39 24H42" stroke="#8a8a8a" stroke-width=".7"/><path d="M0 34A34 34 0 0 1 34 0A21 21 0 0 1 55 21A13 13 0 0 1 42 34A8 8 0 0 1 34 26A5 5 0 0 1 39 21A3 3 0 0 1 42 24" stroke-width="1.6" stroke-linecap="round"/></g><rect x="39" y="24" width="3" height="2" fill="#151515"/></svg><span>בינה מלאכותית לאדריכלים</span></a>
-  <nav class="tabs" aria-label="שלושת הדפים">
+  <nav class="tabs" aria-label="הדפים">
     <a class="btn" href="#guide" data-tab="guide">כללי</a>
     <a class="btn" href="#a" data-tab="a">מפגש א</a>
     <a class="btn" href="#b" data-tab="b">מפגש ב</a>
+    <a class="btn" href="#c" data-tab="c">מפגש ג</a>
   </nav>
   <span class="grow"></span>
   <div class="walk" aria-label="מעבר בין תחנות">
@@ -59,6 +60,7 @@
           <nav class="home-cards" aria-label="המפגשים">
             <a class="hcard" href="#a"><span>מפגש א</span><b>מבחן התב"ע</b><em>מזכויות בנייה למודל.<br>מהמודל להכרעה.</em><i data-count="a"></i></a>
             <a class="hcard" href="#b"><span>מפגש ב</span><b>ניהול הסטודיו</b><em>מהנתון לשליטה במשרד.</em><i data-count="b"></i></a>
+            <a class="hcard" href="#c"><span>מפגש ג</span><b>מהחלופה למודל עבודה</b><em>מהוולום הנבחר למודל מוצב, מנותח ומוכן לייצוא.</em><i data-count="c"></i></a>
           </nav>
         </div>
         <figure class="home-figure" id="homeFigure">
@@ -486,11 +488,270 @@
           <li><span>קלט</span>פרויקט אחד</li>
           <li class="out"><span>פלט</span>כלי וסקירה שבועית</li>
         </ol>
+        <div class="bproj" id="bProj" hidden></div>
       </section>
       <div id="viewsB"></div>
+
+      <!-- ===================== מפגש ג: מהחלופה הנבחרת למודל עבודה. הלוגיקה ב-session-c.js ===================== -->
+      <section class="view cover" data-page="c" data-group="open" data-id="start" data-title="פתיחה" hidden>
+        <h1>מהחלופה הנבחרת למודל עבודה.</h1>
+        <p class="what"><mark>נבחרה חלופה, ויש וולום מאושר. זו אמורה להיות ההתחלה האמיתית.</mark> מציבים את הוולום במרחב, אוספים את מה שקיים, מבינים מה מותר ומה דוחף, ויוצאים עם מודל מוכן לייצוא.</p>
+        <div class="cbar" data-cbar></div>
+        <ol class="week" id="cWeek" aria-label="שבוע של איסוף מידע ידני, מול 90 שניות באפליקציה">
+          <li><b>יום ראשון</b>פותח מפות, מגיע לשטח ומצלם 40 תמונות בלי שיטה. חלקן שמישות. הן נשמרות בתיקייה "שטח 12.11" ולא נפתחות שוב.</li>
+          <li><b>יום שני</b>מוריד תוכנית סטטוטורית מה-GIS, קובץ PDF לא מדויק. שעתיים עבודה כדי להוציא ממנו קו גבול מגרש.</li>
+          <li><b>יום שלישי</b>מחפש נתוני שמש בשלוש תוכנות וגיליון אחד מהאוניברסיטה. מדפיס תרשים, מניח ליד השולחן, ומסתכל עליו פעמיים.</li>
+          <li><b>יום רביעי</b>מתחיל לשרטט, ומגלה שהבניין הסמוך גבוה ב-3 מטר ממה שחשב. כל הצללים שחשב עליהם אינם נכונים.</li>
+          <li><b>יום חמישי</b>כועס. לא על הפרויקט, אלא על כל הזמן שהלך לאיסוף מידע שלא הפך לידע.</li>
+          <li class="after"><b>עם האפליקציה</b>90 שניות. כל מה שאספת בשבוע מוכן. מתחילים לעבוד.</li>
+        </ol>
+        <div class="io-act"><button class="btn small" type="button" id="cWeekReplay">הפעלה מחדש</button> <a class="btn dark" href="#c/volume">מתחילים: הוולום במרחב</a></div>
+        <h2>שלושה אופקים, ומנוע אחד</h2>
+        <ol class="chain" aria-label="שלושת האופקים">
+          <li><span>אופק 1 · עובדות</span>מה קיים</li>
+          <li><span>אופק 2 · כללים</span>מה מותר</li>
+          <li><span>אופק 3 · כוונה</span>מה רוצים</li>
+          <li class="out"><span>מנוע הסינתזה</span>מודל תלת-ממדי</li>
+          <li class="out"><span>ייצוא</span>לתוכנות עבודה</li>
+        </ol>
+      </section>
+
+      <!-- צומת 1 -->
+      <section class="view flow" data-page="c" data-group="learn" data-id="volume" data-title="הוולום במרחב" hidden>
+        <h1>הוולום עומד במרחב האמיתי, לא על דף ריק.</h1>
+        <div class="cbar" data-cbar></div>
+        <div class="step" data-step="explain" data-label="ההסבר">
+          <p class="what"><mark>הוולום שנבחר במפגש א נכנס לכתובת אמיתית, עם הסביבה הבנויה שלו.</mark> בודקים דבר אחד: האם הוא עומד בגובה הנכון ביחס לבניין הסמוך.</p>
+          <ol class="chain">
+            <li><span>קלט</span>הוולום הנבחר וכתובת</li>
+            <li class="out"><span>פלט</span>מודל מוצב, עם שכנים</li>
+          </ol>
+          <ol class="explain">
+            <li><div><b>מאיפה מגיע הוולום</b><p>מהחלופה שנבחרה בהכרעה של מפגש א: קומות, גובה, שטחים וקווי בניין. אם לא נבחרה חלופה, מזינים את הפרמטרים ידנית.</p></div></li>
+            <li><div><b>איך נקבע המקום</b><p>כתובת מתורגמת לקואורדינטות. כיוון החזית נקבע בידי האדריכל, כי הוא קובע את כל ניתוח השמש.</p></div></li>
+            <li><div><b>מאיפה מגיעים השכנים</b><p>גבהי בניינים נשלפים מ-OpenStreetMap, ויש בהם פערים. בניין בלי נתון גובה מסומן כהערכה. אפשר להוסיף ולתקן שכנים ידנית.</p></div></li>
+            <li><div><b>מה לא מחובר</b><p>תצלום אווירי ו-street view דורשים מפתח של Google, ולכן אינם חלק מהכלי. מגרש ויתר שכבות ה-GIS העירוניות נכנסים ידנית.</p></div></li>
+          </ol>
+        </div>
+        <div class="step io" data-step="vol" data-label="וולום ומקום">
+          <div class="io-in"><h3>קלט</h3>
+            <p class="io-q">הוולום שנבחר</p>
+            <div id="cVol"></div>
+            <p class="io-q" style="margin-top:14px">מיקום וכיוון החזית</p>
+            <div class="rec"><input type="text" id="cAddr" dir="rtl" aria-label="כתובת" placeholder="כתובת, למשל: אשדוד, רחוב הרצל 10"><button class="btn" type="button" id="cGeo">איתור כתובת</button></div>
+            <div class="dev" id="cLoc">
+              <div><label>קו רוחב<input type="number" step="any" data-c="lat"></label></div>
+              <div><label>קו אורך<input type="number" step="any" data-c="lon"></label></div>
+              <div class="wide"><label>החזית פונה ל<select data-c="front" id="cFront"></select></label></div>
+            </div>
+            <p class="small muted" id="cGeoMsg"></p>
+            <p class="io-q" style="margin-top:14px">הסביבה הבנויה</p>
+            <div class="io-act"><button class="btn" type="button" id="cOsm">שליפה מ-OpenStreetMap</button><button class="btn" type="button" id="cNbAdd">הוספת שכן</button><span class="tiny" id="cNbMsg" aria-live="polite"></span></div>
+            <table class="t live-plots" id="cNbT"><thead><tr><th>שם</th><th>גובה, מ'</th><th>מרחק מהמגרש, מ'</th><th>כיוון</th><th>רוחב</th><th>עומק</th><th></th></tr></thead><tbody id="cNb"></tbody></table>
+            <div class="io-act"><button class="btn dark" type="button" id="cPlace">הצבת הוולום במרחב</button></div>
+            <div class="prompt" data-label="שאלה אחת לבינה" id="cQ1"><pre></pre></div>
+          </div>
+          <div class="io-out"><h3>פלט</h3>
+            <div id="cPlaceOut" hidden>
+              <p class="verdict" id="cPlaceVerdict"></p>
+              <div data-slot="vpc"></div>
+              <div class="legend"><span><i class="sw plot"></i>גבול המגרש, והחזית בקו עבה</span><span><i class="sw vol"></i>הוולום</span><span><i class="sw nb"></i>שכנים</span><span>סיבוב, הזזה וזום בעכבר</span></div>
+              <p class="tiny" id="cPlaceNote"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- צומת 2 -->
+      <section class="view flow" data-page="c" data-group="learn" data-id="site" data-title="כרטיס שטח" hidden>
+        <h1>מה שקיים במגרש נאסף פעם אחת, ומקושר למודל.</h1>
+        <div class="cbar" data-cbar></div>
+        <div class="step" data-step="explain" data-label="ההסבר">
+          <p class="what"><mark>כרטיס שטח הוא מסמך אחד מובנה, במקום 40 תמונות בתיקייה.</mark> חלק מהנתונים נשלפים, וחלק האדריכל מזין או מצלם.</p>
+          <ol class="chain">
+            <li><span>קלט</span>טופוגרפיה, תשתיות, תיעוד</li>
+            <li class="out"><span>פלט</span>כרטיס שטח</li>
+          </ol>
+          <ol class="explain">
+            <li><div><b>טופוגרפיה</b><p>גובה הקרקע נשלף ממודל גובה (DEM) ברזולוציה של כ-90 מטר. לכן שיפוע וכיוון ניקוז הם אפיון גס בלבד, ולא תחליף למדידה.</p></div></li>
+            <li><div><b>תשתיות</b><p>מד מים, ביוב, חשמל ותקשורת נכנסים ידנית. חיבור לממשק עירוני תלוי ברשות המקומית, ובאשדוד זמינותו לא נבדקה.</p></div></li>
+            <li><div><b>תיעוד שטח</b><p>שישה כיוונים קבועים ושתי פנורמות. כל תמונה נשמרת במשבצת של הכיוון שלה, ולכן מיון לא נדרש.</p></div></li>
+            <li><div><b>דוח גיאוטכני</b><p>הקובץ נשמר ונפתח, ואינו נקרא אוטומטית. סוג הקרקע נבחר ידנית.</p></div></li>
+          </ol>
+        </div>
+        <div class="step io" data-step="site" data-label="כרטיס שטח">
+          <div class="io-in"><h3>קלט</h3>
+            <p class="io-q">טופוגרפיה</p>
+            <div class="io-act"><button class="btn" type="button" id="cDem">שליפת גובה ושיפוע</button><span class="tiny" id="cDemMsg" aria-live="polite"></span></div>
+            <p class="io-q" style="margin-top:12px">מה קיים במגרש</p>
+            <div class="dev" id="cSiteF"></div>
+            <p class="io-q" style="margin-top:12px">תיעוד שטח: שישה כיוונים ושתי פנורמות</p>
+            <ul class="docs" id="cPhotos"></ul>
+            <div class="io-act"><button class="btn dark" type="button" id="cSiteGo">יצירת כרטיס שטח</button></div>
+          </div>
+          <div class="io-out"><h3>פלט</h3><div id="cCardOut"></div></div>
+        </div>
+      </section>
+
+      <!-- צומת 3 -->
+      <section class="view flow" data-page="c" data-group="understand" data-id="climate" data-title="סטטוטורי ואקלים" hidden>
+        <h1>הכוחות על המגרש: מה מותר, ומה דוחף.</h1>
+        <div class="cbar" data-cbar></div>
+        <div class="step" data-step="explain" data-label="ההסבר">
+          <p class="what"><mark>הזכויות הן מה שמותר. השמש, הרוח והגשם הם מה שדוחף.</mark> שניהם נבחנים על הוולום עצמו.</p>
+          <ol class="chain">
+            <li><span>קלט</span>זכויות, תאריך ושעה</li>
+            <li class="out"><span>פלט</span>מסלול שמש והצללה</li>
+            <li class="out"><span>פלט</span>רוח, גשם וקרינה</li>
+          </ol>
+          <ol class="explain">
+            <li><div><b>סטטוטורי</b><p>הזכויות מגיעות ממפגש א. נספח בינוי, הערות רמ"י ותנאים מוקדמים נכנסים ידנית.</p></div></li>
+            <li><div><b>מסלול שמש</b><p>מחושב בכלי עצמו לפי קואורדינטות, תאריך ושעה, בלי שירות חיצוני. הצל מוצג על המודל.</p></div></li>
+            <li><div><b>שעות אור ישיר</b><p>לכל חזית של הוולום, עם חסימה בידי השכנים. החישוב בצעדים של רבע שעה.</p></div></li>
+            <li><div><b>רוח, גשם וקרינה</b><p>נתוני עבר של שנה שלמה מ-Open-Meteo, לפי הקואורדינטות. הם מתארים אקלים, ולא תחזית.</p></div></li>
+          </ol>
+        </div>
+        <div class="step io" data-step="stat" data-label="סטטוטורי">
+          <div class="io-in"><h3>קלט</h3>
+            <p class="io-q">זכויות הבנייה, מקושרות ממפגש א</p>
+            <div id="cRights"></div>
+            <p class="io-q" style="margin-top:12px">נספח בינוי, תנאים מוקדמים והערות</p>
+            <div class="dev" id="cStatF"></div>
+            <textarea data-c="rami" rows="2" dir="rtl" aria-label="הערות מנהל מקרקעי ישראל" placeholder="הערות רשות מקרקעי ישראל, אם יש."></textarea>
+            <div class="io-act"><button class="btn dark" type="button" id="cStatGo">שמירת הנתונים הסטטוטוריים</button></div>
+          </div>
+          <div class="io-out"><h3>פלט</h3><div id="cStatOut"></div></div>
+        </div>
+        <div class="step io" data-step="clim" data-label="אקלים ושמש">
+          <div class="io-in"><h3>קלט</h3>
+            <p class="io-q">תאריך ושעה</p>
+            <div class="dev">
+              <div><label>תאריך<input type="date" data-c="date"></label></div>
+              <div class="wide"><label>שעה: <b id="cHourL"></b><input type="range" min="4" max="20" step="0.25" data-c="hour" id="cHour"></label></div>
+            </div>
+            <div class="io-act"><button class="btn" type="button" data-date="2026-12-21">היום הקצר: 21.12</button><button class="btn" type="button" data-date="2026-06-21">היום הארוך: 21.6</button><button class="btn" type="button" data-date="2026-03-21">שוויון: 21.3</button></div>
+            <div class="io-act"><button class="btn dark" type="button" id="cClimGo">הרצת ניתוח אקלים</button><span class="tiny" id="cWxMsg" aria-live="polite"></span></div>
+          </div>
+          <div class="io-out"><h3>פלט</h3>
+            <div id="cClimOut" hidden>
+              <div data-slot="vpc"></div>
+              <div class="clim-grid">
+                <div><p class="io-q">מסלול השמש ביום שנבחר</p><div id="cSun"></div></div>
+                <div><p class="io-q">שעות אור ישיר לכל חזית</p><div id="cFac"></div></div>
+              </div>
+              <div id="cShadowAlert"></div>
+              <div id="cWx"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- צומת 4 -->
+      <section class="view flow" data-page="c" data-group="understand" data-id="feasibility" data-title="בדיקת היתכנות" hidden>
+        <h1>הבעיות מתגלות לפני השרטוט, לא בשלב ההיתר.</h1>
+        <div class="cbar" data-cbar></div>
+        <div class="step" data-step="explain" data-label="ההסבר">
+          <p class="what"><mark>בדיקה אחת על הוולום הנבחר, לפני שמציירים שורה.</mark> כל פרמטר מקבל סטטוס, עם הסבר קצר.</p>
+          <ol class="chain">
+            <li><span>קלט</span>הוולום, הזכויות והסביבה</li>
+            <li class="out"><span>פלט</span>כרטיס בדיקת היתכנות</li>
+          </ol>
+          <ol class="explain">
+            <li><div><b>עמידה בזכויות</b><p>תכסית, אחוזי בנייה, קומות, גובה, קווי בניין ויח"ד. כל פרמטר נבדק מול הערך המחולץ.</p></div></li>
+            <li><div><b>חניה</b><p>מספר החניות נגזר מהשיעור שהוזן. הבדיקה מעריכה כמה קומות מרתף נדרשות. תקן 19 לא הוטמע, והשיעור הוא ערך שהאדריכל קובע.</p></div></li>
+            <li><div><b>גישת כיבוי אש</b><p>מרחק החזית מגבול המגרש מול מינימום שהוזן. המינימום הוא הנחת עבודה, ולא ערך מהתקנות.</p></div></li>
+            <li><div><b>צל על שכנים</b><p>כמה מהשטח של כל שכן מוצל בידי הוולום בין 8:00 ל-10:00, ביום שנבחר. הסף הוא הנחה של הכלי.</p></div></li>
+            <li><div><b>סטטוסים</b><p><span class="good">ירוק: עומד.</span> <span class="warnc">צהוב: אזהרה.</span> <span class="bad">אדום: חורג.</span> אפור: חסר נתון, והבדיקה לא נעשתה.</p></div></li>
+          </ol>
+        </div>
+        <div class="step io" data-step="check" data-label="בדיקת היתכנות">
+          <div class="io-in"><h3>קלט</h3>
+            <p class="io-q">הוולום הנבחר, הזכויות והסביבה שהוזנו</p>
+            <dl class="kv" id="cFeasIn"></dl>
+            <div class="io-act"><button class="btn dark" type="button" id="cFeasGo">הרצת בדיקת היתכנות</button></div>
+            <div class="prompt" data-label="שאלה אחת לבינה" id="cQ4"><pre></pre></div>
+          </div>
+          <div class="io-out"><h3>פלט</h3>
+            <div id="cFeasOut" hidden>
+              <p class="verdict" id="cFeasVerdict"></p>
+              <table class="t fit" id="cFeas"></table>
+              <div class="io-act"><button class="btn" type="button" id="cFeasCopy">העתקת הכרטיס</button><span class="tiny" id="cFeasToast" aria-live="polite"></span></div>
+              <div class="legend"><span><i class="dot g"></i>עומד</span><span><i class="dot y"></i>אזהרה</span><span><i class="dot r"></i>חורג</span><span><i class="dot"></i>חסר נתון</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- צומת 5 -->
+      <section class="view flow" data-page="c" data-group="do" data-id="intent" data-title="כוונת העיצוב" hidden>
+        <h1>הרעיון העיצובי הופך לשפה שאפשר ליישם.</h1>
+        <div class="cbar" data-cbar></div>
+        <div class="step" data-step="explain" data-label="ההסבר">
+          <p class="what"><mark>האדריכל מתאר, והכלי מתרגם לשפה עיצובית מובנית.</mark> בגרסה הזאת התרגום נשאר כהצעה, ואינו מוחל על המודל.</p>
+          <ol class="chain">
+            <li><span>קלט</span>תיאור, תמונות השראה, מילות מפתח</li>
+            <li class="out"><span>פלט</span>שפה עיצובית מובנית</li>
+          </ol>
+          <ol class="explain">
+            <li><div><b>תיאור חופשי</b><p>טקסט או הקלטה. הכלי מזהה מילות מפתח: סגנון, חומר, כיוון ושמות של גוונים.</p></div></li>
+            <li><div><b>תמונות השראה</b><p>3 עד 10 תמונות. הכלי מחלץ מהן פלטת צבעים. הוא לא מזהה סגנון או חומר, כי אין קריאת בינה באפליקציה.</p></div></li>
+            <li><div><b>מילות מפתח</b><p>בחירה מרשימה: סגנון, חומרים ראשיים וגוון.</p></div></li>
+            <li><div><b>מה מחושב מה</b><p>הצעת החומרים וההצעה ליחס מלא וריק הן כללים פשוטים, לפי מילות המפתח ולפי שעות השמש של כל חזית. הן נקודת פתיחה לשיחה, ולא תוצר של בינה. לתרגום עשיר יש פרומפט להעתקה.</p></div></li>
+          </ol>
+        </div>
+        <div class="step io" data-step="intent" data-label="כוונת עיצוב">
+          <div class="io-in"><h3>קלט</h3>
+            <p class="io-q">תיאור חופשי: בטקסט או בהקלטה</p>
+            <div class="rec"><textarea data-c="intentText" id="cIntentText" rows="3" dir="rtl" aria-label="תיאור הכוונה העיצובית" placeholder="למשל: בניין שמרגיש פתוח לכיוון הים, חומרים גסים, חזית מינימליסטית, בהשראת המחסנים הישנים של הנמל."></textarea><button class="btn" type="button" id="cRec" hidden>הקלטה</button></div>
+            <p class="io-q" style="margin-top:12px">מילות מפתח</p>
+            <div id="cChips"></div>
+            <p class="io-q" style="margin-top:12px">תמונות השראה, 3 עד 10</p>
+            <ul class="docs one" id="cMood"></ul>
+            <div class="io-act"><button class="btn dark" type="button" id="cIntentGo">תרגום לשפה עיצובית</button></div>
+            <div class="prompt" data-label="פרומפט לתרגום עשיר" id="cQ5"><pre></pre></div>
+          </div>
+          <div class="io-out"><h3>פלט</h3><div id="cIntentOut"></div></div>
+        </div>
+      </section>
+
+      <!-- צומת 6 -->
+      <section class="view flow" data-page="c" data-group="do" data-id="export" data-title="מודל מוכן לייצוא" hidden>
+        <h1>כל השכבות במודל אחד, שיוצא לתוכנות העבודה.</h1>
+        <div class="cbar" data-cbar></div>
+        <div class="step" data-step="explain" data-label="ההסבר">
+          <p class="what"><mark>הגאומטריה, הסביבה, השמש והפרמטרים מתאגדים לקובץ אחד.</mark> הייצוא הראשון הוא IFC של הוולום והשכנים, עם הפרמטרים של הזכויות.</p>
+          <ol class="chain">
+            <li><span>קלט</span>כל השכבות שנאספו</li>
+            <li class="out"><span>פלט</span>קובץ IFC ונתוני פרויקט</li>
+          </ol>
+          <ol class="explain">
+            <li><div><b>מה בקובץ</b><p>קומה אחר קומה כגוף נפרד, שכנים בגובה שלהם, מיקום גאוגרפי של האתר, ופרמטרי הזכויות כקבוצת מאפיינים.</p></div></li>
+            <li><div><b>מה עדיין לא</b><p>חומרים ופתחים אינם נכנסים לקובץ בגרסה הזאת. כך גם Revit, SketchUp ו-DWG, שדורשים רכיבי המרה. את קובץ ה-IFC אפשר לפתוח בכל אחת מהן.</p></div></li>
+            <li><div><b>המפרט הראשוני</b><p>שלושה פריטים למעטפת ושלושה לפנים, מתוך הכוונה העיצובית. אם לא הוגדרה כוונה, המפרט ריק.</p></div></li>
+          </ol>
+        </div>
+        <div class="step io" data-step="exp" data-label="ייצוא">
+          <div class="io-in"><h3>קלט</h3>
+            <p class="io-q">מה מייצאים</p>
+            <div class="io-act"><button class="btn dark" type="button" id="cExIfc">ייצוא IFC</button><button class="btn" type="button" id="cExJson">ייצוא נתוני הפרויקט</button></div>
+            <div class="io-act"><button class="btn" type="button" id="cExArea">העתקת טבלת שטחים</button><button class="btn" type="button" id="cExSpec">העתקת מפרט ראשוני</button><span class="tiny" id="cExToast" aria-live="polite"></span></div>
+            <div class="prompt" data-label="שאלה אחת לבינה" id="cQ6"><pre></pre></div>
+          </div>
+          <div class="io-out"><h3>פלט</h3><div id="cExpOut"></div></div>
+        </div>
+      </section>
+
     </div>
 
     <!-- חלון המודל: נכנס למסגרת רק בצעד שבו המודל נבנה -->
+    <div id="vpcStore" hidden>
+      <div id="vpc">
+        <div class="viewport">
+          <div id="iso3dc"><p id="noThreeC" hidden>המודל התלת-ממדי דורש חיבור לאינטרנט לטעינת הספרייה.</p></div>
+          <span class="hint">סיבוב, הזזה וזום בעכבר</span>
+        </div>
+      </div>
+    </div>
     <div id="vpStore" hidden>
       <div id="vp">
         <div class="viewport">
@@ -504,6 +765,8 @@
 
 <script src="assets/icons.js"></script>
 <script src="assets/app.js"></script>
+<script src="assets/session-c.js"></script>
 <script type="module" src="assets/model3d.js"></script>
+<script type="module" src="assets/model3dc.js"></script>
 </body>
 </html>
