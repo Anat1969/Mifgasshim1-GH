@@ -23,7 +23,9 @@ scene.add(amb, sun, sun.target);
 
 const dyn = new THREE.Group();
 scene.add(dyn);
-let baseKey = "", sunKey = "", camTween = null, radius = 60;
+let baseKey = "", sunKey = "", camTween = null, radius = 60, token = 0;
+const aerialCache = new Map();
+window.CAERIAL = { state: "off", tiles: 0 };
 
 function clear(g) {
   while (g.children.length) {
@@ -66,8 +68,44 @@ function label(text, w) {
   return sp;
 }
 
+/* תצלום אווירי: אריחי Esri World Imagery על הקרקע, כשהצפון למעלה */
+function tileXY(lat, lon, z) {
+  const n = 2 ** z, x = (lon + 180) / 360 * n, lr = lat * Math.PI / 180;
+  return [x, (1 - Math.log(Math.tan(lr) + 1 / Math.cos(lr)) / Math.PI) / 2 * n];
+}
+function loadAerial(s, my) {
+  const R = s.radius, z = R <= 150 ? 18 : 17, c = tileXY(s.lat, s.lon, z), mpt = 156543.03392 * Math.cos(s.lat * Math.PI / 180) / 2 ** z * 256, h = R / mpt;
+  const key = [s.lat, s.lon, R].join();
+  const place = (cv) => {
+    if (my !== token) return;
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(R * 2, R * 2), new THREE.MeshStandardMaterial({ map: tex, roughness: 1 }));
+    m.rotation.x = -Math.PI / 2; m.position.y = -0.005; m.receiveShadow = true;
+    dyn.add(m);
+  };
+  if (aerialCache.has(key)) { place(aerialCache.get(key)); window.CAERIAL = { state: "ok", tiles: -1 }; return; }
+  window.CAERIAL = { state: "loading", tiles: 0 };
+  const S = 1024, cv = document.createElement("canvas"); cv.width = cv.height = S;
+  const g = cv.getContext("2d"), sc = S / (2 * h), x0 = Math.floor(c[0] - h), x1 = Math.floor(c[0] + h), y0 = Math.floor(c[1] - h), y1 = Math.floor(c[1] + h);
+  let pending = 0, ok = 0;
+  const done = () => {
+    if (--pending > 0) return;
+    if (ok) { aerialCache.set(key, cv); place(cv); window.CAERIAL = { state: "ok", tiles: ok }; } else window.CAERIAL = { state: "fail", tiles: 0 };
+    if (window.CTOOL && window.CTOOL.aerialState) window.CTOOL.aerialState(window.CAERIAL.state);
+  };
+  for (let ty = y0; ty <= y1; ty++) for (let tx = x0; tx <= x1; tx++) {
+    pending++;
+    const im = new Image(); im.crossOrigin = "anonymous";
+    im.onload = () => { g.drawImage(im, (tx - (c[0] - h)) * sc, (ty - (c[1] - h)) * sc, sc + 0.5, sc + 0.5); ok++; done(); };
+    im.onerror = done;
+    im.src = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/" + z + "/" + ty + "/" + tx;
+  }
+}
+
 function build(s) {
   clear(dyn);
+  token++;
   radius = s.radius;
   const R = radius;
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(R * 6, R * 6), new THREE.MeshStandardMaterial({ color: 0xf3f3f1, roughness: 1 }));
@@ -82,6 +120,7 @@ function build(s) {
   dyn.add(line(s.plot, 0x151515, 0.08, true));
   const f = s.plot.slice(2, 4);
   [0.04, 0.12, 0.2].forEach((dy) => dyn.add(line(f, 0x4a6079, 0.1 + dy, false)));
+  if (s.aerial && s.lat != null) loadAerial(s, token); else window.CAERIAL = { state: "off", tiles: 0 };
   s.nbs.forEach((b) => dyn.add(prism(b.pts, 0, b.h, b.est ? 0xd9d9d6 : 0xc7c7c3, 0x8b8b87)));
   s.boxes.forEach((b) => dyn.add(prism(b.pts, b.z0, b.H, 0xf7f7f5, 0x151515)));
 }
@@ -115,7 +154,7 @@ function update() {
   if (!resize()) return;
   const s = window.CTOOL.scene();
   if (!s) return;
-  const bk = JSON.stringify([s.plot, s.boxes, s.nbs, s.radius]);
+  const bk = JSON.stringify([s.plot, s.boxes, s.nbs, s.radius, s.aerial, s.lat, s.lon]);
   let first = false;
   if (bk !== baseKey) { baseKey = bk; build(s); first = true; fit(camera.position.lengthSq() < 1); }
   const sk = JSON.stringify(s.sun) + bk;

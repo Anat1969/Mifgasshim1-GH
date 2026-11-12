@@ -12,7 +12,7 @@
     return { addr: "", lat: null, lon: null, front: 180, placed: false, useMan: false, man: { W: 30, D: 40, floors: 5, fp: 600, flh: 3.2, sf: 5, ss: 3, sr: 4, h: "", maxFl: "", cov: "", bp: "", units: "" },
       nb: [], osmMsg: "", dem: null, site: { exist: "", trees: "", soil: "", hist: "", water: "", sewer: "", elec: "", comm: "" }, siteDone: false,
       app: { maxH: "", maxFl: "" }, rami: "", park: null, sqm: 28, fireMin: 6, acc: false, statDone: false,
-      date: "2026-12-21", hour: 9, wx: null, climDone: false, feasDone: false,
+      date: "2026-12-21", hour: 9, wx: null, aerial: true, wiki: null, climDone: false, feasDone: false,
       intentText: "", keys: { style: [], mat: [], tone: "" }, intent: null, palette: [], expDone: false };
   }
   var C = APP.load("c1", fresh());
@@ -257,7 +257,12 @@
     if (!has(C.lat)) { C.osmMsg = "קודם כתובת או קואורדינטות."; renderNb(); return; }
     var v = getVol(), q = '[out:json][timeout:25];way["building"](around:90,' + C.lat + "," + C.lon + ");out tags geom 60;";
     C.osmMsg = "שולף..."; renderNb();
-    jget("https://overpass-api.de/api/interpreter", { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "Content-Type": "application/x-www-form-urlencoded" } }).then(function (r) {
+    var mirrors = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
+    function tryMirror(i) {
+      if (i >= mirrors.length) return Promise.reject(new Error("x"));
+      return jget(mirrors[i], { method: "POST", body: "data=" + encodeURIComponent(q), headers: { "Content-Type": "application/x-www-form-urlencoded" } }).catch(function () { return tryMirror(i + 1); });
+    }
+    tryMirror(0).then(function (r) {
       var kx = 111320 * Math.cos(C.lat * RAD), ky = 110540, out = [], skipped = 0, plotPoly = v ? rectWorld(v, 0, 0, v.W, v.D) : null;
       (r.elements || []).forEach(function (e) {
         if (!e.geometry || e.geometry.length < 3) return;
@@ -303,6 +308,20 @@
     return jget("https://archive-api.open-meteo.com/v1/archive?start_date=" + y + "-01-01&end_date=" + y + "-12-31" + q).then(function (r) { parse(r, false); }).catch(function () {
       return jget("https://api.open-meteo.com/v1/forecast?past_days=92&forecast_days=1" + q).then(function (r) { parse(r, true); });
     }).catch(function () { C.wx = null; $("#cWxMsg").textContent = "נתוני האקלים לא התקבלו. מסלול השמש וההצללה מחושבים בכל מקרה."; });
+  }
+
+  function fetchWiki() {
+    if (!has(C.lat)) { $("#cWikiMsg").textContent = "קודם כתובת או קואורדינטות."; return; }
+    $("#cWikiMsg").textContent = "מחפש...";
+    jget("https://commons.wikimedia.org/w/api.php?action=query&generator=geosearch&ggscoord=" + C.lat + "%7C" + C.lon + "&ggsradius=500&ggslimit=8&ggsnamespace=6&prop=imageinfo&iiprop=url&iiurlwidth=220&format=json&origin=*").then(function (r) {
+      var pages = r.query ? Object.keys(r.query.pages).map(function (k) { return r.query.pages[k]; }) : [];
+      C.wiki = pages.filter(function (p) { return p.imageinfo && p.imageinfo[0]; }).map(function (p) { return { t: p.title.replace(/^File:/, "").replace(/\.[a-z]+$/i, ""), u: p.imageinfo[0].descriptionurl || p.imageinfo[0].url, th: p.imageinfo[0].thumburl || p.imageinfo[0].url }; });
+      $("#cWikiMsg").textContent = C.wiki.length ? "" : "לא נמצאו תמונות ברדיוס 500 מטר."; save(); renderWiki();
+    }).catch(function () { $("#cWikiMsg").textContent = "השירות לא ענה. אפשר לנסות שוב."; });
+  }
+  function renderWiki() {
+    var el = $("#cWikiOut"); if (!el) return;
+    el.innerHTML = C.wiki && C.wiki.length ? '<p class="io-q">תמונות מהסביבה, Wikimedia Commons, ברדיוס 500 מ\'</p><div class="wiki">' + C.wiki.map(function (w) { return '<a href="' + esc(w.u) + '" target="_blank" rel="noopener"><img src="' + esc(w.th) + '" alt="' + esc(w.t) + '" loading="lazy"><span>' + esc(w.t) + "</span></a>"; }).join("") + '</div><p class="tiny">התמונות שייכות לצלמים שלהן, ברישיונות שמפורטים בעמוד של כל תמונה.</p>' : "";
   }
 
   /* ---------- צומת 2: כרטיס שטח ---------- */
@@ -603,6 +622,94 @@
     var b = new Blob([text], { type: type || "text/plain" }), a = document.createElement("a");
     a.href = URL.createObjectURL(b); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
   }
+  /* DXF (גרסה 12, טקסט): תוכנית קרקע וחזית סכמטית, בשכבות */
+  function planBounds(v) {
+    var pts = rectWorld(v, 0, 0, v.W, v.D).concat.apply(rectWorld(v, 0, 0, v.W, v.D), nbList(v).map(function (b) { return b.pts; }));
+    var xs = pts.map(function (p) { return p[0]; }), ys = pts.map(function (p) { return p[1]; });
+    return { x1: Math.min.apply(null, xs), x2: Math.max.apply(null, xs), y1: Math.min.apply(null, ys), y2: Math.max.apply(null, ys) };
+  }
+  function buildDXF() {
+    var v = getVol(); if (!v) return null;
+    var o = [], layers = [["PLOT", 7], ["VOLUME", 1], ["NEIGHBOURS", 8], ["ELEVATION", 5], ["FLOORS", 3], ["TEXT", 7]];
+    function g(c, val) { o.push(String(c)); o.push(String(val)); }
+    function f(n) { return Number(n).toFixed(4); }
+    g(0, "SECTION"); g(2, "HEADER"); g(9, "$ACADVER"); g(1, "AC1009"); g(9, "$INSUNITS"); g(70, 6); g(0, "ENDSEC");
+    g(0, "SECTION"); g(2, "TABLES"); g(0, "TABLE"); g(2, "LTYPE"); g(70, 1); g(0, "LTYPE"); g(2, "CONTINUOUS"); g(70, 0); g(3, "Solid line"); g(72, 65); g(73, 0); g(40, 0); g(0, "ENDTAB");
+    g(0, "TABLE"); g(2, "LAYER"); g(70, layers.length);
+    layers.forEach(function (l) { g(0, "LAYER"); g(2, l[0]); g(70, 0); g(62, l[1]); g(6, "CONTINUOUS"); });
+    g(0, "ENDTAB"); g(0, "ENDSEC"); g(0, "SECTION"); g(2, "ENTITIES");
+    function poly(pts, layer, closed) {
+      g(0, "POLYLINE"); g(8, layer); g(66, 1); g(70, closed ? 1 : 0);
+      pts.forEach(function (p) { g(0, "VERTEX"); g(8, layer); g(10, f(p[0])); g(20, f(p[1])); g(30, 0); });
+      g(0, "SEQEND"); g(8, layer);
+    }
+    function line(a, b, layer) { g(0, "LINE"); g(8, layer); g(10, f(a[0])); g(20, f(a[1])); g(30, 0); g(11, f(b[0])); g(21, f(b[1])); g(31, 0); }
+    function text(x, y, h, str, layer) { g(0, "TEXT"); g(8, layer); g(10, f(x)); g(20, f(y)); g(30, 0); g(40, f(h)); g(1, str); }
+    poly(rectWorld(v, 0, 0, v.W, v.D), "PLOT", true);
+    v.boxes.forEach(function (b) { poly(rectWorld(v, b.ox, b.oy, b.ox + b.w, b.oy + b.d), "VOLUME", true); });
+    nbList(v).forEach(function (b) { poly(b.pts, "NEIGHBOURS", true); });
+    var bd = planBounds(v), N = [bd.x2 + 6, bd.y2 - 8];
+    line(N, [N[0], N[1] + 8], "TEXT"); text(N[0] - 1, N[1] + 9, 2.5, "N", "TEXT");
+    /* חזית סכמטית, לצד התוכנית, לאורך רוחב המגרש */
+    var ox = bd.x2 + 40, oy = bd.y1, H = volStats(v).H;
+    line([ox, oy], [ox + v.W, oy], "ELEVATION");
+    v.boxes.forEach(function (b) {
+      poly([[ox + b.ox, oy + b.z0], [ox + b.ox + b.w, oy + b.z0], [ox + b.ox + b.w, oy + b.z0 + b.H], [ox + b.ox, oy + b.z0 + b.H]], "ELEVATION", true);
+      for (var z = b.z0 + v.flh; z < b.z0 + b.H - 0.2; z += v.flh) line([ox + b.ox, oy + z], [ox + b.ox + b.w, oy + z], "FLOORS");
+    });
+    text(ox, oy + H + 3, 2.5, "H=" + fmt(H) + "m", "TEXT");
+    g(0, "ENDSEC"); g(0, "EOF");
+    return o.join("\n") + "\n";
+  }
+  /* OBJ: גופים מוחלקים קומה אחר קומה, ושכנים. Y למעלה, וצפון הוא Z שלילי. */
+  function buildOBJ() {
+    var v = getVol(); if (!v) return null;
+    var out = ["# mifgasshim1, units: meters, Y up, north is -Z"], base = 0;
+    function area(p) { var a = 0; for (var i = 0; i < p.length; i++) { var j = (i + 1) % p.length; a += p[i][0] * p[j][1] - p[j][0] * p[i][1]; } return a / 2; }
+    function prism(name, pts, z0, H) {
+      pts = area(pts) < 0 ? pts.slice().reverse() : pts; var n = pts.length;
+      out.push("o " + name);
+      pts.forEach(function (p) { out.push("v " + p[0].toFixed(3) + " " + z0.toFixed(3) + " " + (-p[1]).toFixed(3)); });
+      pts.forEach(function (p) { out.push("v " + p[0].toFixed(3) + " " + (z0 + H).toFixed(3) + " " + (-p[1]).toFixed(3)); });
+      var b = base, top = [], bot = [], i;
+      for (i = 0; i < n; i++) { top.push(b + n + i + 1); bot.push(b + (n - 1 - i) + 1); }
+      out.push("f " + top.join(" ")); out.push("f " + bot.join(" "));
+      for (i = 0; i < n; i++) { var j = (i + 1) % n; out.push("f " + [b + i + 1, b + j + 1, b + n + j + 1, b + n + i + 1].join(" ")); }
+      base += 2 * n;
+    }
+    var fl = 0;
+    v.boxes.forEach(function (b) {
+      var pts = rectWorld(v, b.ox, b.oy, b.ox + b.w, b.oy + b.d), cnt = Math.max(1, Math.round(b.H / v.flh));
+      for (var k = 0; k < cnt; k++) { fl++; prism("Floor_" + fl, pts, b.z0 + k * v.flh, v.flh); }
+    });
+    nbList(v).forEach(function (b, i) { prism("Neighbour_" + (i + 1), b.pts, 0, Math.max(b.h, 1)); });
+    return out.join("\n") + "\n";
+  }
+  /* תרשים מיקום להדפסה: תוכנית עם צפון */
+  function sitePlanSvg(v) {
+    var bd = planBounds(v), W = 560, Hh = 380, pad = 24, sc = Math.min((W - 2 * pad) / (bd.x2 - bd.x1 || 1), (Hh - 2 * pad) / (bd.y2 - bd.y1 || 1));
+    function pt(p) { return ((p[0] - bd.x1) * sc + pad).toFixed(1) + "," + (Hh - ((p[1] - bd.y1) * sc + pad)).toFixed(1); }
+    function pg(pts, fill, stroke, w) { return '<polygon points="' + pts.map(pt).join(" ") + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="' + w + '"/>'; }
+    var h = nbList(v).map(function (b) { var c = centroid(b.pts), q = pt(c).split(","); return pg(b.pts, "#e3e3df", "#8b8b87", 1) + '<text x="' + q[0] + '" y="' + q[1] + '" font-size="11" text-anchor="middle" fill="#4a4a46">' + esc(b.name) + " " + fmt(b.h, 0) + " מ'</text>"; }).join("");
+    h += pg(rectWorld(v, 0, 0, v.W, v.D), "#fff", "#151515", 1.6);
+    v.boxes.forEach(function (b) { h += pg(rectWorld(v, b.ox, b.oy, b.ox + b.w, b.oy + b.d), "#f1f1ee", "#151515", 1.2); });
+    h += '<g transform="translate(' + (W - 30) + ',40)"><path d="M0 18V-12M-5 -4L0 -14L5 -4" fill="none" stroke="#151515" stroke-width="1.5"/><text y="34" font-size="12" text-anchor="middle">צפון</text></g>';
+    return '<svg viewBox="0 0 ' + W + " " + Hh + '" width="100%" style="max-width:640px;border:1px solid #ddd">' + h + "</svg>";
+  }
+  function printSummary() {
+    var v = getVol(); if (!v) return false;
+    var w = window.open("", "_blank"); if (!w) return false;
+    var ch = C.feasDone ? feasChecks() : [], W = { g: "עומד", y: "אזהרה", r: "חורג", n: "לא נבדק" };
+    var html = '<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>סיכום פרויקט</title><style>body{font-family:Heebo,Arial,sans-serif;margin:24px;color:#151515;line-height:1.5}h1{font-size:22px}h2{font-size:16px;margin-top:22px;border-bottom:1px solid #151515}table{border-collapse:collapse;width:100%;font-size:13px}td,th{border-bottom:1px solid #ddd;padding:4px 6px;text-align:right}.s{font-size:12px;color:#666}</style></head><body>' +
+      "<h1>סיכום פרויקט</h1><p>" + bar() + "</p><h2>תרשים מיקום</h2>" + sitePlanSvg(v) +
+      "<h2>טבלת שטחים</h2><pre style=\"font-family:inherit\">" + esc(areaTable()) + "</pre>" +
+      (ch.length ? "<h2>בדיקת היתכנות</h2><table>" + ch.map(function (x) { return "<tr><td>" + esc(x.n) + "</td><td>" + esc(x.val) + "</td><td>" + W[x.st] + "</td><td class=\"s\">" + esc(x.note) + "</td></tr>"; }).join("") + "</table>" : "") +
+      (C.intent ? "<h2>מפרט חומרים ראשוני</h2><pre style=\"font-family:inherit\">" + esc(specText()) + "</pre>" : "") +
+      '<p class="s">הופק באפליקציה "בינה מלאכותית לאדריכלים". ההנחות והמגבלות מפורטות בכרטיס ההיתכנות.</p></body></html>';
+    w.document.open(); w.document.write(html); w.document.close(); w.focus();
+    setTimeout(function () { try { w.print(); } catch (e) { /* המשתמש מדפיס ידנית */ } }, 400);
+    return true;
+  }
   function areaTable() {
     var v = getVol(); if (!v) return "";
     var rows = ["קומה\tשטח, מ\"ר\tגובה, מ'"], i = 0, fl = 0;
@@ -627,10 +734,11 @@
       ["שמש ורוח", C.climDone ? "g" : "y", C.climDone ? "נותחו, ונשמרים בנתוני הפרויקט" : "לא הורצו"],
       ["פרמטרי זכויות", v ? "g" : "r", "כקבוצת מאפיינים בבניין"],
       ["היתכנות", C.feasDone ? "g" : "y", C.feasDone ? "בנתוני הפרויקט" : "לא הורצה"],
+      ["תצלום אווירי", C.aerial !== false && has(C.lat) ? "g" : "n", "מוצג במודל. לא נכלל בקבצי הייצוא"],
       ["חומרים", "n", "גרסה שנייה. המפרט הראשוני נפרד"]];
     $("#cExpOut").innerHTML = '<p class="verdict"><mark><b>המודל מכיל ' + layers.filter(function (l) { return l[1] === "g"; }).length + " מתוך " + layers.length + " שכבות.</b></mark></p>" +
       '<ol class="outlist req">' + layers.map(function (l) { return "<li><b>" + l[0] + '</b><span><i class="dot ' + (l[1] === "n" ? "" : l[1]) + '"></i>' + esc(l[2]) + "</span></li>"; }).join("") + "</ol>" +
-      '<p class="tiny">הייצוא הוא IFC 4. Revit, SketchUp ו-DWG לא נוצרים ישירות: פותחים את ה-IFC בהן.</p>' +
+      '<p class="tiny">IFC 4 נפתח ב-Revit ובשאר התוכנות. DXF נפתח ב-AutoCAD וב-DWG TrueView, ו-OBJ ב-SketchUp וב-Blender. קובצי rvt, skp ו-dwg מקוריים לא נוצרים.</p>' +
       (C.expDone ? '<p class="small"><mark>הקובץ הורד.</mark></p>' : "");
   }
 
@@ -649,7 +757,7 @@
       nbs.forEach(function (b) { b.pts.forEach(function (p) { ext = Math.max(ext, Math.hypot(p[0], p[1])); }); });
       var cur = $(".view:not([hidden]) .step:not([hidden])"), id = cur ? cur.getAttribute("data-step") : "";
       return { plot: rectWorld(v, 0, 0, v.W, v.D), boxes: vols.map(function (p) { return { pts: p.pts, z0: p.z0, H: p.h - p.z0 }; }), nbs: nbs.map(function (b) { return { pts: b.pts, h: b.h, est: b.est }; }),
-        radius: Math.max(40, Math.ceil(ext * 1.25 / 10) * 10), sun: id === "clim" || id === "vol" ? (id === "clim" ? sunAt(C.date, C.hour) : sunAt("2026-12-21", 9)) : null };
+        radius: Math.max(40, Math.ceil(ext * 1.25 / 10) * 10), aerial: C.aerial !== false && has(C.lat), lat: has(C.lat) ? C.lat : null, lon: has(C.lon) ? C.lon : null, sun: id === "clim" || id === "vol" ? (id === "clim" ? sunAt(C.date, C.hour) : sunAt("2026-12-21", 9)) : null };
     }
   };
   var weekT = null;
@@ -657,7 +765,7 @@
     var w = $("#cWeek"); if (!w) return;
     w.classList.remove("run"); void w.offsetWidth; w.classList.add("run");
   }
-  function sync() { renderVol(); renderNb(); renderLoc(); renderSiteF(); renderPhotos(); renderCard(); renderStat(); renderClim(); renderFeasIn(); renderFeas(); renderChips(); renderMood(); renderIntent(); renderExp(); paintBars(); paintPrompts(); }
+  function sync() { renderWiki(); renderVol(); renderNb(); renderLoc(); renderSiteF(); renderPhotos(); renderCard(); renderStat(); renderClim(); renderFeasIn(); renderFeas(); renderChips(); renderMood(); renderIntent(); renderExp(); paintBars(); paintPrompts(); }
 
   APP.ext.b = { show: function (v) { if (v.id === "start") APP.ext.c.bshow(); } };
   APP.ext.c = {
@@ -700,6 +808,7 @@
       C.placed = true; save(); placeVerdict(); $("#cPlaceOut").hidden = false; refresh();
     });
     $("#cDem").addEventListener("click", fetchDem);
+    $("#cWiki").addEventListener("click", fetchWiki);
     $("#cSiteGo").addEventListener("click", function () { C.siteDone = true; save(); renderCard(); refresh(); });
     $("#cStatGo").addEventListener("click", function () { C.statDone = true; save(); renderStat(); refresh(); });
     $("#cClimGo").addEventListener("click", function () { C.climDone = true; save(); renderClim(); refresh(); if (!C.wx) fetchWx(); });
@@ -708,6 +817,9 @@
     $("#cIntentGo").addEventListener("click", function () { var I = translateIntent(); if (!I) { $("#cIntentOut").innerHTML = '<p class="small bad">אין מה לתרגם. כותבים תיאור או בוחרים מילות מפתח.</p>'; return; } C.intent = I; save(); renderIntent(); refresh(); });
     $("#cExIfc").addEventListener("click", function () { var s = buildIFC(); if (!s) { $("#cExToast").textContent = "אין וולום לייצוא."; return; } download("project.ifc", s, "application/x-step"); C.expDone = true; save(); renderExp(); refresh(); });
     $("#cExJson").addEventListener("click", function () { download("project.json", projectJson(), "application/json"); C.expDone = true; save(); renderExp(); refresh(); });
+    $("#cExDxf").addEventListener("click", function () { var t = buildDXF(); if (!t) { $("#cExToast").textContent = "אין וולום לייצוא."; return; } download("project.dxf", t, "application/dxf"); C.expDone = true; save(); renderExp(); refresh(); });
+    $("#cExObj").addEventListener("click", function () { var t = buildOBJ(); if (!t) { $("#cExToast").textContent = "אין וולום לייצוא."; return; } download("project.obj", t, "text/plain"); C.expDone = true; save(); renderExp(); refresh(); });
+    $("#cExPrint").addEventListener("click", function () { if (!printSummary()) $("#cExToast").textContent = "החלון נחסם, או שאין וולום."; else { C.expDone = true; save(); renderExp(); } });
     $("#cExArea").addEventListener("click", function () { var t = areaTable(); if (t) { copy(t, $("#cExToast")); C.expDone = true; save(); renderExp(); refresh(); } });
     $("#cExSpec").addEventListener("click", function () { var t = specText(); if (!t) { $("#cExToast").textContent = "טרם הוגדרה כוונת עיצוב."; return; } copy(t, $("#cExToast")); });
     document.addEventListener("click", function (e) {
@@ -727,6 +839,7 @@
         if (k === "hour") $("#cHourL").textContent = hh(C.hour);
         if (k === "hour" || k === "date") { if (C.climDone) { renderSunSvg(); if (k === "date") renderClim(); else if (window.update3Dc) window.update3Dc(); } }
         else if (k === "front" || k === "lat" || k === "lon") { if (C.placed) placeVerdict(); renderNb(); if (window.update3Dc) window.update3Dc(); paintBars(); paintPrompts(); if (C.climDone) renderClim(); }
+        else if (k === "aerial") { if (window.update3Dc) window.update3Dc(); }
         else paintPrompts();
         if (t.id === "cIntentText") paintPrompts();
         return;
