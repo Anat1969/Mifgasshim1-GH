@@ -39,6 +39,7 @@
     <div class="pane" id="pane">
       <div class="pane-top">
         <span id="kicker"></span>
+        <span class="modebar" id="modeBar" role="group" aria-label="מצב המפגש"><button class="btn" type="button" data-mode="example">דוגמה</button><button class="btn" type="button" data-mode="live">הדגמה חיה</button></span>
         <span class="pane-tools"><span id="editNote" hidden>מצב עריכה · נשמר אוטומטית</span><button class="btn" id="editDone" type="button" hidden>סיום עריכה</button><button class="btn" id="allBtn" type="button" aria-pressed="false">הצג הכול</button><button class="btn" id="mark" type="button">סמן כנלמד</button></span>
       </div>
 
@@ -278,6 +279,10 @@
           <li><span>קלט</span>בחירת החלופה האידיאלית</li>
           <li class="out"><span>פלט</span>הכרעה מנומקת</li>
         </ol>
+        <div class="modes" aria-label="בחירת מצב">
+          <div><button class="btn" type="button" data-mode="example">דוגמה</button><p>נתוני דמו מוכנים של תכנית עם חמישה מגרשים. רק לוחצים ועוברים את השרשרת.</p></div>
+          <div><button class="btn" type="button" data-mode="live">הדגמה חיה</button><p>הנתונים שלך. מעלים או מדביקים טבלה, מגדירים מגרשים, מזינים דרישות, ומקבלים חלופות והכרעה על הנתונים האלה.</p></div>
+        </div>
       </section>
 
       <section class="view flow" data-page="a" data-group="learn" data-id="plan" data-title="מהתב&quot;ע למגרש">
@@ -301,12 +306,19 @@
         <div class="step io" data-step="docs" data-label="מסמכים ומודל">
           <div class="io-in"><h3>קלט</h3><p class="io-q">מסמכי התב"ע</p>
             <ul class="docs" id="docs"></ul>
+            <div id="liveDocs" class="live-box" hidden>
+              <p class="io-q">הנתונים שלך: מגרשים וטבלה 5</p>
+              <p class="small muted">מעלים קובץ CSV או טקסט במשבצת "טבלת זכויות", מדביקים טבלה מ-Excel, או מוסיפים מגרשים ידנית. בשורת הכותרות: מספר מגרש, רוחב ועומק במטרים, מיקום (מעל הדרך או מתחת לדרך), ופרמטרי טבלה 5. בלי מידות, הכלי גוזר אותן מהשטח. "העתקת תבנית" נותנת את הכותרות.</p>
+              <textarea id="livePaste" rows="4" dir="rtl" aria-label="הדבקת טבלה" placeholder="מדביקים כאן טבלה עם שורת כותרות."></textarea>
+              <div class="io-act"><button class="btn" type="button" id="livePasteBtn">קליטת הטבלה</button><button class="btn" type="button" id="liveTpl">העתקת תבנית</button><button class="btn" type="button" id="liveAdd">הוספת מגרש</button><button class="btn" type="button" id="liveClear">ניקוי</button><span id="liveMsg" class="tiny" aria-live="polite"></span></div>
+              <table class="t live-plots"><thead><tr><th>מספר מגרש</th><th>רוחב, מ'</th><th>עומק, מ'</th><th>מיקום</th><th></th></tr></thead><tbody id="livePlots"></tbody></table>
+            </div>
             <div class="io-act"><button class="btn" type="button" id="demoDocs">טעינת תכנית לדוגמה</button><button class="btn dark" type="button" id="planGo">בניית מודל התכנית</button></div>
             <div class="prompt" data-build="b1"></div>
           </div>
           <div class="io-out"><h3>פלט</h3>
             <div id="planOut" hidden>
-              <p class="verdict"><b>הקו הכחול והמגרשים.</b> <span id="planCount"></span> <span class="demo-tag">דוגמה · תכנית דמו</span></p>
+              <p class="verdict"><b>הקו הכחול והמגרשים.</b> <span id="planCount"></span> <span class="demo-tag ex">דוגמה · תכנית דמו</span></p>
               <div data-slot="vp"></div>
               <div class="legend"><span><i class="ln blue"></i>הקו הכחול: גבול התכנית</span><span><i class="sw plot"></i>מגרש</span><span><i class="sw road"></i>דרך</span></div>
               <p class="tiny" id="planNote"></p>
@@ -329,7 +341,7 @@
             <div id="plotOut" hidden>
               <p class="verdict" id="plotTitle"></p>
               <div data-slot="vp"></div>
-              <p class="io-q">טבלה 5: זכויות הבנייה של המגרש <span id="srcCount" class="tiny"></span> <span class="demo-tag" id="demoTag">דוגמה · ערכי דמו</span></p>
+              <p class="io-q">טבלה 5: זכויות הבנייה של המגרש <span id="srcCount" class="tiny"></span> <span class="demo-tag ex" id="demoTag">דוגמה · ערכי דמו</span></p>
               <table class="t rights">
                 <thead><tr><th>פרמטר</th><th>ערך</th><th></th><th>מקור</th><th></th></tr></thead>
                 <tbody id="rights"></tbody>
@@ -368,6 +380,10 @@
             <p class="io-q" style="margin-top:14px">דרישות היזם: בטקסט, בהקלטה, ובשלושה יעדים</p>
             <div class="rec"><textarea id="devText" rows="3" dir="rtl" aria-label="תיאור דרישות היזם" placeholder="למשל: 36 דירות לפחות, דירות של 100 מ&quot;ר, וחצר גדולה."></textarea><button class="btn" type="button" id="recBtn" hidden>הקלטה</button></div>
             <div class="dev" id="dev"></div>
+            <div id="sysEdit" class="live-box" hidden>
+              <p class="io-q">ערכי הדרישות שלך: נכנסים לבדיקה כשהמקור מחובר, או כשקובץ הטקסט שלו נקרא</p>
+              <div class="dev" id="sysFields"></div>
+            </div>
             <div class="io-act"><button class="btn dark" type="button" id="reqGo">איסוף הדרישות</button></div>
             <div class="prompt" data-build="b3"></div>
           </div>
@@ -380,7 +396,7 @@
           </div>
           <div class="io-act" id="massAct"><button class="btn dark" type="button" id="massGo">יצירת שלוש חלופות</button></div>
           <div class="trio" id="trio" hidden></div>
-          <div class="legend" id="trioLegend" hidden><span><i class="ln solid"></i>גבול המגרש</span><span><i class="ln dash"></i>המעטפת המותרת: קווי הבניין, עד הגובה המרבי</span><span class="demo-tag">דוגמה · ערכי דמו</span></div>
+          <div class="legend" id="trioLegend" hidden><span><i class="ln solid"></i>גבול המגרש</span><span><i class="ln dash"></i>המעטפת המותרת: קווי הבניין, עד הגובה המרבי</span><span class="demo-tag ex">דוגמה · ערכי דמו</span></div>
         </div>
       </section>
 
@@ -412,6 +428,7 @@
               <div class="trio small" id="fitTrio"></div>
               <p class="verdict" id="fitTitle"></p>
               <p class="reco" id="reco"></p>
+              <div class="io-act"><button class="btn" type="button" id="decideCopy">העתקת ההכרעה</button><span id="decideCopyMsg" class="tiny" aria-live="polite"></span></div>
               <h4 class="sub fold-h" id="fitToggle" role="button" tabindex="0" aria-expanded="false">פירוט הבדיקות</h4>
               <div id="fitWrap" hidden>
                 <table class="t fit" id="fit"></table>
