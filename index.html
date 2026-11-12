@@ -582,14 +582,14 @@
         <div class="step io" data-step="site" data-label="כרטיס שטח">
           <div class="io-in"><h3>קלט</h3>
             <p class="io-q">טופוגרפיה</p>
-            <div class="io-act"><button class="btn" type="button" id="cDem">שליפת גובה ושיפוע</button><span class="tiny" id="cDemMsg" aria-live="polite"></span></div>
+            <div class="io-act"><button class="btn" type="button" id="cDem">שליפת גובה ושיפוע</button><span class="tiny" id="cDemMsg" aria-live="polite"></span><button class="btn" type="button" id="cWiki">תמונות מהסביבה</button><span class="tiny" id="cWikiMsg" aria-live="polite"></span></div>
             <p class="io-q" style="margin-top:12px">מה קיים במגרש</p>
             <div class="dev" id="cSiteF"></div>
             <p class="io-q" style="margin-top:12px">תיעוד שטח: שישה כיוונים ושתי פנורמות</p>
             <ul class="docs" id="cPhotos"></ul>
             <div class="io-act"><button class="btn dark" type="button" id="cSiteGo">יצירת כרטיס שטח</button></div>
           </div>
-          <div class="io-out"><h3>פלט</h3><div id="cCardOut"></div></div>
+          <div class="io-out"><h3>פלט</h3><div id="cCardOut"></div><div id="cWikiOut"></div></div>
         </div>
       </section>
 
@@ -719,14 +719,14 @@
         <h1>כל השכבות במודל אחד, שיוצא לתוכנות העבודה.</h1>
         <div class="cbar" data-cbar></div>
         <div class="step" data-step="explain" data-label="ההסבר">
-          <p class="what"><mark>הגאומטריה, הסביבה, השמש והפרמטרים מתאגדים לקובץ אחד.</mark> הייצוא הראשון הוא IFC של הוולום והשכנים, עם הפרמטרים של הזכויות.</p>
+          <p class="what"><mark>הגאומטריה, הסביבה, השמש והפרמטרים מתאגדים למודל אחד.</mark> הייצוא המרכזי הוא IFC של הוולום והשכנים, עם הפרמטרים של הזכויות. לצידו DXF (תוכנית וחזית), OBJ וסיכום להדפסה.</p>
           <ol class="chain">
             <li><span>קלט</span>כל השכבות שנאספו</li>
             <li class="out"><span>פלט</span>קובץ IFC ונתוני פרויקט</li>
           </ol>
           <ol class="explain">
             <li><div><b>מה בקובץ</b><p>קומה אחר קומה כגוף נפרד, שכנים בגובה שלהם, מיקום גאוגרפי של האתר, ופרמטרי הזכויות כקבוצת מאפיינים.</p></div></li>
-            <li><div><b>מה עדיין לא</b><p>חומרים ופתחים אינם נכנסים לקובץ בגרסה הזאת. כך גם Revit, SketchUp ו-DWG, שדורשים רכיבי המרה. את קובץ ה-IFC אפשר לפתוח בכל אחת מהן.</p></div></li>
+            <li><div><b>מה עדיין לא</b><p>חומרים ופתחים אינם נכנסים לקבצים בגרסה הזאת, וגם לא התצלום האווירי. קובצי rvt, skp ו-dwg מקוריים דורשים רכיבי המרה: את ה-IFC, ה-DXF וה-OBJ אפשר לפתוח בכל אחת מהתוכנות.</p></div></li>
             <li><div><b>המפרט הראשוני</b><p>שלושה פריטים למעטפת ושלושה לפנים, מתוך הכוונה העיצובית. אם לא הוגדרה כוונה, המפרט ריק.</p></div></li>
           </ol>
         </div>
@@ -734,6 +734,7 @@
           <div class="io-in"><h3>קלט</h3>
             <p class="io-q">מה מייצאים</p>
             <div class="io-act"><button class="btn dark" type="button" id="cExIfc">ייצוא IFC</button><button class="btn" type="button" id="cExJson">ייצוא נתוני הפרויקט</button></div>
+            <div class="io-act"><button class="btn" type="button" id="cExDxf">ייצוא DXF</button><button class="btn" type="button" id="cExObj">ייצוא OBJ</button><button class="btn" type="button" id="cExPrint">סיכום להדפסה ול-PDF</button></div>
             <div class="io-act"><button class="btn" type="button" id="cExArea">העתקת טבלת שטחים</button><button class="btn" type="button" id="cExSpec">העתקת מפרט ראשוני</button><span class="tiny" id="cExToast" aria-live="polite"></span></div>
             <div class="prompt" data-label="שאלה אחת לבינה" id="cQ6"><pre></pre></div>
           </div>
@@ -750,6 +751,7 @@
           <div id="iso3dc"><p id="noThreeC" hidden>המודל התלת-ממדי דורש חיבור לאינטרנט לטעינת הספרייה.</p></div>
           <span class="hint">סיבוב, הזזה וזום בעכבר</span>
         </div>
+        <div class="vp-note"><label class="chk"><input type="checkbox" data-c="aerial"> תצלום אווירי</label><span class="tiny" id="cAerialMsg"></span><span class="tiny">תצלום: Esri, Maxar, Earthstar Geographics</span></div>
       </div>
     </div>
     <div id="vpStore" hidden>
