@@ -40,6 +40,7 @@
     <div class="pane" id="pane">
       <div class="pane-top">
         <span id="kicker"></span>
+        <span class="modebar" id="cModeBar" role="group" aria-label="מצב מפגש ג"><button class="btn" type="button" data-cmode="example">דוגמה</button><button class="btn" type="button" data-cmode="live">הדגמה חיה</button></span>
         <span class="modebar" id="modeBar" role="group" aria-label="מצב המפגש"><button class="btn" type="button" data-mode="example">דוגמה</button><button class="btn" type="button" data-mode="live">הדגמה חיה</button></span>
         <span class="pane-tools"><span id="editNote" hidden>מצב עריכה · נשמר אוטומטית</span><button class="btn" id="editDone" type="button" hidden>סיום עריכה</button><button class="btn" id="allBtn" type="button" aria-pressed="false">הצג הכול</button><button class="btn" id="mark" type="button">סמן כנלמד</button></span>
       </div>
@@ -497,6 +498,11 @@
         <h1>מהחלופה הנבחרת למודל עבודה.</h1>
         <p class="what"><mark>נבחרה חלופה, ויש וולום מאושר. זו אמורה להיות ההתחלה האמיתית.</mark> מציבים את הוולום במרחב, אוספים את מה שקיים, מבינים מה מותר ומה דוחף, ויוצאים עם מודל מוכן לייצוא.</p>
         <div class="cbar" data-cbar></div>
+        <div class="modes" aria-label="בחירת מצב">
+          <div><button class="btn" type="button" data-cmode="example">דוגמה</button><p>חלופה קבועה של מגרש 633 מהדוגמה של מבחן התב"ע, עם כתובת, שכנים, אקלים וכוונה ממולאים מראש. עוברים את כל הצמתים במהירות ורואים איך הכול נראה.</p></div>
+          <div><button class="btn" type="button" data-cmode="live">הדגמה חיה</button><p>הנתונים שלך: החלופה שהכרעת בהדגמה החיה של מפגש ב, כתובת, שכנים, קבצים ובחירות. הכול מתחיל ריק.</p></div>
+        </div>
+        <div class="io-act cex"><button class="btn dark" type="button" id="cRunAll">הרצת כל הדוגמה</button><span class="tiny">ממלא את כל הצמתים, ואפשר לעבור ביניהם ולראות את התוצאות.</span></div>
         <ol class="week" id="cWeek" aria-label="שבוע של איסוף מידע ידני, מול 90 שניות באפליקציה">
           <li><b>יום ראשון</b>פותח מפות, מגיע לשטח ומצלם 40 תמונות בלי שיטה. חלקן שמישות. הן נשמרות בתיקייה "שטח 12.11" ולא נפתחות שוב.</li>
           <li><b>יום שני</b>מוריד תוכנית סטטוטורית מה-GIS, קובץ PDF לא מדויק. שעתיים עבודה כדי להוציא ממנו קו גבול מגרש.</li>
@@ -537,8 +543,9 @@
           <div class="io-in"><h3>קלט</h3>
             <p class="io-q">הוולום שנבחר</p>
             <div id="cVol"></div>
+            <p class="small muted cex">נתוני דוגמה: כתובת, שכנים וגובה מוזנים מראש, ואפשר לערוך אותם. שליפה משירותים חיצוניים מתאפשרת בהדגמה החיה.</p>
             <p class="io-q" style="margin-top:14px">מיקום וכיוון החזית</p>
-            <div class="rec"><input type="text" id="cAddr" dir="rtl" aria-label="כתובת" placeholder="כתובת, למשל: אשדוד, רחוב הרצל 10"><button class="btn" type="button" id="cGeo">איתור כתובת</button></div>
+            <div class="rec"><input type="text" id="cAddr" dir="rtl" aria-label="כתובת" placeholder="כתובת, למשל: אשדוד, רחוב הרצל 10"><button class="btn net" type="button" id="cGeo">איתור כתובת</button></div>
             <div class="dev" id="cLoc">
               <div><label>קו רוחב<input type="number" step="any" data-c="lat"></label></div>
               <div><label>קו אורך<input type="number" step="any" data-c="lon"></label></div>
@@ -546,7 +553,7 @@
             </div>
             <p class="small muted" id="cGeoMsg"></p>
             <p class="io-q" style="margin-top:14px">הסביבה הבנויה</p>
-            <div class="io-act"><button class="btn" type="button" id="cOsm">שליפה מ-OpenStreetMap</button><button class="btn" type="button" id="cNbAdd">הוספת שכן</button><span class="tiny" id="cNbMsg" aria-live="polite"></span></div>
+            <div class="io-act"><button class="btn net" type="button" id="cOsm">שליפה מ-OpenStreetMap</button><button class="btn" type="button" id="cNbAdd">הוספת שכן</button><span class="tiny" id="cNbMsg" aria-live="polite"></span></div>
             <table class="t live-plots" id="cNbT"><thead><tr><th>שם</th><th>גובה, מ'</th><th>מרחק מהמגרש, מ'</th><th>כיוון</th><th>רוחב</th><th>עומק</th><th></th></tr></thead><tbody id="cNb"></tbody></table>
             <div class="io-act"><button class="btn dark" type="button" id="cPlace">הצבת הוולום במרחב</button></div>
             <div class="prompt" data-label="שאלה אחת לבינה" id="cQ1"><pre></pre></div>
@@ -582,7 +589,7 @@
         <div class="step io" data-step="site" data-label="כרטיס שטח">
           <div class="io-in"><h3>קלט</h3>
             <p class="io-q">טופוגרפיה</p>
-            <div class="io-act"><button class="btn" type="button" id="cDem">שליפת גובה ושיפוע</button><span class="tiny" id="cDemMsg" aria-live="polite"></span><button class="btn" type="button" id="cWiki">תמונות מהסביבה</button><span class="tiny" id="cWikiMsg" aria-live="polite"></span></div>
+            <div class="io-act"><button class="btn net" type="button" id="cDem">שליפת גובה ושיפוע</button><span class="tiny" id="cDemMsg" aria-live="polite"></span><button class="btn net" type="button" id="cWiki">תמונות מהסביבה</button><span class="tiny" id="cWikiMsg" aria-live="polite"></span></div>
             <p class="io-q" style="margin-top:12px">מה קיים במגרש</p>
             <div class="dev" id="cSiteF"></div>
             <p class="io-q" style="margin-top:12px">תיעוד שטח: שישה כיוונים ושתי פנורמות</p>
