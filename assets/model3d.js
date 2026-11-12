@@ -1,4 +1,4 @@
-/* מודל התכנית של מפגש א: הקו הכחול, המגרשים, והבניין שנבנה על המגרש שנבחר. קורא את המצב מ-window.TOOL. */
+/* מודל התכנית של מפגש ב: הקו הכחול, המגרשים, והבניין שנבנה על המגרש שנבחר. קורא את המצב מ-window.TOOL. */
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 

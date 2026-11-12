@@ -50,7 +50,7 @@
   function sunAt(dateStr, hour) { return has(C.lat) && has(C.lon) ? sunPos(localDate(dateStr, hour), C.lat, C.lon) : null; }
   function hh(h) { var m = Math.round(h * 60); return Math.floor(m / 60) + ":" + ("0" + (m % 60)).slice(-2); }
 
-  /* ---------- וולום: מהחלופה שנבחרה במפגש א, או מהזנה ידנית ---------- */
+  /* ---------- וולום: מהחלופה שנבחרה במפגש ב, או מהזנה ידנית ---------- */
   function manualVol() {
     var m = C.man, W = +m.W, D = +m.D, fl = +m.floors, fp = +m.fp, flh = +m.flh || 3.2, sf = +m.sf || 0, ss = +m.ss || 0, sr = +m.sr || 0;
     if (!(W > 0 && D > 0 && fl > 0 && fp > 0)) return null;
@@ -156,7 +156,7 @@
   function placedOk() { return !!(C.placed && has(C.lat) && has(C.lon) && getVol()); }
   function bar() {
     var v = getVol(), t;
-    if (!v) t = "עוד אין וולום. מכריעים חלופה במפגש א, או מזינים וולום ידנית בצומת 1.";
+    if (!v) t = "עוד אין וולום. מכריעים חלופה במפגש ב, או מזינים וולום ידנית בצומת 1.";
     else {
       var f = C.feasDone ? feasCounts() : null;
       t = "<b>פרויקט:</b> " + (v.src === "a" ? "מגרש " + esc(v.plotId) + ", חלופה " + esc(v.key) + " (" + esc(v.name) + ")" : "וולום ידני") + " · " + v.c.floors + " קומות · " + fmt(v.c.h) + " מ' · " + fmt(v.c.gross, 0) + ' מ"ר · ' + (C.addr ? esc(C.addr) : "בלי כתובת") +
@@ -187,15 +187,15 @@
   function renderVol() {
     var st = aVolState(), v = C.useMan ? null : APP.volume(), box = $("#cVol"), html = "";
     if (v && !v.none && !C.useMan) {
-      html = '<dl class="kv">' + [["מקור", "מפגש א, " + (v.mode === "live" ? "הדגמה חיה" : "דוגמה")], ["מגרש", v.plotId], ["חלופה", v.key + " · " + v.name], ["קומות", v.c.floors], ["גובה", fmt(v.c.h) + " מ'"], ['שטח כולל', fmt(v.c.gross, 0) + ' מ"ר'], ['יח"ד', v.c.units]]
+      html = '<dl class="kv">' + [["מקור", "מפגש ב, " + (v.mode === "live" ? "הדגמה חיה" : "דוגמה")], ["מגרש", v.plotId], ["חלופה", v.key + " · " + v.name], ["קומות", v.c.floors], ["גובה", fmt(v.c.h) + " מ'"], ['שטח כולל', fmt(v.c.gross, 0) + ' מ"ר'], ['יח"ד', v.c.units]]
         .map(function (r) { return "<div><dt>" + r[0] + "</dt><dd class=\"num\">" + esc(r[1]) + "</dd></div>"; }).join("") + "</dl>" +
         '<div class="io-act"><button class="btn small" type="button" id="cUseMan">הזנה ידנית במקום</button></div>';
     } else {
-      html = (st === "none" ? '<p class="small bad">בחלופות של מפגש א אין חלופה שעומדת בכל הדרישות.</p>' : (C.useMan ? "" : '<p class="small muted">לא נבחרה חלופה במפגש א. <a href="#a/decide">להכרעה במפגש א</a>, או הזנה ידנית:</p>')) +
+      html = (st === "none" ? '<p class="small bad">בחלופות של מפגש ב אין חלופה שעומדת בכל הדרישות.</p>' : (C.useMan ? "" : '<p class="small muted">לא נבחרה חלופה במפגש ב. <a href="#a/decide">להכרעה במפגש ב</a>, או הזנה ידנית:</p>')) +
         '<div class="dev" id="cMan">' + [["W", 'רוחב המגרש, מ\''], ["D", "עומק המגרש, מ'"], ["floors", "קומות"], ["fp", 'שטח קומה, מ"ר'], ["flh", "גובה קומה, מ'"], ["sf", "קו בניין קדמי"], ["ss", "קו בניין צדדי"], ["sr", "קו בניין אחורי"],
           ["cov", "תכסית מרבית, %"], ["bp", "אחוזי בנייה, %"], ["maxFl", "קומות מרבי"], ["h", "גובה מרבי, מ'"], ["units", 'יח"ד מרבי']]
           .map(function (f) { return '<div><label>' + f[1] + '<input type="number" step="any" data-man="' + f[0] + '" value="' + esc(C.man[f[0]]) + '"></label></div>'; }).join("") + "</div>" +
-        (C.useMan ? "" : '<div class="io-act"><button class="btn small" type="button" id="cUseManGo">שימוש בנתונים האלה</button></div>') + (st === "ok" ? '<div class="io-act"><button class="btn small" type="button" id="cUseA">חזרה לחלופה של מפגש א</button></div>' : "");
+        (C.useMan ? "" : '<div class="io-act"><button class="btn small" type="button" id="cUseManGo">שימוש בנתונים האלה</button></div>') + (st === "ok" ? '<div class="io-act"><button class="btn small" type="button" id="cUseA">חזרה לחלופה של מפגש ב</button></div>' : "");
     }
     box.innerHTML = html;
   }
@@ -728,7 +728,7 @@
   }
   function renderExp() {
     var v = getVol(), layers = [
-      ["גאומטריה", v ? "g" : "r", v ? v.c.floors + " קומות, וולום לפי " + (v.src === "a" ? "מפגש א" : "הזנה ידנית") : "אין וולום"],
+      ["גאומטריה", v ? "g" : "r", v ? v.c.floors + " קומות, וולום לפי " + (v.src === "a" ? "מפגש ב" : "הזנה ידנית") : "אין וולום"],
       ["סביבה", C.nb.length ? "g" : "y", C.nb.length ? C.nb.length + " שכנים" : "בלי שכנים"],
       ["מיקום גאוגרפי", has(C.lat) ? "g" : "y", has(C.lat) ? "הקואורדינטות בקובץ" : "בלי קואורדינטות"],
       ["שמש ורוח", C.climDone ? "g" : "y", C.climDone ? "נותחו, ונשמרים בנתוני הפרויקט" : "לא הורצו"],
@@ -803,7 +803,7 @@
     $("#cOsm").addEventListener("click", fetchOsm);
     $("#cNbAdd").addEventListener("click", function () { C.nb.push({ kind: "man", name: "שכן " + (C.nb.length + 1), h: 18, dist: 10, dir: 0, w: 20, d: 20 }); save(); renderNb(); refresh(); });
     $("#cPlace").addEventListener("click", function () {
-      if (!getVol()) { $("#cGeoMsg").textContent = "אין וולום. מכריעים חלופה במפגש א, או מזינים וולום ידנית."; return; }
+      if (!getVol()) { $("#cGeoMsg").textContent = "אין וולום. מכריעים חלופה במפגש ב, או מזינים וולום ידנית."; return; }
       if (!has(C.lat)) { $("#cGeoMsg").textContent = "חסרים מיקום: כתובת או קואורדינטות."; return; }
       C.placed = true; save(); placeVerdict(); $("#cPlaceOut").hidden = false; refresh();
     });

@@ -1,4 +1,4 @@
-/* בינה מלאכותית לאדריכלים: ניווט, סרגל השלבים, פרומפטים, כלי המגרש ומפגש ב. */
+/* בינה מלאכותית לאדריכלים: ניווט, סרגל השלבים, פרומפטים, כלי המגרש ומפגש א. */
 (function () {
   "use strict";
 
@@ -29,7 +29,7 @@
     else fallback();
   }
 
-  /* ---------- תוכן: פרומפטים של מפגש א ---------- */
+  /* ---------- תוכן: פרומפטים של מפגש ב ---------- */
   var PROMPTS = {
     p1h: 'אתה מנתח תב"ע ישראלית. קלט: כל מסמכי התכנית שהועלו (הוראות, תשריט, טבלת זכויות, נספחים) ומספר המגרש או תא השטח.\n1. אתר ופענח את המגרש בטבלת הזכויות ובתשריט. אם הם לא מסכימים, עצור והצג את הסתירה.\n2. חלץ לכל מגרש: שטח מגרש; תכסית מרבית; אחוזי בנייה מרביים (ציין אם מוגדרים כשטח כולל או מפוצלים לעיקרי ושירות, לפי תקנות חישוב השטחים, התשנ"ב-1992); מספר קומות מרבי מעל ומתחת לקרקע; גובה מרבי והגדרתו; קווי בניין קדמי, צדדי ואחורי; מספר יח"ד מרבי וצפיפות; שימושים מותרים; דרישות חניה.\n3. לכל ערך החזר: ערך, יחידה, מקור (מסמך, עמוד, סעיף או תא), ורמת ודאות: מלאה, חלקית או חסרה.\n4. בצע בדיקות עקביות: רכיבי השטח מסתכמים לסה"כ; אחוזי הבנייה תואמים לשטחים; שטח השייפ תואם לשטח הטבלה בסטייה עד 0.5%.\n5. אל תנחש ערך חסר. סמן "לא נמצא" ורשום איזה מסמך לבדוק.\n6. הפלט: טבלה אחת, וממצאי עקביות בסוף.\n7. בסיום הוסף רשימה קצרה לקליטה בכלי, שורה לכל ערך, בדיוק במבנה הזה:\nשטח מגרש: [מספר] | מקור: [מסמך, עמוד, סעיף]\nתכסית מרבית: [מספר] | מקור: [...]\nאחוזי בנייה: [מספר] | מקור: [...]\nקומות מרבי: [מספר] | מקור: [...]\nגובה מרבי: [מספר] | מקור: [...]\nקו בניין קדמי: [מספר] | מקור: [...]\nקו בניין צדדי: [מספר] | מקור: [...]\nקו בניין אחורי: [מספר] | מקור: [...]\nיח"ד מרבי: [מספר] | מקור: [...]\nחניה: [הדרישה במילים] | מקור: [...]\nערך שלא נמצא: כתוב "לא נמצא".',
     p1e: 'You are an analyst of Israeli detailed plans (TABA). Input: all uploaded plan documents (ordinances, zoning map, rights table, appendices) and the plot or sub-plot number.\n1. Locate the plot in the rights table and on the map. If they disagree, stop and show the conflict.\n2. Extract and decode, for this plot: plot area; maximum coverage; maximum building rights (state whether expressed as total area or split into main and service areas under the 1992 area-calculation regulations); maximum floors above and below ground; maximum height and its definition; front, side and rear setbacks; maximum dwelling units and density; permitted uses; parking requirements.\n3. For each value return: value, unit, source (document, page, section or table cell), and confidence (full, partial or missing).\n4. Run consistency checks: components sum to the total; percentages match the areas; plot shape area matches the table area within 0.5%.\n5. Never guess a missing value. Mark it "not found" and name the document to check.\n6. Output one table, followed by the consistency findings.\n7. Finally, add a short list for import into the tool, one line per value, using exactly these Hebrew labels and this structure:\nשטח מגרש: [number] | מקור: [document, page, section]\nתכסית מרבית: [number] | מקור: [...]\nאחוזי בנייה: [number] | מקור: [...]\nקומות מרבי: [number] | מקור: [...]\nגובה מרבי: [number] | מקור: [...]\nקו בניין קדמי: [number] | מקור: [...]\nקו בניין צדדי: [number] | מקור: [...]\nקו בניין אחורי: [number] | מקור: [...]\nיח"ד מרבי: [number] | מקור: [...]\nחניה: [the requirement in words] | מקור: [...]\nFor a value that was not found write: לא נמצא.',
@@ -41,7 +41,7 @@
     p4e: "Synthesize a comparison report for the alternatives. Structure: 1. Conclusion: the recommended alternative in three sentences. 2. Comparison table: parameter, A, B, C, status. 3. Advantages and disadvantages per alternative. 4. Recommendation and the assumptions behind it; expose every assumption not taken from a document. 5. Source for every number. Write plainly, with no preamble. Do not present a conclusion without naming the data it rests on."
   };
 
-  /* ---------- תוכן: מפגש ב ---------- */
+  /* ---------- תוכן: מפגש א ---------- */
   var NODES = [
     { id: "n1", g: "learn", t: "מה הכלי מחזיק", lead: "חמש ישויות ושדות החובה של כל אחת: פרויקט, איש מקצוע, עלות, שלב ביצוע ותקציב.",
       works: "רשומת פרויקט אחת עם שם, מזמין, סטטוס ותקציב.",
@@ -126,7 +126,7 @@
     choose: [
       { x: "**שאלה או החלטה:** ==צ'אט.==", ex: "\"איזה מבנה נתונים מתאים למעקב היתרים?\"" },
       { x: "**מסמך שחוזר לאורך זמן:** ==קוורק.==", ex: "פרוגרמה שמתעדכנת מפגישה לפגישה." },
-      { x: "**אפליקציה שתיבנה, תיבדק ותיפרס:** ==Claude Code==, עם GitHub, Vercel ו-Supabase.", ex: "כלי מיפוי הזכויות של מפגש א." },
+      { x: "**אפליקציה שתיבנה, תיבדק ותיפרס:** ==Claude Code==, עם GitHub, Vercel ו-Supabase.", ex: "כלי מיפוי הזכויות של מפגש ב." },
       { x: "**אב טיפוס מהיר לפני בנייה אמיתית:** ==Lovable.==", ex: "מסך אחד להדגמה ללקוח." },
       { x: "**תוצר שמודפס או מופץ:** ==Canva.==", ex: "פלייר לערב תושבים." }
     ],
@@ -176,7 +176,7 @@
     photo: "assets/anat.png",
     post: "רומא, מילאנו, וונציה. אשדוד.\n\nקולנוע, הדרכת טיולים... תמיד לספר את הסיפור. ואני, מתלבטת אם זה תפקיד או הרגל.\n\nעכשיו כלים. לא עוד תוכנית."
   };
-  var PAGES = { home: "בית", guide: "כללי", a: 'מפגש א: מבחן התב"ע', b: "מפגש ב: ניהול הסטודיו", c: "מפגש ג: מהחלופה למודל עבודה" };
+  var PAGES = { home: "בית", guide: "כללי", a: 'מפגש ב: מבחן התב"ע', b: "מפגש א: ניהול הסטודיו", c: "מפגש ג: מהחלופה למודל עבודה" };
   var GROUPS = { open: ["פתיחה", ""], learn: ["נלמד", "ידע"], understand: ["נבין", "הבנה"], do: ["נעשה", "יישום"] };
   var GROUP_ORDER = ["open", "learn", "understand", "do"];
 
@@ -681,7 +681,7 @@
   }
 
   /* =====================================================================
-     מפגש א: מגרש, מסמכים, פרמטרים, חלופות ובדיקת התאמה
+     מפגש ב: מגרש, מסמכים, פרמטרים, חלופות ובדיקת התאמה
      ===================================================================== */
   /* ששת הפרומפטים שבונים אפליקציה כזו ב-Claude Code */
   var BUILD = [
@@ -1708,7 +1708,7 @@
           edits = { lists: {}, texts: {} }; save("edits", edits); location.reload();
         } },
         { label: "איפוס סימוני נלמד", onSelect: function () { done = []; seen = []; save("done", done); save("seen", seen); location.reload(); } },
-        { label: "התחלת מפגש א מחדש", onSelect: function () {
+        { label: "התחלת מפגש ב מחדש", onSelect: function () {
           A = freshA(); save(aKey(), A);
           visited = visited.filter(function (k) { return k.indexOf("a/") !== 0; }); save("flowv", visited); location.reload();
         } }

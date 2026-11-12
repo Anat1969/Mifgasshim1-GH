@@ -71,7 +71,9 @@ code { font-family: Consolas, ui-monospace, monospace; font-size: 13px; directio
 .brand:hover { background: var(--g1); box-shadow: var(--sh); }
 .mark { width: 47px; height: 30px; flex: none; display: block; }
 .tabs { display: flex; gap: 4px; }
-.tabs a { min-width: 92px; min-height: 36px; }
+.tabs a { min-width: 92px; min-height: 40px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; padding-block: 3px; }
+.tabs a b { font-weight: 500; }
+.tabs a small { font-size: 11px; color: var(--g3); white-space: nowrap; }
 .walk .btn, .pane-tools .btn { min-height: 36px; }
 .grow { flex: 1; }
 .walk { display: flex; align-items: center; gap: 4px; }
@@ -405,6 +407,7 @@ body[data-page="b"] .out2 { margin-top: 30px; }
   .out2 > div:first-child { border-inline-end: 0; border-bottom: 1px solid var(--g2); }
   .out2 > div { padding-inline-start: 0; }
   .tabs a { min-width: 0; flex: 1; padding: 6px 4px; }
+  .tabs a small { white-space: normal; text-align: center; font-size: 10px; }
   .walk { order: 4; }
   .walk .btn { width: 60px; padding: 6px 4px; }
   #where, #progress, .grow { display: none; }
