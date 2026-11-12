@@ -176,7 +176,7 @@
     photo: "assets/anat.png",
     post: "רומא, מילאנו, וונציה. אשדוד.\n\nקולנוע, הדרכת טיולים... תמיד לספר את הסיפור. ואני, מתלבטת אם זה תפקיד או הרגל.\n\nעכשיו כלים. לא עוד תוכנית."
   };
-  var PAGES = { home: "בית", guide: "כללי", a: 'מפגש א: מבחן התב"ע', b: "מפגש ב: ניהול הסטודיו" };
+  var PAGES = { home: "בית", guide: "כללי", a: 'מפגש א: מבחן התב"ע', b: "מפגש ב: ניהול הסטודיו", c: "מפגש ג: מהחלופה למודל עבודה" };
   var GROUPS = { open: ["פתיחה", ""], learn: ["נלמד", "ידע"], understand: ["נבין", "הבנה"], do: ["נעשה", "יישום"] };
   var GROUP_ORDER = ["open", "learn", "understand", "do"];
 
@@ -191,6 +191,11 @@
       learn: { t: "מה הכלי מחזיק.", x: "מפרקים את המשרד ל**חמש ישויות**. ==לכל ישות שדות חובה בלבד.==" },
       understand: { t: "איך הדברים קשורים.", x: "מחברים את הישויות זו לזו. ==קובעים מתי סטייה הופכת לסיכון.==" },
       do: { t: "בונים ומפעילים.", x: "מזינים **פרויקט אחד** במלואו. ==בונים סקירה שבועית בעמוד אחד.==" }
+    },
+    c: {
+      learn: { t: "מה קיים.", x: "הוולום הנבחר **נכנס למרחב**, ואוספים את העובדות על המגרש וסביבתו. ==עובדות לפני שרטוט.==" },
+      understand: { t: "מה מותר ומה דוחף.", x: "כללים, שמש ורוח. ==בודקים היתכנות לפני שמציירים שורה אחת.==" },
+      do: { t: "מה רוצים.", x: "כוונת העיצוב **הופכת לשפה עיצובית**, וכל השכבות מתאגדות ל==מודל אחד מוכן לייצוא.==" }
     }
   };
   function barsHTML() {
@@ -234,7 +239,7 @@
     $("#viewsB").innerHTML = html;
   }
   function buildIntros() {
-    ["a", "b"].forEach(function (p) {
+    ["a", "b", "c"].forEach(function (p) {
       ["learn", "understand", "do"].forEach(function (g) {
         var items = $$('.view[data-page="' + p + '"][data-group="' + g + '"]');
         if (!items.length) return;
@@ -477,6 +482,7 @@
     document.title = (v.page === "home" ? "" : v.title + " · ") + "בינה מלאכותית לאדריכלים";
     if (v.page === "a") refreshA();
     renderFlow();
+    if (EXT[v.page] && EXT[v.page].show) EXT[v.page].show(v);
     if (v.page === "home") story();
   }
 
@@ -1265,6 +1271,7 @@
   /* ---------- מהלך בצעדים: הסבר, ואז קלט ופלט ---------- */
   var visited = load("flowv", []);
   var flowPos = {};
+  var EXT = {};
   var STEP_DONE = {
     docs: function () { return !!A.planBuilt; },
     plot: function () { return !!A.plot; },
@@ -1280,7 +1287,7 @@
   function stepId(st) { return st.getAttribute("data-step"); }
   function stepKey(v, st) { return key(v) + ":" + stepId(st); }
   function isDone(v, st) {
-    var f = v.page === "a" && STEP_DONE[stepId(st)];
+    var f = v.page === "a" ? STEP_DONE[stepId(st)] : (EXT[v.page] && EXT[v.page].done && EXT[v.page].done[stepId(st)]);
     return f ? f() : visited.indexOf(stepKey(v, st)) !== -1;
   }
   function markVisited(k) { if (visited.indexOf(k) === -1) { visited.push(k); save("flowv", visited); } }
@@ -1321,6 +1328,7 @@
     if (steps.every(function (st) { return isDone(v, st); }) && done.indexOf(k) === -1) { done.push(k); save("done", done); paintRail(); }
     mountVP();
     if (v.page === "a" && window.update3D) window.update3D();
+    if (EXT[v.page] && EXT[v.page].render) EXT[v.page].render(v, cur, pos);
   }
   function wireFlow() {
     document.addEventListener("click", function (e) {
@@ -1367,6 +1375,15 @@
         out.zone = { x: zb.x, y: zb.y, w: zb.w, d: zb.d, h: has(p.R.h) ? p.R.h : 0 };
       }
       return out;
+    },
+    volume: function () {
+      var ids = Object.keys(A.data).filter(function (id) { var d = A.data[id]; return d.decided && d.alts && PLAN.plots[id]; });
+      if (!ids.length) return null;
+      var id = A.plot && ids.indexOf(A.plot) !== -1 ? A.plot : ids[0], p = A.data[id], sum = summary(p);
+      if (!sum.best) return { none: true, plotId: id };
+      var x = sum.all[sum.best], g = geom(x.a, p), L = limits(p);
+      return { mode: MODE, plotId: id, key: sum.best, kind: x.a.kind, name: ALT_NAME[x.a.kind], W: g.W, D: g.D, boxes: JSON.parse(JSON.stringify(g.boxes)),
+        flh: FLH, R: JSON.parse(JSON.stringify(p.R)), c: JSON.parse(JSON.stringify(x.c)), tone: x.tone, why: sum.why, area: L.area, parkRate: SYS().park };
     },
     pick: function (id) { var st = curStep(); if (st && stepId(st) === "plot") choosePlot(id); },
     visible: function () { var h = $("#iso3d"); return document.body.getAttribute("data-page") === "a" && !!h && h.offsetParent !== null; }
@@ -1702,6 +1719,11 @@
     if (!window.customElements || !customElements.whenDefined) return;
     customElements.whenDefined("ai-menu").then(setMenu);
   }
+
+  /* גשר לדפים נוספים (מפגש ג) */
+  window.APP = { load: load, save: save, esc: esc, fmt: fmt, has: has, copy: copy, $: $, $$: $$, rich: rich, lines: lines, ext: EXT, needs: VIEW_NEEDS,
+    refresh: function () { renderFlow(); }, docPut: docPut, docDel: docDel, docs: function () { return docsCache; },
+    sys: function () { return SYS(); }, volume: function () { return window.TOOL.volume(); }, current: function () { return current; }, FLH: function () { return FLH; } };
 
   /* ---------- הפעלה ---------- */
   document.addEventListener("DOMContentLoaded", function () {
